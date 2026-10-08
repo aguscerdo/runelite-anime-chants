@@ -1,9 +1,14 @@
 package com.animechant;
 
+import com.animechant.enums.AutocastSpell;
+import com.animechant.enums.Spell;
+import com.animechant.enums.SpellOrCategory;
 import com.google.inject.Provides;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 import javax.inject.Inject;
 
 import lombok.extern.slf4j.Slf4j;
@@ -20,48 +25,51 @@ import net.runelite.api.widgets.Widget;
 import net.runelite.api.widgets.WidgetUtil;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
-import net.runelite.client.game.ItemManager;
+import net.runelite.client.events.ConfigChanged;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
 import net.runelite.client.util.Text;
+import org.apache.commons.lang3.tuple.Pair;
 
 @Slf4j
-@PluginDescriptor(name = "Anime Chant", description = "Shows custom text when you cast spells or use special attacks")
+@PluginDescriptor(name = "Anime Chant", description = "Shows custom text when you cast spells")
 public class AnimeChantPlugin extends Plugin {
+    // A targeted spell may need us to walk into range first, so allow a long wait.
+    private static final int TARGETED_TIMEOUT_TICKS = 30;
+
+    // Teleports, alchemy etc. animate within a tick or two of the click.
+    private static final int INSTANT_TIMEOUT_TICKS = 4;
+
     @Inject
     private Client client;
 
     @Inject
-    private ItemManager itemManager;
-
-    @Inject
     private AnimeChantConfig config;
 
+    @Inject
+    private ChantResolver chantResolver;
 
-    // Keep track of the last time text for a spell has been displayed
-    private Map<SpellCategory, Integer> spellTextDisplayDelays = new HashMap<>();
-    private Map<SpellCategory, Integer> spellCastDelays = new HashMap<>();
+    /**
+     * A spell the player has clicked that hasn't been launched (animated) yet.
+     */
+    private static final class PendingCast {
+        final Spell spell;
+        final int expiresTick;
 
-    // Varbit value -> spell name. UNVERIFIED: confirm with the debug log (see onAnimationChanged).
-    // Anything not listed is reported as "Autocast #<value>" so it can still be mapped in Custom.
-    private static final Map<Integer, String> AUTOCAST_SPELLS = new HashMap<>();
-
-    static {
-        String[] strikes = {"Wind Strike", "Water Strike", "Earth Strike", "Fire Strike"};
-        String[] bolts = {"Wind Bolt", "Water Bolt", "Earth Bolt", "Fire Bolt"};
-        String[] blasts = {"Wind Blast", "Water Blast", "Earth Blast", "Fire Blast"};
-        String[] waves = {"Wind Wave", "Water Wave", "Earth Wave", "Fire Wave"};
-        String[][] groups = {strikes, bolts, blasts, waves};
-        int v = 1;
-        for (String[] g : groups) {
-            for (String name : g) {
-                AUTOCAST_SPELLS.put(v++, name);
-            }
+        PendingCast(Spell spell, int expiresTick) {
+            this.spell = spell;
+            this.expiresTick = expiresTick;
         }
     }
 
+
+    private Optional<PendingCast> pendingCast = Optional.empty();
+
+    // Tracking key ("spell:..." / "category:...") -> tick
+    private final Map<SpellOrCategory, Integer> lastCastTicks = new HashMap<>();
+    private final Map<SpellOrCategory, Integer> lastDisplayTicks = new HashMap<>();
+
     private int ticksLeft;
-    private int lastShownTick = -10;
 
     @Provides
     AnimeChantConfig provideConfig(ConfigManager configManager) {
@@ -71,99 +79,54 @@ public class AnimeChantPlugin extends Plugin {
     @Override
     protected void startUp() {
         ticksLeft = 0;
+        pendingCast = Optional.empty();
+
+        lastCastTicks.clear();
+        lastDisplayTicks.clear();
+
+        chantResolver.reload();
     }
 
     @Override
     protected void shutDown() {
         clearText();
+
         ticksLeft = 0;
+        pendingCast = Optional.empty();
     }
 
+    @Subscribe
+    public void onConfigChanged(ConfigChanged event) {
+        if (!event.getGroup().equals(AnimeChantConfig.GROUP)) {
+            return;
+        }
+
+        // Gotta love Java's null sfety :)
+        if (Objects.equals(event.getKey(), "spellPreset"))
+            chantResolver.reload();
+    }
+
+    /**
+     * A click only records intent. Text is shown when the cast animation starts.
+     */
     @Subscribe
     public void onMenuOptionClicked(MenuOptionClicked event) {
         if (!config.spellsEnabled()) {
             return;
         }
 
-        String spellText = "";
         MenuAction action = event.getMenuAction();
+        String spellName = spellNameFromClick(event);
+        Spell spell = Spell.fromString(spellName);
 
-        // TODO move this to a helper
-        // TODO cover non-menu spells
-        if (action == MenuAction.WIDGET_TARGET_ON_NPC
-                || action == MenuAction.WIDGET_TARGET_ON_PLAYER
-                || action == MenuAction.WIDGET_TARGET_ON_GAME_OBJECT
-                || action == MenuAction.WIDGET_TARGET_ON_GROUND_ITEM
-                || action == MenuAction.WIDGET_TARGET_ON_WIDGET) {
-            // A spell is selected and was just used on a target
-            Widget selected = client.getSelectedWidget();
-            if (selected == null
-                    || WidgetUtil.componentToInterface(selected.getId()) != InterfaceID.MAGIC_SPELLBOOK) {
-                return;
-            }
-            // Target looks like "<col>Fire Strike</col><col> -> Goblin</col>"
-            String target = Text.removeTags(event.getMenuTarget());
-            int arrow = target.indexOf("->");
-            spellText = (arrow > 0 ? target.substring(0, arrow) : target).trim();
-        } else if (action == MenuAction.CC_OP
-                && event.getMenuOption().equals("Cast")
-                && WidgetUtil.componentToInterface(event.getParam1()) == InterfaceID.MAGIC_SPELLBOOK) {
-            // Non-targeted spells such as teleports
-            spellText = Text.removeTags(event.getMenuTarget()).trim();
+        // TODO improve this to cancel on additional clicks.
+        if (!spell.isUnknown()) {
+            int timeout = isTargetedUse(action) ? TARGETED_TIMEOUT_TICKS : INSTANT_TIMEOUT_TICKS;
+            pendingCast = Optional.of(new PendingCast(spell, client.getTickCount() + timeout));
+        } else if (action == MenuAction.WALK || action == MenuAction.CANCEL) {
+            // Player walked away or cancelled, so they aren't casting after all.
+            pendingCast = Optional.empty();
         }
-
-        if (spellText.isEmpty()) {
-            return;
-        }
-
-        Spell spell = Spell.fromName(spellText);
-        if (spell.isUnknown()) {
-            log.debug("Skipping unknown spell `{}`", spellText);
-            return;
-        }
-
-        handleSpell(spell);
-    }
-
-    public void handleSpell(Spell spell) {
-        String spellText = config.spellPreset().spellText(spell.spellCategory);
-        if (spellText.isEmpty()) {
-            log.debug("Empty spell text for {} and config {}", spell.name, config.spellPreset());
-            return;
-        }
-
-        boolean shouldDisplayText = true;
-        int currentTick = client.getTickCount();
-
-        int spellCastDelay = config.spellTextDelayFromLastCastTicks();
-        if (spellCastDelay > 0) {
-            int lastCast = this.spellCastDelays.getOrDefault(spell.spellCategory, 0);
-
-            if (currentTick - lastCast < spellCastDelay) {
-                shouldDisplayText = false;
-            }
-
-            this.spellCastDelays.put(spell.spellCategory, currentTick);
-        }
-
-        int spellDelay = config.spellTextDelayTicks();
-        if (spellDelay > 0) {
-            int lastDisplay = this.spellTextDisplayDelays.getOrDefault(spell.spellCategory, 0);
-
-            if (currentTick - lastDisplay < spellDelay) {
-                shouldDisplayText = false;
-            }
-        }
-
-        if (!shouldDisplayText) {
-            return;
-        }
-
-        if (spellDelay > 0) {
-            this.spellTextDisplayDelays.put(spell.spellCategory, currentTick);
-        }
-
-        displayText(spellText);
     }
 
     @Subscribe
@@ -171,33 +134,104 @@ public class AnimeChantPlugin extends Plugin {
         if (!config.spellsEnabled() || event.getActor() != client.getLocalPlayer()) {
             return;
         }
-
         Player me = client.getLocalPlayer();
-        if (me.getAnimation() == -1) {
+        if (me == null || me.getAnimation() == -1) {
             return;
         }
 
-        // TODO handle autocast enabled but cast another spell manually
-        int autocast = client.getVarbitValue(VarbitID.AUTOCAST_SPELL);
-        // Autocast must be set, we must be fighting an NPC, and a manual cast must not have just fired
-        if (autocast == 0
-                || !(me.getInteracting() instanceof NPC)
-                || client.getTickCount() - lastShownTick < 2) {
+        // Manual cast (including alchemy, teleports, ...) takes priority over autocast.
+        if (pendingCast.isPresent()) {
+            pendingCast = Optional.empty();
+
+            if (client.getTickCount() <= pendingCast.get().expiresTick) {
+                handleSpell(pendingCast.get().spell);
+                return;
+            }
+        }
+
+        handleAutocast(me);
+    }
+
+    private void handleAutocast(Player me) {
+        int varbit = client.getVarbitValue(VarbitID.AUTOCAST_SPELL);
+        if (varbit == 0 || !(me.getInteracting() instanceof NPC)) {
             return;
         }
 
-        log.debug("Autocast animation {} with autocast varbit {}", me.getAnimation(), autocast);
+        log.debug("Autocast animation {} with autocast varbit {}", me.getAnimation(), varbit);
 
-        // TODO figure out wtf this is.
-        String spellText = AUTOCAST_SPELLS.getOrDefault(autocast, "Autocast #" + autocast);
-
-        Spell spell = Spell.fromName(spellText);
+        Spell spell = AutocastSpell.getSpell(varbit);
         if (spell.isUnknown()) {
-            log.debug("Skipping unknown spell `{}`", spellText);
+            log.debug("Unmapped autocast varbit {}", varbit);
             return;
         }
 
         handleSpell(spell);
+    }
+
+    private void handleSpell(Spell spell) {
+        Optional<Pair<String, SpellOrCategory>> resolved = chantResolver.resolveSpell(spell);
+        if (resolved.isEmpty()) {
+            log.debug("No text for spell `{}`", spell);
+            return;
+        }
+
+        String resolvedText = resolved.get().getLeft();
+        SpellOrCategory key = resolved.get().getRight();
+
+        int tick = client.getTickCount();
+
+        Integer lastCast = lastCastTicks.put(key, tick);
+        Integer lastDisplay = lastDisplayTicks.getOrDefault(key, 0);
+
+        int castDelay = config.spellTextDelayFromLastCastTicks();
+        if (castDelay > 0 && lastCast != null && tick - lastCast < castDelay) {
+            return;
+        }
+
+        int displayDelay = config.spellTextDelayTicks();
+        if (displayDelay > 0 && lastDisplay != null && tick - lastDisplay < displayDelay) {
+            return;
+        }
+
+        lastDisplayTicks.put(key, tick);
+        displayText(resolvedText);
+    }
+
+    /**
+     * Returns the spell name for a click that selects/casts a spell, otherwise null.
+     */
+    private String spellNameFromClick(MenuOptionClicked event) {
+        MenuAction action = event.getMenuAction();
+        String name = null;
+
+        if (isTargetedUse(action)) {
+            // A spell is selected and was just used on a target (NPC, item for alchemy, ...)
+            Widget selected = client.getSelectedWidget();
+            if (selected == null
+                    || WidgetUtil.componentToInterface(selected.getId()) != InterfaceID.MAGIC_SPELLBOOK) {
+                return null;
+            }
+            // Target looks like "<col>High Level Alchemy</col><col> -> Item</col>"
+            String target = Text.removeTags(event.getMenuTarget());
+            int arrow = target.indexOf("->");
+            name = (arrow > 0 ? target.substring(0, arrow) : target).trim();
+        } else if (action == MenuAction.CC_OP
+                && "Cast".equals(event.getMenuOption())
+                && WidgetUtil.componentToInterface(event.getParam1()) == InterfaceID.MAGIC_SPELLBOOK) {
+            // Non-targeted spells such as teleports
+            name = Text.removeTags(event.getMenuTarget()).trim();
+        }
+
+        return name == null || name.isEmpty() ? null : name;
+    }
+
+    private static boolean isTargetedUse(MenuAction action) {
+        return action == MenuAction.WIDGET_TARGET_ON_NPC
+                || action == MenuAction.WIDGET_TARGET_ON_PLAYER
+                || action == MenuAction.WIDGET_TARGET_ON_GAME_OBJECT
+                || action == MenuAction.WIDGET_TARGET_ON_GROUND_ITEM
+                || action == MenuAction.WIDGET_TARGET_ON_WIDGET;
     }
 
     @Subscribe
@@ -207,25 +241,16 @@ public class AnimeChantPlugin extends Plugin {
         }
     }
 
-
-    /**
-     * Display local-only text over the NPC.
-     */
     private void displayText(String text) {
         if (text == null || text.isEmpty()) {
             return;
         }
-
         Player me = client.getLocalPlayer();
         if (me == null) {
             return;
         }
-
         me.setOverheadText(text);
-
         ticksLeft = config.durationTicks();
-        lastShownTick = client.getTickCount();
-
         log.debug("Showing text: {}", text);
     }
 

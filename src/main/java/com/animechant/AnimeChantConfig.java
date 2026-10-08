@@ -1,7 +1,10 @@
 package com.animechant;
 
-
-import net.runelite.client.config.*;
+import net.runelite.client.config.Config;
+import net.runelite.client.config.ConfigGroup;
+import net.runelite.client.config.ConfigItem;
+import net.runelite.client.config.ConfigSection;
+import net.runelite.client.config.Range;
 
 @ConfigGroup(AnimeChantConfig.GROUP)
 public interface AnimeChantConfig extends Config {
@@ -13,7 +16,7 @@ public interface AnimeChantConfig extends Config {
             position = 1,
             closedByDefault = false
     )
-    String SPELL_SECTION = "Spell Section Settings";
+    String SPELL_SECTION = "spellSection";
 
     @ConfigItem(
             keyName = "spellsEnabled",
@@ -26,46 +29,63 @@ public interface AnimeChantConfig extends Config {
         return true;
     }
 
-    @Range(min = 0)
-    @ConfigItem(keyName = "spellTextDelayTicks",
-            name = "Spell text delay (ticks)",
-            description = "Text will be shown after N ticks from last display.",
+    @ConfigItem(
+            keyName = "spellPreset",
+            name = "Spell text list",
+            description = "Bundled list of spell text. Your overrides always take priority.",
             section = SPELL_SECTION,
-            position = 1)
+            position = 1
+    )
+    default TextPreset spellPreset() {
+        return TextPreset.FANTASY;
+    }
+
+//    @ConfigItem(
+//            keyName = "customSpellText",
+//            name = "Overrides",
+//            description = "Format: Spell name=Text; category:Fire=Text. Spell names beat categories. "
+//                    + "Repeat a key for random variants. You can also put a YAML file at "
+//                    + "~/.runelite/anime-chant/overrides.yaml (same format as the bundled presets).",
+//            section = SPELL_SECTION,
+//            position = 2
+//    )
+//    default String spellOverrides() {
+//        return "";
+//    }
+
+    @Range(min = 0)
+    @ConfigItem(
+            keyName = "spellTextDelayTicks",
+            name = "Spell text delay (ticks)",
+            description = "Text is hidden if the same spell/category showed text less than N ticks ago.",
+            section = SPELL_SECTION,
+            position = 3
+    )
     default int spellTextDelayTicks() {
         return 0;
     }
 
     @Range(min = 0)
-    @ConfigItem(keyName = "spellTextDelayFromLastCastTicks",
+    @ConfigItem(
+            keyName = "spellTextDelayFromLastCastTicks",
             name = "Spell text delay from last cast (ticks)",
-            description = "Text will only be shown after N ticks from the last time a spell has been cast. Different spells are tracked separately.",
+            description = "Text is hidden if the same spell/category was cast less than N ticks ago "
+                    + "(even if that cast showed nothing). Spell-name text and category text are tracked separately.",
             section = SPELL_SECTION,
-            position = 2)
+            position = 4
+    )
     default int spellTextDelayFromLastCastTicks() {
         return 0;
     }
 
-
-    @ConfigItem(keyName = "spellPreset", name = "Spell text list", description = "Premade list, or Custom to use your own below", position = 1)
-    default TextPreset spellPreset() {
-        return TextPreset.FANTASY;
-    }
-
-
-    @ConfigItem(keyName = "customSpellText",
-            name = "Custom spell text",
-            description = "Format: Spell name=Text; Spell name=Text. Used when the list is Custom",
-            hidden = true,
-            section = SPELL_SECTION,
-            position = 4)
-    default String customSpellText() {
-        return "Fire Strike=Burn!; Wind Strike=Whoosh!";
-    }
-
-
     @Range(min = 3, max = 12)
-    @ConfigItem(keyName = "durationTicks", name = "Display duration (ticks)", description = "How long the text stays above your head", position = 10)
+    @ConfigItem(
+            keyName = "durationTicks",
+            name = "Display duration (ticks)",
+            description = "How long the text stays above your head",
+            section = SPELL_SECTION,
+            position = 5
+    )
     default int durationTicks() {
         return 3;
     }
