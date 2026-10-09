@@ -1,14 +1,11 @@
 package com.animechant;
 
-import com.animechant.enums.AutocastSpell;
-import com.animechant.enums.Spell;
-import com.animechant.enums.SpellOrCategory;
+import com.animechant.spells.AutocastSpell;
+import com.animechant.spells.Spell;
+import com.animechant.spells.SpellKey;
 import com.google.inject.Provides;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import javax.inject.Inject;
 
 import lombok.extern.slf4j.Slf4j;
@@ -66,8 +63,8 @@ public class AnimeChantPlugin extends Plugin {
     private Optional<PendingCast> pendingCast = Optional.empty();
 
     // Tracking key ("spell:..." / "category:...") -> tick
-    private final Map<SpellOrCategory, Integer> lastCastTicks = new HashMap<>();
-    private final Map<SpellOrCategory, Integer> lastDisplayTicks = new HashMap<>();
+    private final Map<SpellKey, Integer> lastCastTicks = new HashMap<>();
+    private final Map<SpellKey, Integer> lastDisplayTicks = new HashMap<>();
 
     private int ticksLeft;
 
@@ -84,7 +81,7 @@ public class AnimeChantPlugin extends Plugin {
         lastCastTicks.clear();
         lastDisplayTicks.clear();
 
-        chantResolver.reload();
+        chantResolver.reloadPresets();
     }
 
     @Override
@@ -102,8 +99,9 @@ public class AnimeChantPlugin extends Plugin {
         }
 
         // Gotta love Java's null sfety :)
-        if (Objects.equals(event.getKey(), "spellPreset"))
-            chantResolver.reload();
+        if (Objects.equals(event.getKey(), "spellPreset")) {
+            chantResolver.reloadPresets();
+        }
     }
 
     /**
@@ -119,9 +117,9 @@ public class AnimeChantPlugin extends Plugin {
         String spellName = spellNameFromClick(event);
         Spell spell = Spell.fromString(spellName);
 
-        // TODO improve this to cancel on additional clicks.
         if (!spell.isUnknown()) {
             int timeout = isTargetedUse(action) ? TARGETED_TIMEOUT_TICKS : INSTANT_TIMEOUT_TICKS;
+
             pendingCast = Optional.of(new PendingCast(spell, client.getTickCount() + timeout));
         } else if (action == MenuAction.WALK || action == MenuAction.CANCEL) {
             // Player walked away or cancelled, so they aren't casting after all.
@@ -152,6 +150,14 @@ public class AnimeChantPlugin extends Plugin {
         handleAutocast(me);
     }
 
+    @Subscribe
+    public void onGameTick(GameTick tick) {
+        if (ticksLeft > 0 && --ticksLeft == 0) {
+            clearText();
+        }
+    }
+
+
     private void handleAutocast(Player me) {
         int varbit = client.getVarbitValue(VarbitID.AUTOCAST_SPELL);
         if (varbit == 0 || !(me.getInteracting() instanceof NPC)) {
@@ -170,14 +176,14 @@ public class AnimeChantPlugin extends Plugin {
     }
 
     private void handleSpell(Spell spell) {
-        Optional<Pair<String, SpellOrCategory>> resolved = chantResolver.resolveSpell(spell);
+        Optional<Pair<String, SpellKey>> resolved = chantResolver.resolveSpell(spell);
         if (resolved.isEmpty()) {
             log.debug("No text for spell `{}`", spell);
             return;
         }
 
         String resolvedText = resolved.get().getLeft();
-        SpellOrCategory key = resolved.get().getRight();
+        SpellKey key = resolved.get().getRight();
 
         int tick = client.getTickCount();
 
@@ -203,27 +209,31 @@ public class AnimeChantPlugin extends Plugin {
      */
     private String spellNameFromClick(MenuOptionClicked event) {
         MenuAction action = event.getMenuAction();
-        String name = null;
 
+        // A spell is selected and was just used on a target (NPC, item for alchemy, ...)
         if (isTargetedUse(action)) {
-            // A spell is selected and was just used on a target (NPC, item for alchemy, ...)
             Widget selected = client.getSelectedWidget();
             if (selected == null
                     || WidgetUtil.componentToInterface(selected.getId()) != InterfaceID.MAGIC_SPELLBOOK) {
-                return null;
+                return "";
             }
-            // Target looks like "<col>High Level Alchemy</col><col> -> Item</col>"
+
+            // Target looks like "High Level Alchemy -> Item"
             String target = Text.removeTags(event.getMenuTarget());
             int arrow = target.indexOf("->");
-            name = (arrow > 0 ? target.substring(0, arrow) : target).trim();
-        } else if (action == MenuAction.CC_OP
-                && "Cast".equals(event.getMenuOption())
-                && WidgetUtil.componentToInterface(event.getParam1()) == InterfaceID.MAGIC_SPELLBOOK) {
-            // Non-targeted spells such as teleports
-            name = Text.removeTags(event.getMenuTarget()).trim();
+
+            return (arrow > 0 ? target.substring(0, arrow) : target).trim();
         }
 
-        return name == null || name.isEmpty() ? null : name;
+        // Non-targeted spells such as teleports
+        if (action == MenuAction.CC_OP
+                && event.getMenuOption().equals("Cast")
+                && WidgetUtil.componentToInterface(event.getParam1()) == InterfaceID.MAGIC_SPELLBOOK) {
+
+            return Text.removeTags(event.getMenuTarget()).trim();
+        }
+
+        return "";
     }
 
     private static boolean isTargetedUse(MenuAction action) {
@@ -234,12 +244,6 @@ public class AnimeChantPlugin extends Plugin {
                 || action == MenuAction.WIDGET_TARGET_ON_WIDGET;
     }
 
-    @Subscribe
-    public void onGameTick(GameTick tick) {
-        if (ticksLeft > 0 && --ticksLeft == 0) {
-            clearText();
-        }
-    }
 
     private void displayText(String text) {
         if (text == null || text.isEmpty()) {
@@ -260,4 +264,14 @@ public class AnimeChantPlugin extends Plugin {
             me.setOverheadText(null);
         }
     }
+
+    private static final Set<MenuAction> NON_INTERRUPTING = EnumSet.of(
+            MenuAction.EXAMINE_OBJECT, MenuAction.EXAMINE_NPC,
+            MenuAction.EXAMINE_ITEM_GROUND, MenuAction.EXAMINE_ITEM,
+            MenuAction.EXAMINE_WORLD_ENTITY,
+            MenuAction.RUNELITE, MenuAction.RUNELITE_HIGH_PRIORITY,
+            MenuAction.RUNELITE_LOW_PRIORITY, MenuAction.RUNELITE_OVERLAY,
+            MenuAction.RUNELITE_OVERLAY_CONFIG, MenuAction.RUNELITE_INFOBOX,
+            MenuAction.RUNELITE_PLAYER, MenuAction.RUNELITE_WIDGET
+    );
 }

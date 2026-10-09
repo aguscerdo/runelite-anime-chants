@@ -1,7 +1,7 @@
 package com.animechant.presets;
 
-import com.animechant.enums.Spell;
-import com.animechant.enums.SpellCategory;
+import com.animechant.spells.Spell;
+import com.animechant.spells.SpellCategory;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.DeserializationFeature;

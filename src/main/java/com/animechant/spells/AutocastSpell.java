@@ -1,6 +1,5 @@
-package com.animechant.enums;
+package com.animechant.spells;
 
-import com.google.common.collect.ImmutableMap;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 

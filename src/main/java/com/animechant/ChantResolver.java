@@ -1,11 +1,13 @@
 package com.animechant;
 
 
-import com.animechant.enums.Spell;
-import com.animechant.enums.SpellCategory;
-import com.animechant.enums.SpellOrCategory;
+import com.animechant.spells.Spell;
+import com.animechant.spells.SpellCategory;
+import com.animechant.spells.SpellKey;
 import com.animechant.presets.PresetLoader;
 import com.animechant.presets.RawPresetData;
+import com.google.common.collect.ImmutableListMultimap;
+import com.google.common.collect.ListMultimap;
 import org.apache.commons.lang3.tuple.Pair;
 
 import javax.inject.Inject;
@@ -19,7 +21,7 @@ import java.util.concurrent.ThreadLocalRandom;
  */
 @Singleton
 public class ChantResolver {
-    static final ChantResolver EMPTY = new ChantResolver(Map.of(), Map.of());
+    public static final ChantResolver EMPTY = new ChantResolver();
 
     @Inject
     private PresetLoader presetLoader;
@@ -27,52 +29,62 @@ public class ChantResolver {
     @Inject
     private AnimeChantConfig config;
 
-    private Map<Spell, List<String>> spellToText;
-    private Map<SpellCategory, List<String>> spellCategoryToText;
+    private TextPreset currentSpellPreset;
+    private ImmutableListMultimap<Spell, String> presetSpellToText;
+    private ImmutableListMultimap<SpellCategory, String> presetSpellCategoryToText;
+
 
     public ChantResolver() {
-        spellToText = new LinkedHashMap<>();
-        spellCategoryToText = new LinkedHashMap<>();
+        currentSpellPreset = TextPreset.NONE;
+        presetSpellToText = ImmutableListMultimap.of();
+        presetSpellCategoryToText = ImmutableListMultimap.of();
     }
 
-    ChantResolver(Map<Spell, List<String>> spellToText,
-                  Map<SpellCategory, List<String>> spellCategoryToText) {
-        this.spellToText = spellToText;
-        this.spellCategoryToText = spellCategoryToText;
+    ChantResolver(TextPreset currentSpellPreset,
+                  ListMultimap<Spell, String> spellToText,
+                  ListMultimap<SpellCategory, String> spellCategoryToText) {
+        this.currentSpellPreset = currentSpellPreset;
+        this.presetSpellToText = ImmutableListMultimap.copyOf(spellToText);
+        this.presetSpellCategoryToText = ImmutableListMultimap.copyOf(spellCategoryToText);
     }
 
-    public void reload() {
-        Optional<RawPresetData> presetData = presetLoader.loadPreset(config.spellPreset());
+    public void reloadPresets() {
+        if (currentSpellPreset == config.spellPreset()) {
+            currentSpellPreset = config.spellPreset();
+            Optional<RawPresetData> presetData = presetLoader.loadPreset(currentSpellPreset);
 
-        if (presetData.isPresent()) {
-            spellToText = presetData.get().getSpells();
-            spellCategoryToText = presetData.get().getSpellCategories();
-        } else {
-            spellToText = new LinkedHashMap<>();
-            spellCategoryToText = new LinkedHashMap<>();
+            if (presetData.isPresent()) {
+                presetSpellToText = ImmutableListMultimap.copyOf(presetData.get().getSpells());
+                presetSpellCategoryToText = ImmutableListMultimap.copyOf(presetData.get().getSpellCategories());
+            } else {
+                presetSpellToText = ImmutableListMultimap.of();
+                presetSpellCategoryToText = ImmutableListMultimap.of();
+            }
         }
 
         // TODO handle user overrides.
-
-        spellToText.remove(Spell.UNKNOWN);
-        spellCategoryToText.remove(SpellCategory.NONE);
     }
 
     /**
      * Resolves a spell to preset texts if found.
      */
-    public Optional<Pair<String, SpellOrCategory>> resolveSpell(Spell spell) {
-        List<String> variants = spellToText.get(spell);
+    public Optional<Pair<String, SpellKey>> resolveSpell(Spell spell) {
+        if (spell.isUnknown()) {
+            return Optional.empty();
+        }
+
+        // TODO handle user overrides
+        List<String> variants = presetSpellToText.get(spell);
 
         if (variants != null && !variants.isEmpty()) {
-            return Optional.of(Pair.of(randomChoice(variants), new SpellOrCategory(spell)));
+            return Optional.of(Pair.of(randomChoice(variants), new SpellKey(spell)));
         }
 
         SpellCategory spellCategory = spell.getSpellCategory();
         if (spellCategory != SpellCategory.NONE) {
-            variants = spellCategoryToText.get(spellCategory);
+            variants = presetSpellCategoryToText.get(spellCategory);
             if (variants != null && !variants.isEmpty()) {
-                return Optional.of(Pair.of(randomChoice(variants), new SpellOrCategory(spellCategory)));
+                return Optional.of(Pair.of(randomChoice(variants), new SpellKey(spellCategory)));
             }
         }
 
@@ -88,7 +100,7 @@ public class ChantResolver {
     }
 
     boolean isEmpty() {
-        return spellToText.isEmpty() && spellCategoryToText.isEmpty();
+        return presetSpellToText.isEmpty() && presetSpellCategoryToText.isEmpty();
     }
 
 }

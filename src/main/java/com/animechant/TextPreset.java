@@ -1,27 +1,27 @@
 package com.animechant;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+
+import java.util.Optional;
 
 /**
  * Bundled presets shown in the config dropdown. Contents live in
  * src/main/resources/com/animechant/presets/&lt;resourceName&gt;.
  */
+@AllArgsConstructor
 @Getter
 public enum TextPreset {
-    NONE("None (overrides only)", null),
+    NONE("None (overrides only)", ""),
+    SPELL_NAME("Spell Name", ""),
     FANTASY("Fantasy", "fantasy.yaml"),
     ANIME_MIX("Anime Mix", "anime_mix.yaml"),
     FRIEREN("Frieren", "frieren.yaml"),
     PALWORLD("Palworld", "palworld.yaml");
 
     private final String label;
-    /** Null when the preset has no file. */
-    private final String resourceName;
+    private final String fileName;
 
-    TextPreset(String label, String resourceName) {
-        this.label = label;
-        this.resourceName = resourceName;
-    }
 
     @Override
     public String toString() {
