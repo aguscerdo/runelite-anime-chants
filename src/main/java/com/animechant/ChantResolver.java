@@ -52,17 +52,19 @@ public class ChantResolver {
     }
 
     public void reloadPresets() {
-        if (currentSpellPreset != config.spellPreset()) {
-            currentSpellPreset = config.spellPreset();
-            Optional<RawPresetData> presetData = presetLoader.loadPreset(currentSpellPreset);
+        if (currentSpellPreset == config.spellPreset()) {
+            return;
+        }
 
-            if (presetData.isPresent()) {
-                presetSpellToText = ImmutableListMultimap.copyOf(presetData.get().getSpells());
-                presetSpellCategoryToText = ImmutableListMultimap.copyOf(presetData.get().getSpellCategories());
-            } else {
-                presetSpellToText = ImmutableListMultimap.of();
-                presetSpellCategoryToText = ImmutableListMultimap.of();
-            }
+        currentSpellPreset = config.spellPreset();
+        Optional<RawPresetData> presetData = presetLoader.loadPreset(currentSpellPreset);
+
+        if (presetData.isPresent()) {
+            presetSpellToText = ImmutableListMultimap.copyOf(presetData.get().getSpells());
+            presetSpellCategoryToText = ImmutableListMultimap.copyOf(presetData.get().getSpellCategories());
+        } else {
+            presetSpellToText = ImmutableListMultimap.of();
+            presetSpellCategoryToText = ImmutableListMultimap.of();
         }
 
         // TODO handle user overrides.

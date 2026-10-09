@@ -16,7 +16,7 @@ import java.util.Locale;
 @Getter
 public enum Spell {
     UNKNOWN("Unknown", SpellCategory.NONE, SpellCastType.UNKNOWN, ImmutableList.of()),
-// Home teleport 4847
+    // Home teleport 4847
 
     // Standard - Fire
     FIRE_STRIKE("Fire Strike", SpellCategory.FIRE, SpellCastType.WORLD_TARGET, ImmutableList.of(711, 1162, 9144, 11423)),
@@ -51,7 +51,7 @@ public enum Spell {
     FLAMES_OF_ZAMORAK("Flames Of Zamorak", SpellCategory.GOD, SpellCastType.WORLD_TARGET, ImmutableList.of(811)),
     CLAWS_OF_GUTHIX("Claws Of Guthix", SpellCategory.GOD, SpellCastType.WORLD_TARGET, ImmutableList.of(811)),
     SARADOMIN_STRIKE("Saradomin Strike", SpellCategory.GOD, SpellCastType.WORLD_TARGET, ImmutableList.of(811)),
-    CHARGE("Charge", SpellCategory.NONE, SpellCastType.INSTANT, ImmutableList.of(811)),
+    CHARGE("Charge", SpellCategory.GOD, SpellCastType.INSTANT, ImmutableList.of(811)),
 
     // Standard - Bind
     BIND("Bind", SpellCategory.BIND, SpellCastType.WORLD_TARGET, ImmutableList.of(710, 1161)),
@@ -72,17 +72,16 @@ public enum Spell {
     HIGH_LEVEL_ALCHEMY("High Level Alchemy", SpellCategory.ALCHEMY, SpellCastType.INVENTORY_TARGET, ImmutableList.of(713, 10624)),
 
     // Standard - Enchant (jewellery)
-    // TODO add actual alt names. Enchant lvl
-    ENCHANT_SAPPHIRE_JEWELLERY("Enchant Sapphire Jewellery", SpellCategory.ENCHANT, SpellCastType.INVENTORY_TARGET, ImmutableList.of(931)),
-    ENCHANT_EMERALD_JEWELLERY("Enchant Emerald Jewellery", SpellCategory.ENCHANT, SpellCastType.INVENTORY_TARGET, ImmutableList.of(931)),
-    ENCHANT_RUBY_JEWELLERY("Enchant Ruby Jewellery", SpellCategory.ENCHANT, SpellCastType.INVENTORY_TARGET, ImmutableList.of(931)),
-    ENCHANT_DIAMOND_JEWELLERY("Enchant Diamond Jewellery", SpellCategory.ENCHANT, SpellCastType.INVENTORY_TARGET, ImmutableList.of(931)),
-    ENCHANT_DRAGONSTONE_JEWELLERY("Enchant Dragonstone Jewellery", SpellCategory.ENCHANT, SpellCastType.INVENTORY_TARGET, ImmutableList.of(931)),
-    ENCHANT_ONYX_JEWELLERY("Enchant Onyx Jewellery", SpellCategory.ENCHANT, SpellCastType.INVENTORY_TARGET, ImmutableList.of(931)),
-    ENCHANT_ZENYTE_JEWELLERY("Enchant Zenyte Jewellery", SpellCategory.ENCHANT, SpellCastType.INVENTORY_TARGET, ImmutableList.of(931)),
+    LVL_1_ENCHANT("Lvl-1 Enchant", SpellCategory.ENCHANT, SpellCastType.INVENTORY_TARGET, ImmutableList.of(931)),
+    LVL_2_ENCHANT("Lvl-2 Enchant", SpellCategory.ENCHANT, SpellCastType.INVENTORY_TARGET, ImmutableList.of(931)),
+    LVL_3_ENCHANT("Lvl-3 Enchant", SpellCategory.ENCHANT, SpellCastType.INVENTORY_TARGET, ImmutableList.of(931)),
+    LVL_4_ENCHANT("Lvl-4 Enchant", SpellCategory.ENCHANT, SpellCastType.INVENTORY_TARGET, ImmutableList.of(931)),
+    LVL_5_ENCHANT("Lvl-5 Enchant", SpellCategory.ENCHANT, SpellCastType.INVENTORY_TARGET, ImmutableList.of(931)),
+    LVL_6_ENCHANT("Lvl-6 Enchant", SpellCategory.ENCHANT, SpellCastType.INVENTORY_TARGET, ImmutableList.of(931)),
+    LVL_7_ENCHANT("Lvl-7 Enchant", SpellCategory.ENCHANT, SpellCastType.INVENTORY_TARGET, ImmutableList.of(931)),
 
     // Standard - Enchant (crossbow bolts)
-    // TODO add actual alt names. Enchant lvl
+    // TODO handle menu Make-x Actions separately.
     ENCHANT_OPAL_BOLT("Enchant Opal Bolt", SpellCategory.ENCHANT, SpellCastType.INVENTORY_TARGET, ImmutableList.of(931)),
     ENCHANT_SAPPHIRE_BOLT("Enchant Sapphire Bolt", SpellCategory.ENCHANT, SpellCastType.INVENTORY_TARGET, ImmutableList.of(931)),
     ENCHANT_JADE_BOLT("Enchant Jade Bolt", SpellCategory.ENCHANT, SpellCastType.INVENTORY_TARGET, ImmutableList.of(931)),
@@ -95,10 +94,10 @@ public enum Spell {
     ENCHANT_ONYX_BOLT("Enchant Onyx Bolt", SpellCategory.ENCHANT, SpellCastType.INVENTORY_TARGET, ImmutableList.of(931)),
 
     // Standard - Charge orbs
-    CHARGE_WATER_ORB("Charge Water Orb", SpellCategory.ORB, SpellCastType.WORLD_TARGET, ImmutableList.of(726)),
-    CHARGE_EARTH_ORB("Charge Earth Orb", SpellCategory.ORB, SpellCastType.WORLD_TARGET, ImmutableList.of(726)),
-    CHARGE_FIRE_ORB("Charge Fire Orb", SpellCategory.ORB, SpellCastType.WORLD_TARGET, ImmutableList.of(726)),
-    CHARGE_AIR_ORB("Charge Air Orb", SpellCategory.ORB, SpellCastType.WORLD_TARGET, ImmutableList.of(726)),
+    CHARGE_WATER_ORB("Charge Water Orb", SpellCategory.CHARGE_ORB, SpellCastType.WORLD_TARGET, ImmutableList.of(726)),
+    CHARGE_EARTH_ORB("Charge Earth Orb", SpellCategory.CHARGE_ORB, SpellCastType.WORLD_TARGET, ImmutableList.of(726)),
+    CHARGE_FIRE_ORB("Charge Fire Orb", SpellCategory.CHARGE_ORB, SpellCastType.WORLD_TARGET, ImmutableList.of(726)),
+    CHARGE_AIR_ORB("Charge Air Orb", SpellCategory.CHARGE_ORB, SpellCastType.WORLD_TARGET, ImmutableList.of(726)),
 
     // Standard - Teleports
     VARROCK_TELEPORT("Varrock Teleport", SpellCategory.TELEPORT, SpellCastType.INSTANT, ImmutableList.of(714, 715)),
@@ -113,13 +112,16 @@ public enum Spell {
     WATCHTOWER_TELEPORT("Watchtower Teleport", SpellCategory.TELEPORT, SpellCastType.INSTANT, ImmutableList.of(714, 715)),
     YANILLE_TELEPORT("Yanille Teleport", SpellCategory.TELEPORT, SpellCastType.INSTANT, ImmutableList.of(714, 715)),
     TROLLHEIM_TELEPORT("Trollheim Teleport", SpellCategory.TELEPORT, SpellCastType.INSTANT, ImmutableList.of(714, 715)),
-    TELEPORT_APE_ATOLL("Teleport Ape Atoll", SpellCategory.TELEPORT, SpellCastType.INSTANT, ImmutableList.of(714, 715)),
     TELEPORT_TO_TARGET("Teleport To Target", SpellCategory.TELEPORT, SpellCastType.INSTANT, ImmutableList.of(714, 715)),
 
+    // Handles both Arceuus and Standard Teleport
+    APE_ATOLL_TELEPORT("Ape Atoll Teleport", SpellCategory.TELEPORT, SpellCastType.INSTANT, ImmutableList.of(714, 715, 3865, 6575)),
+
+
     // Standard - Teleother
-    TELEOTHER_LUMBRIDGE("Teleother Lumbridge", SpellCategory.TELEPORT, SpellCastType.WORLD_TARGET, ImmutableList.of(1818)),
-    TELEOTHER_FALADOR("Teleother Falador", SpellCategory.TELEPORT, SpellCastType.WORLD_TARGET, ImmutableList.of(1818)),
-    TELEOTHER_CAMELOT("Teleother Camelot", SpellCategory.TELEPORT, SpellCastType.WORLD_TARGET, ImmutableList.of(1818)),
+    TELEOTHER_LUMBRIDGE("Teleother Lumbridge", SpellCategory.TELE_OTHER, SpellCastType.WORLD_TARGET, ImmutableList.of(1818)),
+    TELEOTHER_FALADOR("Teleother Falador", SpellCategory.TELE_OTHER, SpellCastType.WORLD_TARGET, ImmutableList.of(1818)),
+    TELEOTHER_CAMELOT("Teleother Camelot", SpellCategory.TELE_OTHER, SpellCastType.WORLD_TARGET, ImmutableList.of(1818)),
 
     // Standard - Other
     BONES_TO_BANANAS("Bones To Bananas", SpellCategory.NONE, SpellCastType.INSTANT, ImmutableList.of(722)),
@@ -196,7 +198,12 @@ public enum Spell {
     HARMONY_ISLAND_TELEPORT("Harmony Island Teleport", SpellCategory.TELEPORT, SpellCastType.INSTANT, ImmutableList.of(3865, 6575)),
     CEMETERY_TELEPORT("Cemetery Teleport", SpellCategory.TELEPORT, SpellCastType.INSTANT, ImmutableList.of(3865, 6575)),
     BARROWS_TELEPORT("Barrows Teleport", SpellCategory.TELEPORT, SpellCastType.INSTANT, ImmutableList.of(3865, 6575)),
-    APE_ATOLL_TELEPORT("Ape Atoll Teleport", SpellCategory.TELEPORT, SpellCastType.INSTANT, ImmutableList.of(3865, 6575)),
+    // APE_ATOLL_TELEPORT("Ape Atoll Teleport", SpellCategory.TELEPORT, SpellCastType.INSTANT, ImmutableList.of(3865, 6575)),
+
+    // Arceuus - Offering
+    RESURRECT_CROPS("Resurrect Crops", SpellCategory.OFFERING, SpellCastType.WORLD_TARGET, ImmutableList.of(7163)),
+    DEMONIC_OFFERING("Demonic Offering", SpellCategory.OFFERING, SpellCastType.INSTANT, ImmutableList.of(8975)),
+    SINISTER_OFFERING("Sinister Offering", SpellCategory.OFFERING, SpellCastType.INSTANT, ImmutableList.of(8975)),
 
     // Arceuus - Other
     MARK_OF_DARKNESS("Mark of Darkness", SpellCategory.NONE, SpellCastType.INSTANT, ImmutableList.of(8970)),
@@ -204,13 +211,11 @@ public enum Spell {
     DEATH_CHARGE("Death Charge", SpellCategory.NONE, SpellCastType.INSTANT, ImmutableList.of(8970)),
     SHADOW_VEIL("Shadow Veil", SpellCategory.NONE, SpellCastType.INSTANT, ImmutableList.of(8979)),
     DARK_LURE("Dark Lure", SpellCategory.NONE, SpellCastType.WORLD_TARGET, ImmutableList.of(8974)),
-    LESSER_CORRUPTION("Lesser Corruption", SpellCategory.NONE, SpellCastType.INSTANT, ImmutableList.of(8977)),
-    GREATER_CORRUPTION("Greater Corruption", SpellCategory.NONE, SpellCastType.INSTANT, ImmutableList.of(8977)),
+    LESSER_CORRUPTION("Lesser Corruption", SpellCategory.CORRUPTION, SpellCastType.INSTANT, ImmutableList.of(8977)),
+    GREATER_CORRUPTION("Greater Corruption", SpellCategory.CORRUPTION, SpellCastType.INSTANT, ImmutableList.of(8977)),
     VILE_VIGOUR("Vile Vigour", SpellCategory.NONE, SpellCastType.INSTANT, ImmutableList.of(8978)),
     DEGRIME("Degrime", SpellCategory.NONE, SpellCastType.INSTANT, ImmutableList.of(8980)),
-    RESURRECT_CROPS("Resurrect Crops", SpellCategory.NONE, SpellCastType.WORLD_TARGET, ImmutableList.of(7163)),
-    DEMONIC_OFFERING("Demonic Offering", SpellCategory.NONE, SpellCastType.INSTANT, ImmutableList.of(8975)),
-    SINISTER_OFFERING("Sinister Offering", SpellCategory.NONE, SpellCastType.INSTANT, ImmutableList.of(8975)),
+
 
     // Lunar - Teleports
     MOONCLAN_TELEPORT("Moonclan Teleport", SpellCategory.TELEPORT, SpellCastType.INSTANT, ImmutableList.of(1816)),
@@ -233,19 +238,18 @@ public enum Spell {
 
     // Lunar - Other
     ASTRAL_CONTACT("Astral Contact", SpellCategory.NONE, SpellCastType.INSTANT, ImmutableList.of(11904)),
-    NPC_CONTACT("Npc Contact", SpellCategory.NONE, SpellCastType.INSTANT, ImmutableList.of(11904)),
     BAKE_PIE("Bake Pie", SpellCategory.NONE, SpellCastType.INSTANT, ImmutableList.of(4413)),
     BOOST_POTION_SHARE("Boost Potion Share", SpellCategory.NONE, SpellCastType.INVENTORY_TARGET, ImmutableList.of(4413)),
-    CURE_GROUP("Cure Group", SpellCategory.NONE, SpellCastType.INSTANT, ImmutableList.of(4411)),
-    CURE_ME("Cure Me", SpellCategory.NONE, SpellCastType.INSTANT, ImmutableList.of(4411)),
-    CURE_OTHER("Cure Other", SpellCategory.NONE, SpellCastType.WORLD_TARGET, ImmutableList.of(4411)),
-    CURE_PLANT("Cure Plant", SpellCategory.NONE, SpellCastType.WORLD_TARGET, ImmutableList.of(4432)), // 4432?
+    CURE_GROUP("Cure Group", SpellCategory.CURE, SpellCastType.INSTANT, ImmutableList.of(4411)),
+    CURE_ME("Cure Me", SpellCategory.CURE, SpellCastType.INSTANT, ImmutableList.of(4411)),
+    CURE_OTHER("Cure Other", SpellCategory.CURE, SpellCastType.WORLD_TARGET, ImmutableList.of(4411)),
+    CURE_PLANT("Cure Plant", SpellCategory.CURE, SpellCastType.WORLD_TARGET, ImmutableList.of(4432)), // 4432?
     DREAM("Dream", SpellCategory.NONE, SpellCastType.INSTANT, ImmutableList.of(7627)),
     ENERGY_TRANSFER("Energy Transfer", SpellCategory.NONE, SpellCastType.WORLD_TARGET, ImmutableList.of(4411)),
     FERTILE_SOIL("Fertile Soil", SpellCategory.NONE, SpellCastType.WORLD_TARGET, ImmutableList.of(4413)),
     GEOMANCY("Geomancy", SpellCategory.NONE, SpellCastType.INSTANT, ImmutableList.of(7118)),
-    HEAL_GROUP("Heal Group", SpellCategory.NONE, SpellCastType.INSTANT, ImmutableList.of(709)),
-    HEAL_OTHER("Heal Other", SpellCategory.NONE, SpellCastType.WORLD_TARGET, ImmutableList.of(709)),
+    HEAL_GROUP("Heal Group", SpellCategory.HEAL, SpellCastType.INSTANT, ImmutableList.of(709)),
+    HEAL_OTHER("Heal Other", SpellCategory.HEAL, SpellCastType.WORLD_TARGET, ImmutableList.of(709)),
     HUMIDIFY("Humidify", SpellCategory.NONE, SpellCastType.INSTANT, ImmutableList.of(6294)),
     HUNTER_KIT("Hunter Kit", SpellCategory.NONE, SpellCastType.INSTANT, ImmutableList.of(6303)),
     MAGIC_IMBUE("Magic Imbue", SpellCategory.NONE, SpellCastType.INSTANT, ImmutableList.of(722, 8970)),
@@ -259,13 +263,26 @@ public enum Spell {
     STRING_JEWELLERY("String Jewellery", SpellCategory.NONE, SpellCastType.INSTANT, ImmutableList.of(4412)),
     SUPERGLASS_MAKE("Superglass Make", SpellCategory.NONE, SpellCastType.INSTANT, ImmutableList.of(4413)),
     TAN_LEATHER("Tan Leather", SpellCategory.NONE, SpellCastType.INSTANT, ImmutableList.of(712)),
-    VENGEANCE("Vengeance", SpellCategory.NONE, SpellCastType.INSTANT, ImmutableList.of(8316, 8317, 10626)),
-    VENGEANCE_OTHER("Vengeance Other", SpellCategory.NONE, SpellCastType.WORLD_TARGET, ImmutableList.of(8316, 8317, 10626));
+    VENGEANCE("Vengeance", SpellCategory.VENGEANCE, SpellCastType.INSTANT, ImmutableList.of(8316, 8317, 10626)),
+    VENGEANCE_OTHER("Vengeance Other", SpellCategory.VENGEANCE, SpellCastType.WORLD_TARGET, ImmutableList.of(8316, 8317, 10626));
 
     private final String name;
     private final SpellCategory spellCategory;
     private final SpellCastType spellCastType;
     private final ImmutableList<Integer> animationIds;
+
+    // Must be kept in lower-case
+    private static final ImmutableMap<String, Spell> ALTERNATIVE_SPELL_NAMES = ImmutableMap.<String, Spell>builder()
+            .put("enchant sapphire", LVL_1_ENCHANT)
+            .put("enchant emerald", LVL_2_ENCHANT)
+            .put("enchant ruby", LVL_3_ENCHANT)
+            .put("enchant diamond", LVL_4_ENCHANT)
+            .put("enchant dragonstone", LVL_5_ENCHANT)
+            .put("enchant onyx", LVL_6_ENCHANT)
+            .put("enchant zenyte", LVL_7_ENCHANT)
+            .put("npc contact", ASTRAL_CONTACT)
+            .build();
+
 
     private static final ImmutableMap<String, Spell> SPELLS_BY_NAME;
     private static final ImmutableSetMultimap<Integer, Spell> SPELLS_BY_ANIMATION_ID;
@@ -284,6 +301,8 @@ public enum Spell {
                 spellsByAnimationIdBuilder.put(animationId, spell);
             }
         }
+
+        spellsByName.putAll(ALTERNATIVE_SPELL_NAMES);
 
         SPELLS_BY_NAME = spellsByName.build();
         SPELLS_BY_ANIMATION_ID = spellsByAnimationIdBuilder.build();

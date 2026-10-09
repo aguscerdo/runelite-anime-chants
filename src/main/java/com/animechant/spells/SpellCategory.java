@@ -8,6 +8,8 @@ public enum SpellCategory {
     NONE,
     // --- General --- //
     TELEPORT,
+    TELE_OTHER,
+    TELE_GROUP,
 
     // --- Standard spellbook --- //
     AIR,
@@ -19,7 +21,7 @@ public enum SpellCategory {
     ALCHEMY,
     CURSE,
     ENCHANT,
-    ORB,
+    CHARGE_ORB,
 
     // --- Ancient spellbook --- //
     SHADOW,
@@ -32,7 +34,14 @@ public enum SpellCategory {
     DEMONBANE,
     THRALL,
     REANIMATE,
-    DEATH_CHARGE;
+    OFFERING,
+    CORRUPTION,
+
+    // --- Lunar --- //
+    CURE,
+    HEAL,
+    VENGEANCE
+    ;
 
     /**
      * Returns a SpellCategory from a string ("Mark of Darkness", "fire", ...) or UNKNOWN.
