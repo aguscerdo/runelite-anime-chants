@@ -1,26 +1,22 @@
 package com.animechant;
 
-import com.animechant.spells.AutocastSpell;
+import com.animechant.spells.SpellChantResolver;
 import com.animechant.spells.Spell;
-import com.animechant.spells.SpellKey;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.inject.Provides;
 
 import java.util.*;
-import javax.annotation.concurrent.Immutable;
 import javax.inject.Inject;
 
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Client;
 import net.runelite.api.MenuAction;
-import net.runelite.api.NPC;
 import net.runelite.api.Player;
 import net.runelite.api.events.AnimationChanged;
 import net.runelite.api.events.GameTick;
 import net.runelite.api.events.MenuOptionClicked;
 import net.runelite.api.gameval.InterfaceID;
-import net.runelite.api.gameval.VarbitID;
 import net.runelite.api.widgets.Widget;
 import net.runelite.api.widgets.WidgetUtil;
 import net.runelite.client.config.ConfigManager;
@@ -29,12 +25,28 @@ import net.runelite.client.events.ConfigChanged;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
 import net.runelite.client.util.Text;
-import org.apache.commons.lang3.tuple.Pair;
 
 @Slf4j
 @PluginDescriptor(name = "Anime Chant", description = "Shows custom text when you cast spells")
 public class AnimeChantPlugin extends Plugin {
 
+
+    private static final String CAST = "Cast";
+    private static final String ARROW = "->";
+
+    // Spells with alternative menu options that are not "Cast"
+    private static final ImmutableMap<String, String> NON_CAST_ALT_NAMED_SPELLS = ImmutableMap.of(
+            "Grand Exchange", "Grand Exchange Teleport",
+            "Yanille", "Yanille Teleport"
+    );
+
+    private static final ImmutableSet<MenuAction> TARGETED_USES = ImmutableSet.of(
+            MenuAction.WIDGET_TARGET_ON_NPC,
+            MenuAction.WIDGET_TARGET_ON_PLAYER,
+            MenuAction.WIDGET_TARGET_ON_GAME_OBJECT,
+            MenuAction.WIDGET_TARGET_ON_GROUND_ITEM,
+            MenuAction.WIDGET_TARGET_ON_WIDGET
+    );
 
     @Inject
     private Client client;
@@ -43,36 +55,9 @@ public class AnimeChantPlugin extends Plugin {
     private AnimeChantConfig config;
 
     @Inject
-    private ChantResolver chantResolver;
+    private SpellChantResolver chantResolver;
 
-    /**
-     * A spell the player has clicked that hasn't been launched (animated) yet.
-     */
-    private static final class PendingCast {
-        final Spell spell;
-        final int expiresTick;
-
-        PendingCast(Spell spell, int expiresTick) {
-            this.spell = spell;
-            this.expiresTick = expiresTick;
-        }
-    }
-
-
-    private Optional<PendingCast> pendingCast = Optional.empty();
     private int textTicksLeft;
-
-    // Tracking key ("spell:..." / "category:...") -> tick
-    private final Map<SpellKey, Integer> lastCastTicks = new HashMap<>();
-    private final Map<SpellKey, Integer> lastDisplayTicks = new HashMap<>();
-
-    private static final String CAST = "Cast";
-    private static final String ARROW = "->";
-
-    private static final ImmutableMap<String, String> SPELL_RENAMES = ImmutableMap.of(
-            "Grand Exchange", "Grand Exchange Teleport",
-            "Yanille", "Yanille Teleport"
-    );
 
 
     @Provides
@@ -83,12 +68,8 @@ public class AnimeChantPlugin extends Plugin {
     @Override
     protected void startUp() {
         textTicksLeft = 0;
-        pendingCast = Optional.empty();
 
-        lastCastTicks.clear();
-        lastDisplayTicks.clear();
-
-        chantResolver.reloadPresets();
+        chantResolver.reloadAll();
     }
 
     @Override
@@ -96,7 +77,6 @@ public class AnimeChantPlugin extends Plugin {
         clearText();
 
         textTicksLeft = 0;
-        pendingCast = Optional.empty();
     }
 
     @Subscribe
@@ -118,30 +98,10 @@ public class AnimeChantPlugin extends Plugin {
     public void onMenuOptionClicked(MenuOptionClicked event) {
         if (!config.spellsEnabled()) return;
 
-        MenuAction action = event.getMenuAction();
         Spell spell = Spell.fromString(spellNameFromClick(event));
+        MenuAction action = event.getMenuAction();
 
-        if (!spell.isUnknown()) {
-            // Selecting a targeted spell (WIDGET_TARGET) isn't a cast yet; only the click
-            // on the target (WIDGET_TARGET_ON_*) is. Don't arm on the selection click.
-            if (action == MenuAction.WIDGET_TARGET) {
-                log.debug("Ignoring widget targeted spell {}", spell);
-
-                pendingCast = Optional.empty();
-                return;
-            }
-
-            pendingCast = Optional.of(new PendingCast(spell, client.getTickCount() + spell.timeouteTicks()));
-            return;
-        }
-
-        if (NON_INTERRUPTING.contains(action)) return;
-
-        // CANCEL only matters if it's deselecting a targeting spell, not just closing a menu
-        if (action == MenuAction.CANCEL && !client.isWidgetSelected()) return;
-
-        // walk, object/NPC/item interaction, widget clicks, etc.
-        pendingCast = Optional.empty();
+        chantResolver.handleManualCastEventIntent(spell, action);
     }
 
     @Subscribe
@@ -155,13 +115,14 @@ public class AnimeChantPlugin extends Plugin {
             return;
         }
 
-        // Manual cast (including alchemy, teleports, ...) takes priority over autocast.
-        if (handleManualSpell(me.getAnimation())) {
+        Optional<String> manualSpellText = chantResolver.handleManualSpell(me.getAnimation());
+        if (manualSpellText.isPresent()) {
+            displayText(manualSpellText.get());
             return;
         }
 
         // Manual spells did not match, try auto-cast.
-        handleAutocast(me);
+        displayText(chantResolver.handleAutocast(me));
     }
 
     @Subscribe
@@ -171,84 +132,6 @@ public class AnimeChantPlugin extends Plugin {
         }
     }
 
-    private boolean handleManualSpell(int animationId) {
-        if (pendingCast.isEmpty()) {
-            return false;
-        }
-
-        PendingCast currentPendingCast = this.pendingCast.get();
-        if (!currentPendingCast.spell.animationIdMatches(animationId)) {
-            return false;
-        }
-
-        // Either the spell is correct or expired, clean up either way.
-        this.pendingCast = Optional.empty();
-
-        if (client.getTickCount() > currentPendingCast.expiresTick) {
-            log.debug("Pending cast expired, ignoring: {} vs {}", client.getTickCount(), currentPendingCast.expiresTick);
-            return false;
-        }
-
-        handleSpell(currentPendingCast.spell);
-        return true;
-    }
-
-    private void handleAutocast(Player me) {
-        int varbit = client.getVarbitValue(VarbitID.AUTOCAST_SPELL);
-        if (varbit == 0 || !(me.getInteracting() instanceof NPC)) {
-            return;
-        }
-
-        log.debug("Autocast animation {} with autocast varbit {}", me.getAnimation(), varbit);
-
-        Spell spell = AutocastSpell.getSpell(varbit);
-        if (spell.isUnknown()) {
-            log.debug("Unmapped autocast varbit {}", varbit);
-            return;
-        }
-
-        handleSpell(spell);
-    }
-
-    private void handleSpell(Spell spell) {
-        Optional<Pair<String, SpellKey>> resolved = chantResolver.resolveSpell(spell);
-        if (resolved.isEmpty()) {
-            log.debug("No text for spell `{}`", spell);
-            return;
-        }
-
-        String resolvedText = resolved.get().getLeft();
-        SpellKey key = resolved.get().getRight();
-
-        int tick = client.getTickCount();
-
-        Integer lastCast = lastCastTicks.put(key, tick);
-        int castDelay = config.spellTextDelayFromLastCastTicks();
-
-        if (castDelay > 0 && lastCast != null && tick - lastCast < castDelay) {
-            log.debug("Cast delay is enabled and last cast is too recent, skipping: delay {}; tick {}; last cast {}",
-                    castDelay, tick, lastCast);
-            return;
-        }
-
-        Integer lastDisplay = lastDisplayTicks.getOrDefault(key, null);
-        int displayDelay = config.spellTextDelayTicks();
-
-
-        if (displayDelay > 0 && lastDisplay != null && tick - lastDisplay < displayDelay) {
-            log.debug("Display delay is enabled and last display is too recent, skipping: delay {}; tick {}; last cast {}",
-                    displayDelay, tick, lastDisplay);
-            return;
-        }
-
-        if (config.shoutSpells() && !resolvedText.isEmpty()) {
-            resolvedText += "!";
-        }
-
-        if (displayText(resolvedText)) {
-            lastDisplayTicks.put(key, tick);
-        }
-    }
 
     /**
      * Returns the spell name for a click that selects/casts a spell, otherwise null.
@@ -257,7 +140,7 @@ public class AnimeChantPlugin extends Plugin {
         MenuAction action = event.getMenuAction();
 
         // A spell is selected and was just used on a target (NPC, item for alchemy, ...)
-        if (isTargetedUse(action)) {
+        if (TARGETED_USES.contains(action)) {
             Widget selected = client.getSelectedWidget();
             if (selected == null
                     || WidgetUtil.componentToInterface(selected.getId()) != InterfaceID.MAGIC_SPELLBOOK) {
@@ -277,11 +160,11 @@ public class AnimeChantPlugin extends Plugin {
                 && menuOption != null
                 && WidgetUtil.componentToInterface(event.getParam1()) == InterfaceID.MAGIC_SPELLBOOK) {
 
-            if (menuOption == CAST) {
+            if (menuOption.equals(CAST)) {
                 return Text.removeTags(event.getMenuTarget()).trim();
             }
 
-            String spellRename = SPELL_RENAMES.getOrDefault(menuOption, "");
+            String spellRename = NON_CAST_ALT_NAMED_SPELLS.getOrDefault(menuOption, "");
             if (!spellRename.isEmpty()) {
                 return spellRename;
             }
@@ -290,30 +173,24 @@ public class AnimeChantPlugin extends Plugin {
         return "";
     }
 
-    private static boolean isTargetedUse(MenuAction action) {
-        return action == MenuAction.WIDGET_TARGET_ON_NPC
-                || action == MenuAction.WIDGET_TARGET_ON_PLAYER
-                || action == MenuAction.WIDGET_TARGET_ON_GAME_OBJECT
-                || action == MenuAction.WIDGET_TARGET_ON_GROUND_ITEM
-                || action == MenuAction.WIDGET_TARGET_ON_WIDGET;
-    }
-
-
-    private boolean displayText(String text) {
+    private void displayText(String text) {
         if (text == null || text.isEmpty()) {
-            return false;
+            return;
         }
 
         Player me = client.getLocalPlayer();
         if (me == null) {
-            return false;
+            return;
         }
 
         me.setOverheadText(text);
         textTicksLeft = config.durationTicks();
 
         log.debug("Showing text: {}", text);
-        return true;
+    }
+
+    private void displayText(Optional<String> text) {
+        text.ifPresent(this::displayText);
     }
 
     private void clearText() {

@@ -119,7 +119,7 @@ public enum AutocastSpell {
 
     }
 
-    public static Spell getSpell(int varbitValue) {
+    public static Spell spellFromAutocast(int varbitValue) {
         return VARBIT_TO_SPELL.getOrDefault(varbitValue, Spell.UNKNOWN);
     }
 }
