@@ -18,6 +18,7 @@ public interface AnimeChantConfig extends Config {
     )
     String SPELL_SECTION = "spellSection";
 
+
     @ConfigItem(
             keyName = "spellsEnabled",
             name = "Show text on spell cast",
@@ -29,8 +30,10 @@ public interface AnimeChantConfig extends Config {
         return true;
     }
 
+    String SPELL_PRESET = "spellPrest";
+
     @ConfigItem(
-            keyName = "spellPreset",
+            keyName = SPELL_PRESET,
             name = "Spell text list",
             description = "Bundled list of spell text. Your overrides always take priority.",
             section = SPELL_SECTION,
@@ -76,6 +79,28 @@ public interface AnimeChantConfig extends Config {
     )
     default int spellTextDelayFromLastCastTicks() {
         return 0;
+    }
+
+    @ConfigItem(
+            keyName = "shoutSpells",
+            name = "Shout Spells",
+            description = "Make spells more intense by adding ! at the end of every chant!",
+            section = SPELL_SECTION,
+            position = 5
+    )
+    default boolean shoutSpells() {
+        return false;
+    }
+
+    @ConfigItem(
+            keyName = "fallbackToSpellName",
+            name = "Fall back to Spell Name",
+            description = "When enabled fall back to displaying the spells name if there are no matches.",
+            section = SPELL_SECTION,
+            position = 6
+    )
+    default boolean fallbackToSpellName() {
+        return false;
     }
 
     @Range(min = 3, max = 12)

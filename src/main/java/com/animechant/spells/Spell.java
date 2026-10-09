@@ -1,14 +1,12 @@
 package com.animechant.spells;
 
-import com.google.common.collect.*;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSetMultimap;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-import java.util.Arrays;
 import java.util.Locale;
-import java.util.function.Function;
-
-import static com.google.common.collect.ImmutableMap.toImmutableMap;
 
 /**
  * Known spells and the category they belong to. A spell that isn't listed here can
@@ -74,6 +72,7 @@ public enum Spell {
     HIGH_LEVEL_ALCHEMY("High Level Alchemy", SpellCategory.ALCHEMY, SpellCastType.INVENTORY_TARGET, ImmutableList.of(713, 10624)),
 
     // Standard - Enchant (jewellery)
+    // TODO add actual alt names. Enchant lvl
     ENCHANT_SAPPHIRE_JEWELLERY("Enchant Sapphire Jewellery", SpellCategory.ENCHANT, SpellCastType.INVENTORY_TARGET, ImmutableList.of(931)),
     ENCHANT_EMERALD_JEWELLERY("Enchant Emerald Jewellery", SpellCategory.ENCHANT, SpellCastType.INVENTORY_TARGET, ImmutableList.of(931)),
     ENCHANT_RUBY_JEWELLERY("Enchant Ruby Jewellery", SpellCategory.ENCHANT, SpellCastType.INVENTORY_TARGET, ImmutableList.of(931)),
@@ -83,6 +82,7 @@ public enum Spell {
     ENCHANT_ZENYTE_JEWELLERY("Enchant Zenyte Jewellery", SpellCategory.ENCHANT, SpellCastType.INVENTORY_TARGET, ImmutableList.of(931)),
 
     // Standard - Enchant (crossbow bolts)
+    // TODO add actual alt names. Enchant lvl
     ENCHANT_OPAL_BOLT("Enchant Opal Bolt", SpellCategory.ENCHANT, SpellCastType.INVENTORY_TARGET, ImmutableList.of(931)),
     ENCHANT_SAPPHIRE_BOLT("Enchant Sapphire Bolt", SpellCategory.ENCHANT, SpellCastType.INVENTORY_TARGET, ImmutableList.of(931)),
     ENCHANT_JADE_BOLT("Enchant Jade Bolt", SpellCategory.ENCHANT, SpellCastType.INVENTORY_TARGET, ImmutableList.of(931)),
@@ -102,6 +102,7 @@ public enum Spell {
 
     // Standard - Teleports
     VARROCK_TELEPORT("Varrock Teleport", SpellCategory.TELEPORT, SpellCastType.INSTANT, ImmutableList.of(714, 715)),
+    GRAND_EXCHANGE_TELEPORT("Grand Exchange Teleport", SpellCategory.TELEPORT, SpellCastType.INSTANT, ImmutableList.of(714, 715)),
     LUMBRIDGE_TELEPORT("Lumbridge Teleport", SpellCategory.TELEPORT, SpellCastType.INSTANT, ImmutableList.of(714, 715)),
     FALADOR_TELEPORT("Falador Teleport", SpellCategory.TELEPORT, SpellCastType.INSTANT, ImmutableList.of(714, 715)),
     TELEPORT_TO_HOUSE("Teleport To House", SpellCategory.TELEPORT, SpellCastType.INSTANT, ImmutableList.of(714, 715)),
@@ -110,6 +111,7 @@ public enum Spell {
     ARDOUGNE_TELEPORT("Ardougne Teleport", SpellCategory.TELEPORT, SpellCastType.INSTANT, ImmutableList.of(714, 715)),
     CIVITAS_ILLA_FORTIS_TELEPORT("Civitas illa Fortis Teleport", SpellCategory.TELEPORT, SpellCastType.INSTANT, ImmutableList.of(714, 715)),
     WATCHTOWER_TELEPORT("Watchtower Teleport", SpellCategory.TELEPORT, SpellCastType.INSTANT, ImmutableList.of(714, 715)),
+    YANILLE_TELEPORT("Yanille Teleport", SpellCategory.TELEPORT, SpellCastType.INSTANT, ImmutableList.of(714, 715)),
     TROLLHEIM_TELEPORT("Trollheim Teleport", SpellCategory.TELEPORT, SpellCastType.INSTANT, ImmutableList.of(714, 715)),
     TELEPORT_APE_ATOLL("Teleport Ape Atoll", SpellCategory.TELEPORT, SpellCastType.INSTANT, ImmutableList.of(714, 715)),
     TELEPORT_TO_TARGET("Teleport To Target", SpellCategory.TELEPORT, SpellCastType.INSTANT, ImmutableList.of(714, 715)),
@@ -206,7 +208,7 @@ public enum Spell {
     GREATER_CORRUPTION("Greater Corruption", SpellCategory.NONE, SpellCastType.INSTANT, ImmutableList.of(8977)),
     VILE_VIGOUR("Vile Vigour", SpellCategory.NONE, SpellCastType.INSTANT, ImmutableList.of(8978)),
     DEGRIME("Degrime", SpellCategory.NONE, SpellCastType.INSTANT, ImmutableList.of(8980)),
-    RESURRECT_CROPS("Resurrect Crops", SpellCategory.NONE, SpellCastType.WORLD_TARGET, ImmutableList.of(8973)), // TODO check ID
+    RESURRECT_CROPS("Resurrect Crops", SpellCategory.NONE, SpellCastType.WORLD_TARGET, ImmutableList.of(7163)),
     DEMONIC_OFFERING("Demonic Offering", SpellCategory.NONE, SpellCastType.INSTANT, ImmutableList.of(8975)),
     SINISTER_OFFERING("Sinister Offering", SpellCategory.NONE, SpellCastType.INSTANT, ImmutableList.of(8975)),
 
@@ -230,7 +232,8 @@ public enum Spell {
     TELE_GROUP_ICE_PLATEAU("Tele Group Ice Plateau", SpellCategory.TELEPORT, SpellCastType.INSTANT, ImmutableList.of(1816)),
 
     // Lunar - Other
-    ASTRAL_CONTACT("Npc Contact", SpellCategory.NONE, SpellCastType.INSTANT, ImmutableList.of(11904)),
+    ASTRAL_CONTACT("Astral Contact", SpellCategory.NONE, SpellCastType.INSTANT, ImmutableList.of(11904)),
+    NPC_CONTACT("Npc Contact", SpellCategory.NONE, SpellCastType.INSTANT, ImmutableList.of(11904)),
     BAKE_PIE("Bake Pie", SpellCategory.NONE, SpellCastType.INSTANT, ImmutableList.of(4413)),
     BOOST_POTION_SHARE("Boost Potion Share", SpellCategory.NONE, SpellCastType.INVENTORY_TARGET, ImmutableList.of(4413)),
     CURE_GROUP("Cure Group", SpellCategory.NONE, SpellCastType.INSTANT, ImmutableList.of(4411)),
@@ -247,7 +250,6 @@ public enum Spell {
     HUNTER_KIT("Hunter Kit", SpellCategory.NONE, SpellCastType.INSTANT, ImmutableList.of(6303)),
     MAGIC_IMBUE("Magic Imbue", SpellCategory.NONE, SpellCastType.INSTANT, ImmutableList.of(722, 8970)),
     MONSTER_EXAMINE("Monster Examine", SpellCategory.NONE, SpellCastType.WORLD_TARGET, ImmutableList.of(6293, 6306)),
-    NPC_CONTACT("Npc Contact", SpellCategory.NONE, SpellCastType.INSTANT, ImmutableList.of(11904)),
     PLANK_MAKE("Plank Make", SpellCategory.NONE, SpellCastType.INSTANT, ImmutableList.of(6298)),
     RECHARGE_DRAGONSTONE("Recharge Dragonstone", SpellCategory.ENCHANT, SpellCastType.INSTANT, ImmutableList.of(712)),
     SPELLBOOK_SWAP("Spellbook Swap", SpellCategory.NONE, SpellCastType.UNKNOWN, ImmutableList.of(6299)), // TODO handle menu
@@ -266,8 +268,10 @@ public enum Spell {
     private final ImmutableList<Integer> animationIds;
 
     private static final ImmutableMap<String, Spell> SPELLS_BY_NAME;
-
     private static final ImmutableSetMultimap<Integer, Spell> SPELLS_BY_ANIMATION_ID;
+
+    private static final int TARGETED_TIMEOUT_TICKS = 30;
+    private static final int INSTANT_TIMEOUT_TICKS = 4;
 
     static {
         ImmutableMap.Builder<String, Spell> spellsByName = ImmutableMap.builder();
@@ -294,6 +298,18 @@ public enum Spell {
         }
 
         return SPELLS_BY_NAME.getOrDefault(name.trim().toLowerCase(Locale.ROOT), UNKNOWN);
+    }
+
+    public boolean animationIdMatches(int animationId) {
+        return animationIds.contains(animationId);
+    }
+
+    public int timeouteTicks() {
+        if (spellCastType == SpellCastType.INVENTORY_TARGET || spellCastType == SpellCastType.WORLD_TARGET) {
+            return TARGETED_TIMEOUT_TICKS;
+        }
+
+        return INSTANT_TIMEOUT_TICKS;
     }
 
     public boolean isUnknown() {

@@ -27,8 +27,9 @@ public class PresetLoader {
     private static final ObjectMapper YAML_MAPPER = PresetYaml.createMapper();
 
     public Optional<RawPresetData> loadPreset(TextPreset preset) {
+        // Spell name doesn't need a mapping, use spell names directly.
         if (preset == TextPreset.SPELL_NAME) {
-            return Optional.of(makeSpellNamePreset());
+            return Optional.empty();
         }
 
         if (preset.getFileName().isEmpty()) {
@@ -59,19 +60,4 @@ public class PresetLoader {
         }
     }
 
-
-    private static RawPresetData makeSpellNamePreset() {
-        ImmutableListMultimap<Spell, String> spells = Arrays.stream(Spell.values()).collect(
-                toImmutableListMultimap(
-                        Function.identity(),
-                        Spell::getName
-                )
-        );
-
-        return new RawPresetData(
-                TextPreset.SPELL_NAME.name(),
-                /* spellCategories= */ ImmutableListMultimap.of(),
-                /* spells= */ spells
-        );
-    }
 }

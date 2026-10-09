@@ -8,6 +8,7 @@ import com.animechant.presets.PresetLoader;
 import com.animechant.presets.RawPresetData;
 import com.google.common.collect.ImmutableListMultimap;
 import com.google.common.collect.ListMultimap;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.Pair;
 
 import javax.inject.Inject;
@@ -19,6 +20,7 @@ import java.util.concurrent.ThreadLocalRandom;
  * One layer of text: spell-name entries and category entries. Each entry holds one or
  * more variants; one is picked at random on lookup.
  */
+@Slf4j
 @Singleton
 public class ChantResolver {
     public static final ChantResolver EMPTY = new ChantResolver();
@@ -34,6 +36,7 @@ public class ChantResolver {
     private ImmutableListMultimap<SpellCategory, String> presetSpellCategoryToText;
 
 
+    // TODO consider having a feature to fallback to spell name.
     public ChantResolver() {
         currentSpellPreset = TextPreset.NONE;
         presetSpellToText = ImmutableListMultimap.of();
@@ -49,7 +52,7 @@ public class ChantResolver {
     }
 
     public void reloadPresets() {
-        if (currentSpellPreset == config.spellPreset()) {
+        if (currentSpellPreset != config.spellPreset()) {
             currentSpellPreset = config.spellPreset();
             Optional<RawPresetData> presetData = presetLoader.loadPreset(currentSpellPreset);
 
@@ -73,6 +76,10 @@ public class ChantResolver {
             return Optional.empty();
         }
 
+        if (currentSpellPreset == TextPreset.SPELL_NAME) {
+            return Optional.of(Pair.of(spell.getName(), new SpellKey(spell)));
+        }
+
         // TODO handle user overrides
         List<String> variants = presetSpellToText.get(spell);
 
@@ -86,6 +93,10 @@ public class ChantResolver {
             if (variants != null && !variants.isEmpty()) {
                 return Optional.of(Pair.of(randomChoice(variants), new SpellKey(spellCategory)));
             }
+        }
+
+        if (config.fallbackToSpellName()) {
+            return Optional.of(Pair.of(spell.getName(), new SpellKey(spell)));
         }
 
         return Optional.empty();

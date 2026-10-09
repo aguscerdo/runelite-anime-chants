@@ -1,5 +1,8 @@
 package com.animechant.spells;
 
+import lombok.EqualsAndHashCode;
+
+@EqualsAndHashCode
 public final class SpellKey {
     final Spell spell;
     final SpellCategory spellCategory;

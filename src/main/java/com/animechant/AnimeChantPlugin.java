@@ -3,9 +3,12 @@ package com.animechant;
 import com.animechant.spells.AutocastSpell;
 import com.animechant.spells.Spell;
 import com.animechant.spells.SpellKey;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 import com.google.inject.Provides;
 
 import java.util.*;
+import javax.annotation.concurrent.Immutable;
 import javax.inject.Inject;
 
 import lombok.extern.slf4j.Slf4j;
@@ -31,11 +34,7 @@ import org.apache.commons.lang3.tuple.Pair;
 @Slf4j
 @PluginDescriptor(name = "Anime Chant", description = "Shows custom text when you cast spells")
 public class AnimeChantPlugin extends Plugin {
-    // A targeted spell may need us to walk into range first, so allow a long wait.
-    private static final int TARGETED_TIMEOUT_TICKS = 30;
 
-    // Teleports, alchemy etc. animate within a tick or two of the click.
-    private static final int INSTANT_TIMEOUT_TICKS = 4;
 
     @Inject
     private Client client;
@@ -61,12 +60,20 @@ public class AnimeChantPlugin extends Plugin {
 
 
     private Optional<PendingCast> pendingCast = Optional.empty();
+    private int textTicksLeft;
 
     // Tracking key ("spell:..." / "category:...") -> tick
     private final Map<SpellKey, Integer> lastCastTicks = new HashMap<>();
     private final Map<SpellKey, Integer> lastDisplayTicks = new HashMap<>();
 
-    private int ticksLeft;
+    private static final String CAST = "Cast";
+    private static final String ARROW = "->";
+
+    private static final ImmutableMap<String, String> SPELL_RENAMES = ImmutableMap.of(
+            "Grand Exchange", "Grand Exchange Teleport",
+            "Yanille", "Yanille Teleport"
+    );
+
 
     @Provides
     AnimeChantConfig provideConfig(ConfigManager configManager) {
@@ -75,7 +82,7 @@ public class AnimeChantPlugin extends Plugin {
 
     @Override
     protected void startUp() {
-        ticksLeft = 0;
+        textTicksLeft = 0;
         pendingCast = Optional.empty();
 
         lastCastTicks.clear();
@@ -88,7 +95,7 @@ public class AnimeChantPlugin extends Plugin {
     protected void shutDown() {
         clearText();
 
-        ticksLeft = 0;
+        textTicksLeft = 0;
         pendingCast = Optional.empty();
     }
 
@@ -98,8 +105,8 @@ public class AnimeChantPlugin extends Plugin {
             return;
         }
 
-        // Gotta love Java's null sfety :)
-        if (Objects.equals(event.getKey(), "spellPreset")) {
+        // Gotta love Java's null safety :)
+        if (Objects.equals(event.getKey(), AnimeChantConfig.SPELL_PRESET)) {
             chantResolver.reloadPresets();
         }
     }
@@ -109,22 +116,32 @@ public class AnimeChantPlugin extends Plugin {
      */
     @Subscribe
     public void onMenuOptionClicked(MenuOptionClicked event) {
-        if (!config.spellsEnabled()) {
+        if (!config.spellsEnabled()) return;
+
+        MenuAction action = event.getMenuAction();
+        Spell spell = Spell.fromString(spellNameFromClick(event));
+
+        if (!spell.isUnknown()) {
+            // Selecting a targeted spell (WIDGET_TARGET) isn't a cast yet; only the click
+            // on the target (WIDGET_TARGET_ON_*) is. Don't arm on the selection click.
+            if (action == MenuAction.WIDGET_TARGET) {
+                log.debug("Ignoring widget targeted spell {}", spell);
+
+                pendingCast = Optional.empty();
+                return;
+            }
+
+            pendingCast = Optional.of(new PendingCast(spell, client.getTickCount() + spell.timeouteTicks()));
             return;
         }
 
-        MenuAction action = event.getMenuAction();
-        String spellName = spellNameFromClick(event);
-        Spell spell = Spell.fromString(spellName);
+        if (NON_INTERRUPTING.contains(action)) return;
 
-        if (!spell.isUnknown()) {
-            int timeout = isTargetedUse(action) ? TARGETED_TIMEOUT_TICKS : INSTANT_TIMEOUT_TICKS;
+        // CANCEL only matters if it's deselecting a targeting spell, not just closing a menu
+        if (action == MenuAction.CANCEL && !client.isWidgetSelected()) return;
 
-            pendingCast = Optional.of(new PendingCast(spell, client.getTickCount() + timeout));
-        } else if (action == MenuAction.WALK || action == MenuAction.CANCEL) {
-            // Player walked away or cancelled, so they aren't casting after all.
-            pendingCast = Optional.empty();
-        }
+        // walk, object/NPC/item interaction, widget clicks, etc.
+        pendingCast = Optional.empty();
     }
 
     @Subscribe
@@ -132,31 +149,49 @@ public class AnimeChantPlugin extends Plugin {
         if (!config.spellsEnabled() || event.getActor() != client.getLocalPlayer()) {
             return;
         }
+
         Player me = client.getLocalPlayer();
         if (me == null || me.getAnimation() == -1) {
             return;
         }
 
         // Manual cast (including alchemy, teleports, ...) takes priority over autocast.
-        if (pendingCast.isPresent()) {
-            pendingCast = Optional.empty();
-
-            if (client.getTickCount() <= pendingCast.get().expiresTick) {
-                handleSpell(pendingCast.get().spell);
-                return;
-            }
+        if (handleManualSpell(me.getAnimation())) {
+            return;
         }
 
+        // Manual spells did not match, try auto-cast.
         handleAutocast(me);
     }
 
     @Subscribe
     public void onGameTick(GameTick tick) {
-        if (ticksLeft > 0 && --ticksLeft == 0) {
+        if (textTicksLeft > 0 && --textTicksLeft == 0) {
             clearText();
         }
     }
 
+    private boolean handleManualSpell(int animationId) {
+        if (pendingCast.isEmpty()) {
+            return false;
+        }
+
+        PendingCast currentPendingCast = this.pendingCast.get();
+        if (!currentPendingCast.spell.animationIdMatches(animationId)) {
+            return false;
+        }
+
+        // Either the spell is correct or expired, clean up either way.
+        this.pendingCast = Optional.empty();
+
+        if (client.getTickCount() > currentPendingCast.expiresTick) {
+            log.debug("Pending cast expired, ignoring: {} vs {}", client.getTickCount(), currentPendingCast.expiresTick);
+            return false;
+        }
+
+        handleSpell(currentPendingCast.spell);
+        return true;
+    }
 
     private void handleAutocast(Player me) {
         int varbit = client.getVarbitValue(VarbitID.AUTOCAST_SPELL);
@@ -188,20 +223,31 @@ public class AnimeChantPlugin extends Plugin {
         int tick = client.getTickCount();
 
         Integer lastCast = lastCastTicks.put(key, tick);
-        Integer lastDisplay = lastDisplayTicks.getOrDefault(key, 0);
-
         int castDelay = config.spellTextDelayFromLastCastTicks();
+
         if (castDelay > 0 && lastCast != null && tick - lastCast < castDelay) {
+            log.debug("Cast delay is enabled and last cast is too recent, skipping: delay {}; tick {}; last cast {}",
+                    castDelay, tick, lastCast);
             return;
         }
 
+        Integer lastDisplay = lastDisplayTicks.getOrDefault(key, null);
         int displayDelay = config.spellTextDelayTicks();
+
+
         if (displayDelay > 0 && lastDisplay != null && tick - lastDisplay < displayDelay) {
+            log.debug("Display delay is enabled and last display is too recent, skipping: delay {}; tick {}; last cast {}",
+                    displayDelay, tick, lastDisplay);
             return;
         }
 
-        lastDisplayTicks.put(key, tick);
-        displayText(resolvedText);
+        if (config.shoutSpells() && !resolvedText.isEmpty()) {
+            resolvedText += "!";
+        }
+
+        if (displayText(resolvedText)) {
+            lastDisplayTicks.put(key, tick);
+        }
     }
 
     /**
@@ -220,17 +266,25 @@ public class AnimeChantPlugin extends Plugin {
 
             // Target looks like "High Level Alchemy -> Item"
             String target = Text.removeTags(event.getMenuTarget());
-            int arrow = target.indexOf("->");
+            int arrow = target.indexOf(ARROW);
 
             return (arrow > 0 ? target.substring(0, arrow) : target).trim();
         }
 
         // Non-targeted spells such as teleports
+        String menuOption = event.getMenuOption();
         if (action == MenuAction.CC_OP
-                && event.getMenuOption().equals("Cast")
+                && menuOption != null
                 && WidgetUtil.componentToInterface(event.getParam1()) == InterfaceID.MAGIC_SPELLBOOK) {
 
-            return Text.removeTags(event.getMenuTarget()).trim();
+            if (menuOption == CAST) {
+                return Text.removeTags(event.getMenuTarget()).trim();
+            }
+
+            String spellRename = SPELL_RENAMES.getOrDefault(menuOption, "");
+            if (!spellRename.isEmpty()) {
+                return spellRename;
+            }
         }
 
         return "";
@@ -245,17 +299,21 @@ public class AnimeChantPlugin extends Plugin {
     }
 
 
-    private void displayText(String text) {
+    private boolean displayText(String text) {
         if (text == null || text.isEmpty()) {
-            return;
+            return false;
         }
+
         Player me = client.getLocalPlayer();
         if (me == null) {
-            return;
+            return false;
         }
+
         me.setOverheadText(text);
-        ticksLeft = config.durationTicks();
+        textTicksLeft = config.durationTicks();
+
         log.debug("Showing text: {}", text);
+        return true;
     }
 
     private void clearText() {
@@ -267,7 +325,7 @@ public class AnimeChantPlugin extends Plugin {
 
     private static final Set<MenuAction> NON_INTERRUPTING = EnumSet.of(
             MenuAction.EXAMINE_OBJECT, MenuAction.EXAMINE_NPC,
-            MenuAction.EXAMINE_ITEM_GROUND, MenuAction.EXAMINE_ITEM,
+            MenuAction.EXAMINE_ITEM_GROUND,
             MenuAction.EXAMINE_WORLD_ENTITY,
             MenuAction.RUNELITE, MenuAction.RUNELITE_HIGH_PRIORITY,
             MenuAction.RUNELITE_LOW_PRIORITY, MenuAction.RUNELITE_OVERLAY,
