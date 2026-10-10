@@ -1,0 +1,246 @@
+package com.aguscerdo.animechant.spells;
+
+import com.aguscerdo.animechant.AnimeChantConfig;
+import com.aguscerdo.animechant.TextPreset;
+import com.aguscerdo.animechant.presets.PresetLoader;
+import com.aguscerdo.animechant.presets.RawPresetData;
+import com.aguscerdo.animechant.presets.TextEntry;
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.ImmutableListMultimap;
+import com.google.common.collect.ListMultimap;
+import com.google.inject.Guice;
+import com.google.inject.testing.fieldbinder.Bind;
+import com.google.inject.testing.fieldbinder.BoundFieldModule;
+import net.runelite.api.Client;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
+
+import java.util.Optional;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+/**
+ * Tests for {@link SpellTextResolver} (via {@link SpellTextResolverImpl}).
+ */
+@RunWith(MockitoJUnitRunner.Silent.class)
+public class SpellTextResolverTest {
+    private static final TextEntry FIRE_STRIKE_TEXT = new TextEntry("Fire", Optional.empty());
+    private static final TextEntry FIRE_TEXT = new TextEntry("Fire Category", Optional.empty());
+
+    private static final TextEntry HIGH_LEVEL_ALCHEMY_TEXT = new TextEntry("Money", Optional.empty());
+    private static final TextEntry TELEPORT_TEXT = new TextEntry("Teleport", Optional.empty());
+
+    private static final int CURRENT_TICK = 1000;
+
+    @Mock
+    @Bind
+    private Client mockClient;
+
+    @Mock
+    @Bind
+    private PresetLoader mockPresetLoader;
+
+    @Mock
+    @Bind
+    private AnimeChantConfig config;
+
+    private ListMultimap<Spell, TextEntry> spellToText;
+    private ListMultimap<SpellCategory, TextEntry> categoryToText;
+
+    private SpellTextResolverImpl resolver;
+
+    @Before
+    public void setUp() {
+        spellToText = ArrayListMultimap.create();
+        spellToText.put(Spell.HIGH_LEVEL_ALCHEMY, HIGH_LEVEL_ALCHEMY_TEXT);
+        spellToText.put(Spell.FIRE_STRIKE, FIRE_STRIKE_TEXT);
+        spellToText.put(Spell.VARROCK_TELEPORT, TELEPORT_TEXT);
+
+        categoryToText = ArrayListMultimap.create();
+        categoryToText.put(SpellCategory.FIRE, FIRE_TEXT);
+
+        injectResolver(TextPreset.NONE);
+
+        when(mockClient.getTickCount()).thenReturn(100);
+    }
+
+    private void injectResolver(TextPreset textPreset) {
+        resolver = new SpellTextResolverImpl(textPreset, spellToText, categoryToText);
+        Guice.createInjector(BoundFieldModule.of(this)).injectMembers(resolver);
+    }
+
+    @Test
+    public void resolve_unknownSpell_returnsEmpty() {
+        assertThat(resolver.resolve(Spell.UNKNOWN)).isEmpty();
+    }
+
+    @Test
+    public void resolve_spellEntryTakesPriorityOverCategory() {
+        assertThat(resolver.resolve(Spell.FIRE_STRIKE)).hasValue(FIRE_STRIKE_TEXT);
+    }
+
+    @Test
+    public void resolve_fallsBackToCategoryEntry() {
+        assertThat(resolver.resolve(Spell.FIRE_WAVE)).hasValue(FIRE_TEXT);
+    }
+
+    @Test
+    public void resolve_noEntriesAndFallbackDisabled_returnsEmpty() {
+        assertThat(resolver.resolve(Spell.DARK_DEMONBANE)).isEmpty();
+    }
+
+    @Test
+    public void resolve_noEntriesWithFallbackEnabled_returnsSpellName() {
+        when(config.fallbackToSpellName()).thenReturn(true);
+
+        assertThat(resolver.resolve(Spell.DARK_DEMONBANE))
+                .hasValue(new TextEntry(Spell.DARK_DEMONBANE.getName(), Optional.empty()));
+    }
+
+    @Test
+    public void resolve_spellNamePreset_returnsSpellNameEntry() {
+        injectResolver(TextPreset.SPELL_NAME);
+
+        assertThat(resolver.resolve(Spell.HIGH_LEVEL_ALCHEMY))
+                .hasValue(new TextEntry(Spell.HIGH_LEVEL_ALCHEMY.getName(), Optional.empty()));
+    }
+
+    @Test
+    public void resolve_multipleVariants_returnsOneOfThem() {
+        TextEntry otherTextEntry = new TextEntry("Fire 2", Optional.empty());
+        spellToText.put(Spell.FIRE_STRIKE, otherTextEntry);
+        injectResolver(TextPreset.NONE);
+
+        for (int i = 0; i < 20; i++) {
+            Optional<TextEntry> result = resolver.resolve(Spell.FIRE_STRIKE);
+
+            assertThat(result).isPresent();
+            assertThat(result.get()).isIn(otherTextEntry, FIRE_STRIKE_TEXT);
+        }
+    }
+
+    @Test
+    public void resolve_entryWithNoTextOrSound_returnsEmpty() {
+        TextEntry otherTextEntry = new TextEntry("", Optional.empty());
+        spellToText.put(Spell.WATER_WAVE, otherTextEntry);
+        injectResolver(TextPreset.NONE);
+
+        assertThat(resolver.resolve(Spell.WATER_WAVE)).isEmpty();
+    }
+
+    @Test
+    public void resolve_withTextDelay_presentThenEmpty() {
+        when(config.spellTextDelayTicks()).thenReturn(10);
+        when(mockClient.getTickCount())
+                .thenReturn(CURRENT_TICK)
+                .thenReturn(CURRENT_TICK + 5);
+
+        assertThat(resolver.resolve(Spell.FIRE_STRIKE)).isPresent();
+        assertThat(resolver.resolve(Spell.FIRE_STRIKE)).isEmpty();
+    }
+
+    @Test
+    public void resolve_withTextDelay_presentAfterDelay() {
+        when(config.spellTextDelayTicks()).thenReturn(10);
+        when(mockClient.getTickCount())
+                .thenReturn(CURRENT_TICK)
+                .thenReturn(CURRENT_TICK + 12);
+
+        assertThat(resolver.resolve(Spell.FIRE_STRIKE)).isPresent();
+        assertThat(resolver.resolve(Spell.FIRE_STRIKE)).isPresent();
+    }
+
+    @Test
+    public void resolve_withLastCastDelay_noDisplay() {
+        when(config.spellTextDelayFromLastCastTicks()).thenReturn(10);
+        when(mockClient.getTickCount())
+                .thenReturn(CURRENT_TICK)
+                .thenReturn(CURRENT_TICK + 5)
+                .thenReturn(CURRENT_TICK + 10)
+                .thenReturn(CURRENT_TICK + 15)
+                .thenReturn(CURRENT_TICK + 20)
+                .thenReturn(CURRENT_TICK + 25)
+                .thenReturn(CURRENT_TICK + 30);
+
+        assertThat(resolver.resolve(Spell.FIRE_STRIKE)).isPresent();
+        assertThat(resolver.resolve(Spell.FIRE_STRIKE)).isEmpty();
+        assertThat(resolver.resolve(Spell.FIRE_STRIKE)).isEmpty();
+        assertThat(resolver.resolve(Spell.FIRE_STRIKE)).isEmpty();
+        assertThat(resolver.resolve(Spell.FIRE_STRIKE)).isEmpty();
+        assertThat(resolver.resolve(Spell.FIRE_STRIKE)).isEmpty();
+        assertThat(resolver.resolve(Spell.FIRE_STRIKE)).isEmpty();
+    }
+
+    @Test
+    public void resolve_withLastCastDelay_presentAfterDelay() {
+        when(config.spellTextDelayFromLastCastTicks()).thenReturn(10);
+        when(mockClient.getTickCount())
+                .thenReturn(CURRENT_TICK)
+                .thenReturn(CURRENT_TICK + 5)
+                .thenReturn(CURRENT_TICK + 50);
+
+        assertThat(resolver.resolve(Spell.FIRE_STRIKE)).isPresent();
+        assertThat(resolver.resolve(Spell.FIRE_STRIKE)).isEmpty();
+        assertThat(resolver.resolve(Spell.FIRE_STRIKE)).isPresent();
+    }
+
+    @Test
+    public void reloadAll_clearsThrottleState() {
+        when(config.spellPreset()).thenReturn(TextPreset.NONE);
+        when(config.spellTextDelayTicks()).thenReturn(10);
+        when(mockClient.getTickCount()).thenReturn(CURRENT_TICK);
+
+        assertThat(resolver.resolve(Spell.FIRE_STRIKE)).isPresent();
+        assertThat(resolver.resolve(Spell.FIRE_STRIKE)).isEmpty();
+
+        resolver.reloadAll();
+
+        assertThat(resolver.resolve(Spell.FIRE_STRIKE)).isPresent();
+    }
+
+    @Test
+    public void reloadPresets_noPresetChange_nothing() {
+        when(config.spellPreset()).thenReturn(TextPreset.NONE);
+
+        resolver.reloadPresets();
+
+        verify(mockPresetLoader, never()).loadPreset(any());
+    }
+
+    @Test
+    public void reloadPresets_presetsReturnsEmpty_emptyMaps() {
+        when(config.spellPreset()).thenReturn(TextPreset.FRIEREN);
+        when(mockPresetLoader.loadPreset(any())).thenReturn(Optional.empty());
+
+        assertThat(resolver.resolve(Spell.FIRE_STRIKE)).isPresent();
+
+        resolver.reloadPresets();
+
+        assertThat(resolver.resolve(Spell.FIRE_STRIKE)).isEmpty();
+    }
+
+    @Test
+    public void reloadPresets_updateFromPresets() {
+        when(config.spellPreset()).thenReturn(TextPreset.FRIEREN);
+        when(mockPresetLoader.loadPreset(any())).thenReturn(Optional.of(
+                new RawPresetData("Frieren",
+                        ImmutableListMultimap.of(SpellCategory.WATER, FIRE_TEXT),
+                        ImmutableListMultimap.of(Spell.FIRE_STRIKE, HIGH_LEVEL_ALCHEMY_TEXT)
+                )
+        ));
+
+        assertThat(resolver.resolve(Spell.FIRE_STRIKE)).hasValue(FIRE_STRIKE_TEXT);
+
+        resolver.reloadPresets();
+
+        assertThat(resolver.resolve(Spell.FIRE_STRIKE)).hasValue(HIGH_LEVEL_ALCHEMY_TEXT);
+        assertThat(resolver.resolve(Spell.WATER_BLAST)).hasValue(FIRE_TEXT);
+    }
+}

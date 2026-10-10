@@ -1,8 +1,9 @@
 package com.aguscerdo.animechant;
 
 import com.aguscerdo.animechant.presets.TextEntry;
-import com.aguscerdo.animechant.spells.SpellChantResolver;
+import com.aguscerdo.animechant.spells.SpellCastDetector;
 import com.aguscerdo.animechant.spells.Spell;
+import com.aguscerdo.animechant.spells.SpellTextResolver;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.inject.Binder;
@@ -57,7 +58,10 @@ public class AnimeChantPlugin extends Plugin {
     private AnimeChantConfig config;
 
     @Inject
-    private SpellChantResolver chantResolver;
+    private SpellCastDetector castDetector;
+
+    @Inject
+    private SpellTextResolver textResolver;
 
     private int textTicksLeft;
 
@@ -75,7 +79,8 @@ public class AnimeChantPlugin extends Plugin {
     protected void startUp() {
         textTicksLeft = 0;
 
-        chantResolver.reloadAll();
+        castDetector.reset();
+        textResolver.reloadAll();
     }
 
     @Override
@@ -93,7 +98,7 @@ public class AnimeChantPlugin extends Plugin {
 
         // Gotta love Java's null safety :)
         if (Objects.equals(event.getKey(), AnimeChantConfig.SPELL_PRESET)) {
-            chantResolver.reloadPresets();
+            textResolver.reloadPresets();
         }
     }
 
@@ -107,7 +112,7 @@ public class AnimeChantPlugin extends Plugin {
         Spell spell = Spell.fromString(spellNameFromClick(event));
         MenuAction action = event.getMenuAction();
 
-        chantResolver.handleManualCastEventIntent(spell, action);
+        castDetector.processManualCastEventIntent(spell, action);
     }
 
     @Subscribe
@@ -121,14 +126,14 @@ public class AnimeChantPlugin extends Plugin {
             return;
         }
 
-        Optional<TextEntry> manualSpellText = chantResolver.handleManualSpell(me.getAnimation());
+        Optional<TextEntry> manualSpellText = castDetector.handleManualSpell(me.getAnimation()).flatMap(textResolver::resolve);
         if (manualSpellText.isPresent()) {
             displayText(manualSpellText.get());
             return;
         }
 
         // Manual spells did not match, try auto-cast.
-        displayText(chantResolver.handleAutoCast());
+        displayText(castDetector.handleAutoCast().flatMap(textResolver::resolve));
     }
 
     @Subscribe
