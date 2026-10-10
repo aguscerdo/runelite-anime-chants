@@ -65,6 +65,17 @@ public class SpellTextResolverImpl implements SpellTextResolver {
     }
 
     @Override
+    public  void clear() {
+        currentSpellPreset = TextPreset.NONE;
+
+        presetSpellToText = ImmutableListMultimap.of();
+        presetSpellCategoryToText = ImmutableListMultimap.of();
+
+        lastCastTicks.clear();
+        lastDisplayTicks.clear();
+    }
+
+    @Override
     public void reloadPresets() {
         if (currentSpellPreset == config.spellPreset()) {
             return;

@@ -17,6 +17,9 @@ public interface SpellTextResolver {
      */
     void reloadAll();
 
+    /** Clears all data structures from memory */
+    void clear();
+
     /**
      * Reload Spell to Text presets if the current config differs from the actual user config.
      */

@@ -86,8 +86,9 @@ public class AnimeChantPlugin extends Plugin {
     @Override
     protected void shutDown() {
         clearText();
-
         textTicksLeft = 0;
+
+        textResolver.clear();
     }
 
     @Subscribe
@@ -117,12 +118,12 @@ public class AnimeChantPlugin extends Plugin {
 
     @Subscribe
     public void onAnimationChanged(AnimationChanged event) {
-        if (!config.spellsEnabled() || event.getActor() != client.getLocalPlayer()) {
+        if (!config.spellsEnabled()) {
             return;
         }
 
         Player me = client.getLocalPlayer();
-        if (me == null || me.getAnimation() == -1) {
+        if (me == null || event.getActor() != me || me.getAnimation() == -1) {
             return;
         }
 
@@ -189,7 +190,6 @@ public class AnimeChantPlugin extends Plugin {
             return;
         }
 
-
         Player me = client.getLocalPlayer();
         if (me != null && !textEntry.getText().isBlank()) {
             String text = textEntry.getText();
@@ -216,14 +216,4 @@ public class AnimeChantPlugin extends Plugin {
             me.setOverheadText(null);
         }
     }
-
-    private static final Set<MenuAction> NON_INTERRUPTING = EnumSet.of(
-            MenuAction.EXAMINE_OBJECT, MenuAction.EXAMINE_NPC,
-            MenuAction.EXAMINE_ITEM_GROUND,
-            MenuAction.EXAMINE_WORLD_ENTITY,
-            MenuAction.RUNELITE, MenuAction.RUNELITE_HIGH_PRIORITY,
-            MenuAction.RUNELITE_LOW_PRIORITY, MenuAction.RUNELITE_OVERLAY,
-            MenuAction.RUNELITE_OVERLAY_CONFIG, MenuAction.RUNELITE_INFOBOX,
-            MenuAction.RUNELITE_PLAYER, MenuAction.RUNELITE_WIDGET
-    );
 }
