@@ -4,7 +4,6 @@ import com.aguscerdo.animechant.chantdata.TextEntry;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSetMultimap;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -288,7 +287,6 @@ public enum Spell {
 
 
     private static final ImmutableMap<String, Spell> SPELLS_BY_NAME;
-    private static final ImmutableSetMultimap<Integer, Spell> SPELLS_BY_ANIMATION_ID;
 
     @VisibleForTesting
     static final int WORLD_TARGETED_TIMEOUT_TICKS = 30;
@@ -297,20 +295,14 @@ public enum Spell {
 
     static {
         ImmutableMap.Builder<String, Spell> spellsByName = ImmutableMap.builder();
-        ImmutableSetMultimap.Builder<Integer, Spell> spellsByAnimationIdBuilder = ImmutableSetMultimap.builder();
 
         for (Spell spell : values()) {
             spellsByName.put(spell.name.toLowerCase(Locale.ROOT), spell);
-
-            for (int animationId : spell.animationIds) {
-                spellsByAnimationIdBuilder.put(animationId, spell);
-            }
         }
 
         spellsByName.putAll(ALTERNATIVE_SPELL_NAMES);
 
         SPELLS_BY_NAME = spellsByName.build();
-        SPELLS_BY_ANIMATION_ID = spellsByAnimationIdBuilder.build();
     }
 
     /**

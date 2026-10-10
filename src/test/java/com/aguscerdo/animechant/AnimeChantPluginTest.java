@@ -73,11 +73,6 @@ public class AnimeChantPluginTest {
 
         when(mockCastDetector.handleManualSpell(eq(HIGH_LEVEL_ALCHEMY_ANIMATION_ID))).thenReturn(Optional.of(Spell.HIGH_LEVEL_ALCHEMY));
         when(mockTextResolver.resolve(eq(Spell.HIGH_LEVEL_ALCHEMY))).thenReturn(Optional.of(HIGH_LEVEL_ALCHEMY_TEXT));
-
-        // when(player.getAnimation()).thenReturn(713);
-        // when(castDetector.handleManualSpell(713)).thenReturn(Optional.of(Spell.HIGH_LEVEL_ALCHEMY));
-        // when(textResolver.resolve(Spell.HIGH_LEVEL_ALCHEMY)).thenReturn(Optional.of(HIGH_LEVEL_ALCHEMY_TEXT));
-
     }
 
     @Test

@@ -4,6 +4,8 @@ package com.aguscerdo.animechant.spells;
 import com.aguscerdo.animechant.chantdata.TextEntry;
 import org.junit.Test;
 
+import java.util.Optional;
+
 import static org.junit.Assert.*;
 
 public class SpellTest {
@@ -72,7 +74,7 @@ public class SpellTest {
     public void asTextEntry_returnsTextEntry() {
         assertEquals(
                 Spell.HIGH_LEVEL_ALCHEMY.asTextEntry(),
-                new TextEntry("High Level Alchemy", null)
+                new TextEntry("High Level Alchemy", Optional.empty())
         );
     }
 

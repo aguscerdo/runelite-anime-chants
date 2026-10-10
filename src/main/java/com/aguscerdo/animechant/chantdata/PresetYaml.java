@@ -29,7 +29,7 @@ final class PresetYaml {
     }
 
     private static <E> void registerEnum(SimpleModule module, Class<E> type, Function<String, E> parser) {
-        module.addDeserializer(type, new StdDeserializer<E>(type) {
+        module.addDeserializer(type, new StdDeserializer<>(type) {
             @Override
             public E deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
                 return parser.apply(p.getValueAsString());
