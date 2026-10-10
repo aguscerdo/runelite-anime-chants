@@ -1,17 +1,14 @@
 package com.aguscerdo.animechant;
 
-import com.aguscerdo.animechant.presets.TextEntry;
-import com.aguscerdo.animechant.spells.SpellCastDetector;
+import com.aguscerdo.animechant.chantdata.CustomOverrides;
+import com.aguscerdo.animechant.chantdata.TextEntry;
 import com.aguscerdo.animechant.spells.Spell;
+import com.aguscerdo.animechant.spells.SpellCastDetector;
 import com.aguscerdo.animechant.spells.SpellTextResolver;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.inject.Binder;
 import com.google.inject.Provides;
-
-import java.util.*;
-import javax.inject.Inject;
-
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Client;
 import net.runelite.api.MenuAction;
@@ -29,13 +26,17 @@ import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
 import net.runelite.client.util.Text;
 
+import javax.inject.Inject;
+import java.util.Objects;
+import java.util.Optional;
+
 @Slf4j
 @PluginDescriptor(name = "Anime Chant", description = "Shows custom text when you cast spells")
 public class AnimeChantPlugin extends Plugin {
 
 
-    private static final String CAST = "Cast";
-    private static final String ARROW = "->";
+    private static final String CAST_TEXT = "Cast";
+    private static final String ARROW_TEXT = "->";
 
     // Spells with alternative menu options that are not "Cast"
     private static final ImmutableMap<String, String> NON_CAST_ALT_NAMED_SPELLS = ImmutableMap.of(
@@ -101,6 +102,9 @@ public class AnimeChantPlugin extends Plugin {
         if (Objects.equals(event.getKey(), AnimeChantConfig.SPELL_PRESET)) {
             textResolver.reloadPresets();
         }
+        if (Objects.equals(event.getKey(), AnimeChantConfig.SPELL_OVERRIDES)) {
+            textResolver.reloadOverrides();
+        }
     }
 
     /**
@@ -161,7 +165,7 @@ public class AnimeChantPlugin extends Plugin {
 
             // Target looks like "High Level Alchemy -> Item"
             String target = Text.removeTags(event.getMenuTarget());
-            int arrow = target.indexOf(ARROW);
+            int arrow = target.indexOf(ARROW_TEXT);
 
             return (arrow > 0 ? target.substring(0, arrow) : target).trim();
         }
@@ -172,7 +176,7 @@ public class AnimeChantPlugin extends Plugin {
                 && menuOption != null
                 && WidgetUtil.componentToInterface(event.getParam1()) == InterfaceID.MAGIC_SPELLBOOK) {
 
-            if (menuOption.equals(CAST)) {
+            if (menuOption.equals(CAST_TEXT)) {
                 return Text.removeTags(event.getMenuTarget()).trim();
             }
 
@@ -191,7 +195,7 @@ public class AnimeChantPlugin extends Plugin {
         }
 
         Player me = client.getLocalPlayer();
-        if (me != null && !textEntry.getText().isBlank()) {
+        if (me != null && !textEntry.getText().isBlank() && !textEntry.getText().equals(CustomOverrides.NONE)) {
             String text = textEntry.getText();
             if (config.shoutSpells() && !(text.endsWith(".") || text.endsWith("!"))) {
                 text += "!";

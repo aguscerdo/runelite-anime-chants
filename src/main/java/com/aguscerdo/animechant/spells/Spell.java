@@ -1,6 +1,6 @@
 package com.aguscerdo.animechant.spells;
 
-import com.aguscerdo.animechant.presets.TextEntry;
+import com.aguscerdo.animechant.chantdata.TextEntry;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
@@ -18,7 +18,7 @@ import java.util.Optional;
 @AllArgsConstructor
 @Getter
 public enum Spell {
-    UNKNOWN("Unknown", SpellCategory.NONE, SpellCastType.UNKNOWN, ImmutableList.of()),
+    UNKNOWN("Unknown", SpellCategory.UNKNOWN, SpellCastType.UNKNOWN, ImmutableList.of()),
     // Home teleport 4847
 
     // Standard - Fire
@@ -127,13 +127,13 @@ public enum Spell {
     TELEOTHER_CAMELOT("Teleother Camelot", SpellCategory.TELE_OTHER, SpellCastType.WORLD_TARGET, ImmutableList.of(1818)),
 
     // Standard - Other
-    BONES_TO_BANANAS("Bones To Bananas", SpellCategory.NONE, SpellCastType.INSTANT, ImmutableList.of(722)),
-    BONES_TO_PEACHES("Bones To Peaches", SpellCategory.NONE, SpellCastType.INSTANT, ImmutableList.of(722)),
-    TELEKINETIC_GRAB("Telekinetic Grab", SpellCategory.NONE, SpellCastType.WORLD_TARGET, ImmutableList.of(723)),
-    SUPERHEAT_ITEM("Superheat Item", SpellCategory.NONE, SpellCastType.INVENTORY_TARGET, ImmutableList.of(725)),
-    IBAN_BLAST("Iban Blast", SpellCategory.NONE, SpellCastType.WORLD_TARGET, ImmutableList.of(708)),
-    MAGIC_DART("Magic Dart", SpellCategory.NONE, SpellCastType.INVENTORY_TARGET, ImmutableList.of(811)),
-    CRUMBLE_UNDEAD("Crumble Undead", SpellCategory.NONE, SpellCastType.WORLD_TARGET, ImmutableList.of(724, 1166)),
+    BONES_TO_BANANAS("Bones To Bananas", SpellCategory.UNKNOWN, SpellCastType.INSTANT, ImmutableList.of(722)),
+    BONES_TO_PEACHES("Bones To Peaches", SpellCategory.UNKNOWN, SpellCastType.INSTANT, ImmutableList.of(722)),
+    TELEKINETIC_GRAB("Telekinetic Grab", SpellCategory.UNKNOWN, SpellCastType.WORLD_TARGET, ImmutableList.of(723)),
+    SUPERHEAT_ITEM("Superheat Item", SpellCategory.UNKNOWN, SpellCastType.INVENTORY_TARGET, ImmutableList.of(725)),
+    IBAN_BLAST("Iban Blast", SpellCategory.UNKNOWN, SpellCastType.WORLD_TARGET, ImmutableList.of(708)),
+    MAGIC_DART("Magic Dart", SpellCategory.UNKNOWN, SpellCastType.INVENTORY_TARGET, ImmutableList.of(811)),
+    CRUMBLE_UNDEAD("Crumble Undead", SpellCategory.UNKNOWN, SpellCastType.WORLD_TARGET, ImmutableList.of(724, 1166)),
 
     // Ancient - Smoke
     SMOKE_RUSH("Smoke Rush", SpellCategory.SMOKE, SpellCastType.INVENTORY_TARGET, ImmutableList.of(1978, 10091)),
@@ -209,15 +209,15 @@ public enum Spell {
     SINISTER_OFFERING("Sinister Offering", SpellCategory.OFFERING, SpellCastType.INSTANT, ImmutableList.of(8975)),
 
     // Arceuus - Other
-    MARK_OF_DARKNESS("Mark of Darkness", SpellCategory.NONE, SpellCastType.INSTANT, ImmutableList.of(8970)),
-    WARD_OF_ARCEUUS("Ward of Arceuus", SpellCategory.NONE, SpellCastType.INSTANT, ImmutableList.of(8970)),
-    DEATH_CHARGE("Death Charge", SpellCategory.NONE, SpellCastType.INSTANT, ImmutableList.of(8970)),
-    SHADOW_VEIL("Shadow Veil", SpellCategory.NONE, SpellCastType.INSTANT, ImmutableList.of(8979)),
-    DARK_LURE("Dark Lure", SpellCategory.NONE, SpellCastType.WORLD_TARGET, ImmutableList.of(8974)),
+    MARK_OF_DARKNESS("Mark of Darkness", SpellCategory.UNKNOWN, SpellCastType.INSTANT, ImmutableList.of(8970)),
+    WARD_OF_ARCEUUS("Ward of Arceuus", SpellCategory.UNKNOWN, SpellCastType.INSTANT, ImmutableList.of(8970)),
+    DEATH_CHARGE("Death Charge", SpellCategory.UNKNOWN, SpellCastType.INSTANT, ImmutableList.of(8970)),
+    SHADOW_VEIL("Shadow Veil", SpellCategory.UNKNOWN, SpellCastType.INSTANT, ImmutableList.of(8979)),
+    DARK_LURE("Dark Lure", SpellCategory.UNKNOWN, SpellCastType.WORLD_TARGET, ImmutableList.of(8974)),
     LESSER_CORRUPTION("Lesser Corruption", SpellCategory.CORRUPTION, SpellCastType.INSTANT, ImmutableList.of(8977)),
     GREATER_CORRUPTION("Greater Corruption", SpellCategory.CORRUPTION, SpellCastType.INSTANT, ImmutableList.of(8977)),
-    VILE_VIGOUR("Vile Vigour", SpellCategory.NONE, SpellCastType.INSTANT, ImmutableList.of(8978)),
-    DEGRIME("Degrime", SpellCategory.NONE, SpellCastType.INSTANT, ImmutableList.of(8980)),
+    VILE_VIGOUR("Vile Vigour", SpellCategory.UNKNOWN, SpellCastType.INSTANT, ImmutableList.of(8978)),
+    DEGRIME("Degrime", SpellCategory.UNKNOWN, SpellCastType.INSTANT, ImmutableList.of(8980)),
 
 
     // Lunar - Teleports
@@ -240,32 +240,32 @@ public enum Spell {
     TELE_GROUP_ICE_PLATEAU("Tele Group Ice Plateau", SpellCategory.TELEPORT, SpellCastType.INSTANT, ImmutableList.of(1816)),
 
     // Lunar - Other
-    ASTRAL_CONTACT("Astral Contact", SpellCategory.NONE, SpellCastType.INSTANT, ImmutableList.of(11904)),
-    BAKE_PIE("Bake Pie", SpellCategory.NONE, SpellCastType.INSTANT, ImmutableList.of(4413)),
-    BOOST_POTION_SHARE("Boost Potion Share", SpellCategory.NONE, SpellCastType.INVENTORY_TARGET, ImmutableList.of(4413)),
+    ASTRAL_CONTACT("Astral Contact", SpellCategory.UNKNOWN, SpellCastType.INSTANT, ImmutableList.of(11904)),
+    BAKE_PIE("Bake Pie", SpellCategory.UNKNOWN, SpellCastType.INSTANT, ImmutableList.of(4413)),
+    BOOST_POTION_SHARE("Boost Potion Share", SpellCategory.UNKNOWN, SpellCastType.INVENTORY_TARGET, ImmutableList.of(4413)),
     CURE_GROUP("Cure Group", SpellCategory.CURE, SpellCastType.INSTANT, ImmutableList.of(4411)),
     CURE_ME("Cure Me", SpellCategory.CURE, SpellCastType.INSTANT, ImmutableList.of(4411)),
     CURE_OTHER("Cure Other", SpellCategory.CURE, SpellCastType.WORLD_TARGET, ImmutableList.of(4411)),
     CURE_PLANT("Cure Plant", SpellCategory.CURE, SpellCastType.WORLD_TARGET, ImmutableList.of(4432)), // 4432?
-    DREAM("Dream", SpellCategory.NONE, SpellCastType.INSTANT, ImmutableList.of(7627)),
-    ENERGY_TRANSFER("Energy Transfer", SpellCategory.NONE, SpellCastType.WORLD_TARGET, ImmutableList.of(4411)),
-    FERTILE_SOIL("Fertile Soil", SpellCategory.NONE, SpellCastType.WORLD_TARGET, ImmutableList.of(4413)),
-    GEOMANCY("Geomancy", SpellCategory.NONE, SpellCastType.INSTANT, ImmutableList.of(7118)),
+    DREAM("Dream", SpellCategory.UNKNOWN, SpellCastType.INSTANT, ImmutableList.of(7627)),
+    ENERGY_TRANSFER("Energy Transfer", SpellCategory.UNKNOWN, SpellCastType.WORLD_TARGET, ImmutableList.of(4411)),
+    FERTILE_SOIL("Fertile Soil", SpellCategory.UNKNOWN, SpellCastType.WORLD_TARGET, ImmutableList.of(4413)),
+    GEOMANCY("Geomancy", SpellCategory.UNKNOWN, SpellCastType.INSTANT, ImmutableList.of(7118)),
     HEAL_GROUP("Heal Group", SpellCategory.HEAL, SpellCastType.INSTANT, ImmutableList.of(709)),
     HEAL_OTHER("Heal Other", SpellCategory.HEAL, SpellCastType.WORLD_TARGET, ImmutableList.of(709)),
-    HUMIDIFY("Humidify", SpellCategory.NONE, SpellCastType.INSTANT, ImmutableList.of(6294)),
-    HUNTER_KIT("Hunter Kit", SpellCategory.NONE, SpellCastType.INSTANT, ImmutableList.of(6303)),
-    MAGIC_IMBUE("Magic Imbue", SpellCategory.NONE, SpellCastType.INSTANT, ImmutableList.of(722, 8970)),
-    MONSTER_EXAMINE("Monster Examine", SpellCategory.NONE, SpellCastType.WORLD_TARGET, ImmutableList.of(6293, 6306)),
-    PLANK_MAKE("Plank Make", SpellCategory.NONE, SpellCastType.INSTANT, ImmutableList.of(6298)),
+    HUMIDIFY("Humidify", SpellCategory.UNKNOWN, SpellCastType.INSTANT, ImmutableList.of(6294)),
+    HUNTER_KIT("Hunter Kit", SpellCategory.UNKNOWN, SpellCastType.INSTANT, ImmutableList.of(6303)),
+    MAGIC_IMBUE("Magic Imbue", SpellCategory.UNKNOWN, SpellCastType.INSTANT, ImmutableList.of(722, 8970)),
+    MONSTER_EXAMINE("Monster Examine", SpellCategory.UNKNOWN, SpellCastType.WORLD_TARGET, ImmutableList.of(6293, 6306)),
+    PLANK_MAKE("Plank Make", SpellCategory.UNKNOWN, SpellCastType.INSTANT, ImmutableList.of(6298)),
     RECHARGE_DRAGONSTONE("Recharge Dragonstone", SpellCategory.ENCHANT, SpellCastType.INSTANT, ImmutableList.of(712)),
-    SPELLBOOK_SWAP("Spellbook Swap", SpellCategory.NONE, SpellCastType.UNKNOWN, ImmutableList.of(6299)), // TODO handle menu
-    SPIN_FLAX("Spin Flax", SpellCategory.NONE, SpellCastType.INSTANT, ImmutableList.of(4413)),
-    STAT_RESTORE_POT_SHARE("Stat Restore Pot Share", SpellCategory.NONE, SpellCastType.INVENTORY_TARGET, ImmutableList.of(4413)),
-    STAT_SPY("Stat Spy", SpellCategory.NONE, SpellCastType.WORLD_TARGET, ImmutableList.of(6293)),
-    STRING_JEWELLERY("String Jewellery", SpellCategory.NONE, SpellCastType.INSTANT, ImmutableList.of(4412)),
-    SUPERGLASS_MAKE("Superglass Make", SpellCategory.NONE, SpellCastType.INSTANT, ImmutableList.of(4413)),
-    TAN_LEATHER("Tan Leather", SpellCategory.NONE, SpellCastType.INSTANT, ImmutableList.of(712)),
+    SPELLBOOK_SWAP("Spellbook Swap", SpellCategory.UNKNOWN, SpellCastType.UNKNOWN, ImmutableList.of(6299)), // TODO handle menu
+    SPIN_FLAX("Spin Flax", SpellCategory.UNKNOWN, SpellCastType.INSTANT, ImmutableList.of(4413)),
+    STAT_RESTORE_POT_SHARE("Stat Restore Pot Share", SpellCategory.UNKNOWN, SpellCastType.INVENTORY_TARGET, ImmutableList.of(4413)),
+    STAT_SPY("Stat Spy", SpellCategory.UNKNOWN, SpellCastType.WORLD_TARGET, ImmutableList.of(6293)),
+    STRING_JEWELLERY("String Jewellery", SpellCategory.UNKNOWN, SpellCastType.INSTANT, ImmutableList.of(4412)),
+    SUPERGLASS_MAKE("Superglass Make", SpellCategory.UNKNOWN, SpellCastType.INSTANT, ImmutableList.of(4413)),
+    TAN_LEATHER("Tan Leather", SpellCategory.UNKNOWN, SpellCastType.INSTANT, ImmutableList.of(712)),
     VENGEANCE("Vengeance", SpellCategory.VENGEANCE, SpellCastType.INSTANT, ImmutableList.of(8316, 8317, 10626)),
     VENGEANCE_OTHER("Vengeance Other", SpellCategory.VENGEANCE, SpellCastType.WORLD_TARGET, ImmutableList.of(8316, 8317, 10626));
 

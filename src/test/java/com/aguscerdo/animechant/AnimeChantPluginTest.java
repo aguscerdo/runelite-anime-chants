@@ -1,6 +1,6 @@
 package com.aguscerdo.animechant;
 
-import com.aguscerdo.animechant.presets.TextEntry;
+import com.aguscerdo.animechant.chantdata.TextEntry;
 import com.aguscerdo.animechant.spells.Spell;
 import com.aguscerdo.animechant.spells.SpellCastDetector;
 import com.aguscerdo.animechant.spells.SpellTextResolver;
@@ -21,7 +21,6 @@ import net.runelite.client.events.ConfigChanged;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
@@ -188,6 +187,16 @@ public class AnimeChantPluginTest {
     public void onAnimationChanged_blankText_notDisplayed() {
         when(mockCastDetector.handleManualSpell(eq(HIGH_LEVEL_ALCHEMY_ANIMATION_ID))).thenReturn(Optional.of(Spell.HIGH_LEVEL_ALCHEMY));
         when(mockTextResolver.resolve(eq(Spell.HIGH_LEVEL_ALCHEMY))).thenReturn(Optional.of(new TextEntry("   ", Optional.empty())));
+
+        plugin.onAnimationChanged(makeAnimationEvent());
+
+        verify(mockPlayer, never()).setOverheadText(any());
+    }
+
+    @Test
+    public void onAnimationChanged_noneText_notDisplayed() {
+        when(mockCastDetector.handleManualSpell(eq(HIGH_LEVEL_ALCHEMY_ANIMATION_ID))).thenReturn(Optional.of(Spell.HIGH_LEVEL_ALCHEMY));
+        when(mockTextResolver.resolve(eq(Spell.HIGH_LEVEL_ALCHEMY))).thenReturn(Optional.of(new TextEntry("NONE", Optional.empty())));
 
         plugin.onAnimationChanged(makeAnimationEvent());
 
@@ -419,39 +428,6 @@ public class AnimeChantPluginTest {
 
         verify(mockTextResolver, times(1)).reloadPresets();
     }
-
-    //
-    // @Test
-    // public void shoutAppendsExclamationOnce() {
-    //     when(mockConfig.shoutSpells()).thenReturn(true);
-    //     // ...same setup, entry text "Fire" -> verify "Fire!"; text "Fire!" -> verify "Fire!"
-    // }
-    //
-    // @Test
-    // public void textClearsAfterConfiguredTicks() {
-    //     // trigger a display, then:
-    //     plugin.onGameTick(new GameTick());
-    //     plugin.onGameTick(new GameTick());
-    //     verify(mockPlayer, never()).setOverheadText(null);
-    //     plugin.onGameTick(new GameTick());
-    //     verify(mockPlayer).setOverheadText(null);
-    // }
-    //
-    // @Test
-    // public void alchemyClickResolvesSpellNameFromTarget() {
-    //     Widget selected = mock(Widget.class);
-    //     when(selected.getId()).thenReturn(InterfaceID.MAGIC_SPELLBOOK << 16 | 1);
-    //     when(mockClient.getSelectedWidget()).thenReturn(selected);
-    //
-    //     MenuOptionClicked click = mock(MenuOptionClicked.class);
-    //     when(click.getMenuAction()).thenReturn(MenuAction.WIDGET_TARGET_ON_WIDGET);
-    //     when(click.getMenuTarget()).thenReturn("<col=00ff00>High Level Alchemy</col> -> <col=ff9040>Rune bar</col>");
-    //
-    //     plugin.onMenuOptionClicked(click);
-    //
-    //     verify(mockCastDetector).processManualCastEventIntent(
-    //             eq(Spell.fromString("High Level Alchemy")), eq(MenuAction.WIDGET_TARGET_ON_WIDGET));
-    // }
 
     private AnimationChanged makeAnimationEvent() {
         AnimationChanged animation = new AnimationChanged();

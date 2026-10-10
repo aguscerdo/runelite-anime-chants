@@ -2,9 +2,9 @@ package com.aguscerdo.animechant.spells;
 
 import com.aguscerdo.animechant.AnimeChantConfig;
 import com.aguscerdo.animechant.TextPreset;
-import com.aguscerdo.animechant.presets.PresetLoader;
-import com.aguscerdo.animechant.presets.RawPresetData;
-import com.aguscerdo.animechant.presets.TextEntry;
+import com.aguscerdo.animechant.chantdata.ChantData;
+import com.aguscerdo.animechant.chantdata.PresetLoader;
+import com.aguscerdo.animechant.chantdata.TextEntry;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ImmutableListMultimap;
 import com.google.common.collect.ListMultimap;
@@ -22,9 +22,7 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 /**
  * Tests for {@link SpellTextResolver} (via {@link SpellTextResolverImpl}).
@@ -36,6 +34,10 @@ public class SpellTextResolverTest {
 
     private static final TextEntry HIGH_LEVEL_ALCHEMY_TEXT = new TextEntry("Money", Optional.empty());
     private static final TextEntry TELEPORT_TEXT = new TextEntry("Teleport", Optional.empty());
+
+    private static final TextEntry BAKE_PIE_TEXT = new TextEntry("Yummie pie", Optional.empty());
+    private static final TextEntry DEMONBANE_TEXT = new TextEntry("Demons die", Optional.empty());
+
 
     private static final int CURRENT_TICK = 1000;
 
@@ -54,6 +56,9 @@ public class SpellTextResolverTest {
     private ListMultimap<Spell, TextEntry> spellToText;
     private ListMultimap<SpellCategory, TextEntry> categoryToText;
 
+    ListMultimap<Spell, TextEntry> userSpellToText;
+    ListMultimap<SpellCategory, TextEntry> userSpellCategoryToText;
+
     private SpellTextResolverImpl resolver;
 
     @Before
@@ -66,13 +71,25 @@ public class SpellTextResolverTest {
         categoryToText = ArrayListMultimap.create();
         categoryToText.put(SpellCategory.FIRE, FIRE_TEXT);
 
+        userSpellToText = ArrayListMultimap.create();
+        userSpellToText.put(Spell.BAKE_PIE, BAKE_PIE_TEXT);
+
+        userSpellCategoryToText = ArrayListMultimap.create();
+        userSpellCategoryToText.put(SpellCategory.DEMONBANE, DEMONBANE_TEXT);
+
+
         injectResolver(TextPreset.NONE);
 
         when(mockClient.getTickCount()).thenReturn(100);
     }
 
     private void injectResolver(TextPreset textPreset) {
-        resolver = new SpellTextResolverImpl(textPreset, spellToText, categoryToText);
+        resolver = new SpellTextResolverImpl(textPreset,
+                spellToText,
+                categoryToText,
+                userSpellToText,
+                userSpellCategoryToText
+        );
         Guice.createInjector(BoundFieldModule.of(this)).injectMembers(resolver);
     }
 
@@ -87,21 +104,51 @@ public class SpellTextResolverTest {
     }
 
     @Test
+    public void resolve_userSpellOverride() {
+        assertThat(resolver.resolve(Spell.BAKE_PIE)).hasValue(BAKE_PIE_TEXT);
+    }
+
+    @Test
     public void resolve_fallsBackToCategoryEntry() {
         assertThat(resolver.resolve(Spell.FIRE_WAVE)).hasValue(FIRE_TEXT);
     }
 
     @Test
+    public void resolve_userCategorySpellOverride() {
+        assertThat(resolver.resolve(Spell.DARK_DEMONBANE)).hasValue(DEMONBANE_TEXT);
+    }
+
+
+    @Test
+    public void resolve_userSpellOverridesPrioritizeOverPresets() {
+        spellToText.put(Spell.BAKE_PIE, new TextEntry("I hate pies >:(", Optional.empty()));
+        userSpellToText.put(Spell.BAKE_PIE, BAKE_PIE_TEXT);
+        injectResolver(TextPreset.NONE);
+
+        assertThat(resolver.resolve(Spell.BAKE_PIE)).hasValue(BAKE_PIE_TEXT);
+    }
+
+
+    @Test
+    public void resolve_userSpellCategoryOverridesPrioritizeOverPresets() {
+        categoryToText.put(SpellCategory.DEMONBANE, new TextEntry("Demons are great", Optional.empty()));
+        userSpellCategoryToText.put(SpellCategory.DEMONBANE, DEMONBANE_TEXT);
+        injectResolver(TextPreset.NONE);
+
+        assertThat(resolver.resolve(Spell.DARK_DEMONBANE)).hasValue(DEMONBANE_TEXT);
+    }
+
+    @Test
     public void resolve_noEntriesAndFallbackDisabled_returnsEmpty() {
-        assertThat(resolver.resolve(Spell.DARK_DEMONBANE)).isEmpty();
+        assertThat(resolver.resolve(Spell.CLAWS_OF_GUTHIX)).isEmpty();
     }
 
     @Test
     public void resolve_noEntriesWithFallbackEnabled_returnsSpellName() {
         when(config.fallbackToSpellName()).thenReturn(true);
 
-        assertThat(resolver.resolve(Spell.DARK_DEMONBANE))
-                .hasValue(new TextEntry(Spell.DARK_DEMONBANE.getName(), Optional.empty()));
+        assertThat(resolver.resolve(Spell.CLAWS_OF_GUTHIX))
+                .hasValue(new TextEntry(Spell.CLAWS_OF_GUTHIX.getName(), Optional.empty()));
     }
 
     @Test
@@ -230,7 +277,7 @@ public class SpellTextResolverTest {
     public void reloadPresets_updateFromPresets() {
         when(config.spellPreset()).thenReturn(TextPreset.FRIEREN);
         when(mockPresetLoader.loadPreset(any())).thenReturn(Optional.of(
-                new RawPresetData("Frieren",
+                new ChantData("Frieren",
                         ImmutableListMultimap.of(SpellCategory.WATER, FIRE_TEXT),
                         ImmutableListMultimap.of(Spell.FIRE_STRIKE, HIGH_LEVEL_ALCHEMY_TEXT)
                 )

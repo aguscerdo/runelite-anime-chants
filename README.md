@@ -25,12 +25,46 @@ the [Github Repo](https://github.com/aguscerdo/runelite-anime-chants/tree/master
 * `Spell Name` - Chant the name of the spell. E.g. "High Level Alchemy"
 * `Fantasy` - Basic fantasy names of spells. E.g. "Fireball"
 * `Anime Mix` - Mix of many different anime series. E.g. "Arise...", "Zoltraak", "Explosion"
-* `Frieren` - Spell names from "Frieren: At Journey's End". E.g. "Zoltraak", "Sorganeil"
+* `Frieren` - Spell names from "Frieren". E.g. "Zoltraak", "Sorganeil"
 * `Palworld` - Palworld Skills. E.g. "Hydro Jet", "Ignis Blast"
 * `Demon Slayer` - Different breathing stances and Blood Demon Arts. E.g. "Water Breathing, First Form: Water Surface
   Slash"
 
 Default: Fantasy
+
+### **Custom Spell Overrides**
+
+Custom user overrides for spell, spell categories and sound files.
+
+Each line contains one `=` separate name to text mapping as follows:
+
+```
+fire strike=Single Spell Text
+fire strike file=Single Spell File.wav
+Demonbane=Spell Category Text
+Demonbane=Additional text entry
+```
+
+**Usage Notes:**
+
+- Multiple entries with the same name will all be used.
+    - e.g. Two Fire Strike lines will be accepted, text is chosen randomly each time.
+- Multiple file paths for the same spell or category will be applied in order.
+    - For example:
+    ```
+    demonbane=text1
+    demonbane=text2
+    demonbane file=file1.wav
+    demonbane file=file2.wav 
+    
+    Will result in:
+      (demonbane -> (text1, file1.wav), demonbane -> (text2, file2.wav))
+    ```
+- User overrides take priority over chant data or spell names.
+- Setting a spell to <b>None</b> or <b>empty</b> will disable it.
+- Invalid lines will be ignored.
+
+Default: empty
 
 ### **Spell text delay (ticks)**
 
@@ -74,3 +108,7 @@ Number of ticks text will be displayed over the character.
 * Default: 3
 * Minimum: 3
 * Maximum: 15
+
+### **Scratch Pad**
+
+A convinient place to copy and paste stuff. It is not used.

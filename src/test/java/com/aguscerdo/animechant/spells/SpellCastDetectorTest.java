@@ -18,9 +18,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
-/**
- * Tests for {@link SpellCastDetector} (via {@link SpellCastDetectorImpl}).
- */
+
 @RunWith(MockitoJUnitRunner.Silent.class)
 public class SpellCastDetectorTest {
     private static final int ALCHEMY_ANIMATION_ID = 713;

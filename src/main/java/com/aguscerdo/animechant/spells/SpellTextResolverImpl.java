@@ -2,9 +2,8 @@ package com.aguscerdo.animechant.spells;
 
 import com.aguscerdo.animechant.AnimeChantConfig;
 import com.aguscerdo.animechant.TextPreset;
-import com.aguscerdo.animechant.presets.PresetLoader;
-import com.aguscerdo.animechant.presets.RawPresetData;
-import com.aguscerdo.animechant.presets.TextEntry;
+import com.aguscerdo.animechant.chantdata.*;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableListMultimap;
 import com.google.common.collect.ListMultimap;
 import lombok.extern.slf4j.Slf4j;
@@ -37,7 +36,12 @@ public class SpellTextResolverImpl implements SpellTextResolver {
     private TextPreset currentSpellPreset;
 
     private ImmutableListMultimap<Spell, TextEntry> presetSpellToText;
+    private ImmutableListMultimap<Spell, TextEntry> userOverrideSpellToText;
+
     private ImmutableListMultimap<SpellCategory, TextEntry> presetSpellCategoryToText;
+    private ImmutableListMultimap<SpellCategory, TextEntry> userOverrideSpellCategoryToText;
+
+    private ImmutableList<ValidationIssue> overrideValidationIssues;
 
     private final Map<Spell, Integer> lastCastTicks = new HashMap<>();
     private final Map<Spell, Integer> lastDisplayTicks = new HashMap<>();
@@ -49,31 +53,47 @@ public class SpellTextResolverImpl implements SpellTextResolver {
     }
 
     SpellTextResolverImpl(TextPreset currentSpellPreset,
-                          ListMultimap<Spell, TextEntry> spellToText,
-                          ListMultimap<SpellCategory, TextEntry> spellCategoryToText) {
+                          ListMultimap<Spell, TextEntry> presetSpellToText,
+                          ListMultimap<SpellCategory, TextEntry> presetSpellCategoryToText,
+                          ListMultimap<Spell, TextEntry> userSpellToText,
+                          ListMultimap<SpellCategory, TextEntry> userSpellCategoryToText
+
+    ) {
         this.currentSpellPreset = currentSpellPreset;
-        this.presetSpellToText = ImmutableListMultimap.copyOf(spellToText);
-        this.presetSpellCategoryToText = ImmutableListMultimap.copyOf(spellCategoryToText);
+
+        this.presetSpellToText = ImmutableListMultimap.copyOf(presetSpellToText);
+        this.presetSpellCategoryToText = ImmutableListMultimap.copyOf(presetSpellCategoryToText);
+
+        this.userOverrideSpellToText = ImmutableListMultimap.copyOf(userSpellToText);
+        this.userOverrideSpellCategoryToText = ImmutableListMultimap.copyOf(userSpellCategoryToText);
     }
 
     @Override
-    public void reloadAll() {
-        reloadPresets();
-
-        lastCastTicks.clear();
-        lastDisplayTicks.clear();
-    }
-
-    @Override
-    public  void clear() {
+    public void clear() {
         currentSpellPreset = TextPreset.NONE;
 
         presetSpellToText = ImmutableListMultimap.of();
         presetSpellCategoryToText = ImmutableListMultimap.of();
 
+        overrideValidationIssues = ImmutableList.of();
+
+        userOverrideSpellToText = ImmutableListMultimap.of();
+        userOverrideSpellCategoryToText = ImmutableListMultimap.of();
+
         lastCastTicks.clear();
         lastDisplayTicks.clear();
     }
+
+
+    @Override
+    public void reloadAll() {
+        reloadPresets();
+        reloadOverrides();
+
+        lastCastTicks.clear();
+        lastDisplayTicks.clear();
+    }
+
 
     @Override
     public void reloadPresets() {
@@ -82,7 +102,7 @@ public class SpellTextResolverImpl implements SpellTextResolver {
         }
 
         currentSpellPreset = config.spellPreset();
-        Optional<RawPresetData> presetData = presetLoader.loadPreset(currentSpellPreset);
+        Optional<ChantData> presetData = presetLoader.loadPreset(currentSpellPreset);
 
         if (presetData.isPresent()) {
             presetSpellToText = ImmutableListMultimap.copyOf(presetData.get().getSpells());
@@ -91,9 +111,17 @@ public class SpellTextResolverImpl implements SpellTextResolver {
             presetSpellToText = ImmutableListMultimap.of();
             presetSpellCategoryToText = ImmutableListMultimap.of();
         }
-
-        // TODO handle user overrides.
     }
+
+    @Override
+    public void reloadOverrides() {
+        CustomOverrides.CustomOverridesResult result = CustomOverrides.parseSpellOverrides(config.customSpellOverrides());
+
+        overrideValidationIssues = result.getValidationIssues();
+        userOverrideSpellToText = result.getChantData().getSpells();
+        userOverrideSpellCategoryToText = result.getChantData().getSpellCategories();
+    }
+
 
     @Override
     public Optional<TextEntry> resolve(Spell spell) {
@@ -142,26 +170,44 @@ public class SpellTextResolverImpl implements SpellTextResolver {
             return Optional.empty();
         }
 
-        if (currentSpellPreset == TextPreset.SPELL_NAME) {
-            return Optional.of(spell.asTextEntry());
-        }
-
-        // TODO handle user overrides
-        List<TextEntry> variants = presetSpellToText.get(spell);
-
+        // User Overrides
+        List<TextEntry> variants = userOverrideSpellToText.get(spell);
         if (variants != null && !variants.isEmpty()) {
+            log.debug("Resolved spell to user override: {}}", spell);
             return Optional.of(randomChoice(variants));
         }
 
         SpellCategory spellCategory = spell.getSpellCategory();
-        if (spellCategory != SpellCategory.NONE) {
+        if (spellCategory != SpellCategory.UNKNOWN) {
+            variants = userOverrideSpellCategoryToText.get(spellCategory);
+            if (variants != null && !variants.isEmpty()) {
+                log.debug("Resolved spell category to user override: {}", spellCategory);
+                return Optional.of(randomChoice(variants));
+            }
+        }
+
+        // Presets
+        if (currentSpellPreset == TextPreset.SPELL_NAME) {
+            log.debug("Resolved spell to its name: {}", spell);
+            return Optional.of(spell.asTextEntry());
+        }
+
+        variants = presetSpellToText.get(spell);
+        if (variants != null && !variants.isEmpty()) {
+            log.debug("Resolved spell to preset: {}", spell);
+            return Optional.of(randomChoice(variants));
+        }
+
+        if (spellCategory != SpellCategory.UNKNOWN) {
             variants = presetSpellCategoryToText.get(spellCategory);
             if (variants != null && !variants.isEmpty()) {
+                log.debug("Resolved spell category to preset: {}", spellCategory);
                 return Optional.of(randomChoice(variants));
             }
         }
 
         if (config.fallbackToSpellName()) {
+            log.debug("Fallback resolved spell to its name: {}", spell);
             return Optional.of(spell.asTextEntry());
         }
 

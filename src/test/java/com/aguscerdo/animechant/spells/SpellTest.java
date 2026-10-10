@@ -1,7 +1,7 @@
 package com.aguscerdo.animechant.spells;
 
 
-import com.aguscerdo.animechant.presets.TextEntry;
+import com.aguscerdo.animechant.chantdata.TextEntry;
 import org.junit.Test;
 
 import static org.junit.Assert.*;

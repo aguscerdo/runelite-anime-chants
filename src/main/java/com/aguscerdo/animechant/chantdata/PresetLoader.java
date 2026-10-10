@@ -1,4 +1,4 @@
-package com.aguscerdo.animechant.presets;
+package com.aguscerdo.animechant.chantdata;
 
 import com.aguscerdo.animechant.TextPreset;
 
@@ -11,5 +11,5 @@ public interface PresetLoader {
      * @return the parsed preset, or empty if the preset has no backing file,
      * the resource is missing, or the file is invalid or an unsupported version.
      */
-    Optional<RawPresetData> loadPreset(TextPreset preset);
+    Optional<ChantData> loadPreset(TextPreset preset);
 }

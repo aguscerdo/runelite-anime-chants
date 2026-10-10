@@ -5,7 +5,7 @@ package com.aguscerdo.animechant.spells;
  * preset gives text for a whole category rather than a single spell.
  */
 public enum SpellCategory {
-    NONE,
+    UNKNOWN,
     // --- General --- //
     TELEPORT,
     TELE_OTHER,
@@ -40,21 +40,24 @@ public enum SpellCategory {
     // --- Lunar --- //
     CURE,
     HEAL,
-    VENGEANCE
-    ;
+    VENGEANCE;
 
     /**
      * Returns a SpellCategory from a string ("Mark of Darkness", "fire", ...) or UNKNOWN.
      */
     public static SpellCategory fromString(String s) {
         if (s == null) {
-            return NONE;
+            return UNKNOWN;
         }
 
         try {
             return valueOf(s.trim().toUpperCase().replace(' ', '_'));
         } catch (IllegalArgumentException e) {
-            return NONE;
+            return UNKNOWN;
         }
+    }
+
+    public boolean isUnknown() {
+        return this == SpellCategory.UNKNOWN;
     }
 }

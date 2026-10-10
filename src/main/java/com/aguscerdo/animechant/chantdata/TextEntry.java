@@ -1,4 +1,4 @@
-package com.aguscerdo.animechant.presets;
+package com.aguscerdo.animechant.chantdata;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
@@ -15,7 +15,7 @@ import java.util.Optional;
 
 /**
  * One chant for a spell or category: the text, plus an optional sound file.
- * Sound paths are relative to the presets resource directory.
+ * Sound paths are relative to the chantdata resource directory.
  * <p>
  * YAML accepts either a bare string (text only) or an object:
  * - "Burn bright"

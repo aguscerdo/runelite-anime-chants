@@ -4,8 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 /**
- * Bundled presets shown in the config dropdown. Contents live in
- * src/main/resources/com/animechant/presets/&lt;resourceName&gt;.
+ * Bundled chantdata shown in the config dropdown. Contents live in
+ * src/main/resources/com/animechant/chantdata/&lt;resourceName&gt;.
  */
 @AllArgsConstructor
 @Getter

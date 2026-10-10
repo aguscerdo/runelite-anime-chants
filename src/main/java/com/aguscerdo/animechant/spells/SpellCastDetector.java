@@ -7,7 +7,7 @@ import java.util.Optional;
 
 /**
  * Detects which spell the player actually cast, for both manual casts (menu click followed by
- * an animation) and autocasts. Knows nothing about text, presets or display throttling.
+ * an animation) and autocasts. Knows nothing about text, chantdata or display throttling.
  */
 @ImplementedBy(SpellCastDetectorImpl.class)
 public interface SpellCastDetector {

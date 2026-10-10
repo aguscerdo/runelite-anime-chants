@@ -1,4 +1,4 @@
-package com.aguscerdo.animechant.presets;
+package com.aguscerdo.animechant.chantdata;
 
 import com.aguscerdo.animechant.spells.Spell;
 import com.aguscerdo.animechant.spells.SpellCategory;
@@ -19,18 +19,24 @@ import java.util.Objects;
  * in-memory form is a multimap (one spell -> many entries, each with its own sound).
  */
 @Value
-public class RawPresetData {
+public class ChantData {
     public static final int CURRENT_VERSION = 1;
 
     String name;
     ImmutableListMultimap<SpellCategory, TextEntry> spellCategories;
     ImmutableListMultimap<Spell, TextEntry> spells;
 
+    public ChantData() {
+        name = "";
+        spellCategories = ImmutableListMultimap.of();
+        spells = ImmutableListMultimap.of();
+    }
+
     /**
      * Used by Jackson.
      */
     @JsonCreator
-    public RawPresetData(
+    public ChantData(
             @JsonProperty("name") String name,
             @JsonProperty("spell_categories") Map<SpellCategory, List<TextEntry>> spellCategories,
             @JsonProperty("spells") Map<Spell, List<TextEntry>> spells) {
@@ -39,7 +45,7 @@ public class RawPresetData {
         this.spells = copyOf(spells);
     }
 
-    public RawPresetData(
+    public ChantData(
             String name,
             ImmutableListMultimap<SpellCategory, TextEntry> spellCategories,
             ImmutableListMultimap<Spell, TextEntry> spells) {

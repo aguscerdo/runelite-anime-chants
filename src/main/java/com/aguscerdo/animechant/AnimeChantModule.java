@@ -1,7 +1,7 @@
 package com.aguscerdo.animechant;
 
-import com.aguscerdo.animechant.presets.PresetLoader;
-import com.aguscerdo.animechant.presets.PresetLoaderImpl;
+import com.aguscerdo.animechant.chantdata.PresetLoader;
+import com.aguscerdo.animechant.chantdata.PresetLoaderImpl;
 import com.aguscerdo.animechant.spells.SpellCastDetector;
 import com.aguscerdo.animechant.spells.SpellCastDetectorImpl;
 import com.aguscerdo.animechant.spells.SpellTextResolver;

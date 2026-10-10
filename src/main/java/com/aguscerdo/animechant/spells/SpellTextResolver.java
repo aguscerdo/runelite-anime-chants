@@ -1,29 +1,36 @@
 package com.aguscerdo.animechant.spells;
 
-import com.aguscerdo.animechant.presets.TextEntry;
+import com.aguscerdo.animechant.chantdata.TextEntry;
 import com.google.inject.ImplementedBy;
 
 import java.util.Optional;
 
 /**
  * Converts a cast {@link Spell} into the text/sound entry to display, based on the user's
- * configured presets and display throttling. Knows nothing about how the cast was detected.
+ * configured chantdata and display throttling. Knows nothing about how the cast was detected.
  */
 @ImplementedBy(SpellTextResolverImpl.class)
 public interface SpellTextResolver {
 
     /**
-     * Reloads presets and clears all throttling state.
+     * Clears all data structures from memory
      */
-    void reloadAll();
-
-    /** Clears all data structures from memory */
     void clear();
 
     /**
-     * Reload Spell to Text presets if the current config differs from the actual user config.
+     * Reloads chantdata and clears all throttling state.
+     */
+    void reloadAll();
+
+    /**
+     * Reload Spell to Text chantdata if the current config differs from the actual user config.
      */
     void reloadPresets();
+
+    /**
+     * Reloads spell custom overrides
+     */
+    void reloadOverrides();
 
     /**
      * Resolves a spell into the text to display IF it should be displayed based on the user configs.
