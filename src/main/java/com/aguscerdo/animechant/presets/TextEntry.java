@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
+import lombok.NonNull;
 import lombok.Value;
 import lombok.With;
 
@@ -28,6 +29,7 @@ public class TextEntry {
 
     String text;
 
+    @NonNull
     Optional<String> sound;
 
     static class Deserializer extends StdDeserializer<TextEntry> {
@@ -40,7 +42,7 @@ public class TextEntry {
             JsonNode node = p.getCodec().readTree(p);
 
             if (node.isTextual()) {
-                return new TextEntry(node.asText(), null);
+                return new TextEntry(node.asText(), Optional.empty());
             }
 
             if (!node.isObject() || !node.hasNonNull("text")) {

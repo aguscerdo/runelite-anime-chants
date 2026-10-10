@@ -1,6 +1,7 @@
 package com.aguscerdo.animechant.spells;
 
 import com.aguscerdo.animechant.presets.TextEntry;
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSetMultimap;
@@ -8,6 +9,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import java.util.Locale;
+import java.util.Optional;
 
 /**
  * Known spells and the category they belong to. A spell that isn't listed here can
@@ -288,8 +290,10 @@ public enum Spell {
     private static final ImmutableMap<String, Spell> SPELLS_BY_NAME;
     private static final ImmutableSetMultimap<Integer, Spell> SPELLS_BY_ANIMATION_ID;
 
-    private static final int TARGETED_TIMEOUT_TICKS = 30;
-    private static final int INSTANT_TIMEOUT_TICKS = 4;
+    @VisibleForTesting
+    static final int WORLD_TARGETED_TIMEOUT_TICKS = 30;
+    @VisibleForTesting
+    static final int INSTANT_TIMEOUT_TICKS = 6;
 
     static {
         ImmutableMap.Builder<String, Spell> spellsByName = ImmutableMap.builder();
@@ -321,16 +325,17 @@ public enum Spell {
     }
 
     public TextEntry asTextEntry() {
-        return new TextEntry(name, null);
+        return new TextEntry(name, Optional.empty());
     }
 
     public boolean animationIdMatches(int animationId) {
         return animationIds.contains(animationId);
     }
 
-    public int timeouteTicks() {
-        if (spellCastType == SpellCastType.INVENTORY_TARGET || spellCastType == SpellCastType.WORLD_TARGET) {
-            return TARGETED_TIMEOUT_TICKS;
+    public int timeoutTicks() {
+        // Spells that may drag the player. Inventory spells trigger immediately when used on items.
+        if (spellCastType == SpellCastType.WORLD_TARGET) {
+            return WORLD_TARGETED_TIMEOUT_TICKS;
         }
 
         return INSTANT_TIMEOUT_TICKS;

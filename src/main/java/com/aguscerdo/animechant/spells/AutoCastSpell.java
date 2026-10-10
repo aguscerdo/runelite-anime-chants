@@ -10,7 +10,7 @@ import static com.google.common.collect.ImmutableMap.toImmutableMap;
 
 @RequiredArgsConstructor
 @Getter
-public enum AutocastSpell {
+public enum AutoCastSpell {
     /**
      * The currently selected autocast spell.
      * 0        = no spell selected.
@@ -112,14 +112,14 @@ public enum AutocastSpell {
     static {
         VARBIT_TO_SPELL = Arrays.stream(values()).collect(
                 toImmutableMap(
-                        AutocastSpell::getVarbitValue,
-                        AutocastSpell::getSpell
+                        AutoCastSpell::getVarbitValue,
+                        AutoCastSpell::getSpell
                 )
         );
 
     }
 
-    public static Spell spellFromAutocast(int varbitValue) {
+    public static Spell spellFromAutoCast(int varbitValue) {
         return VARBIT_TO_SPELL.getOrDefault(varbitValue, Spell.UNKNOWN);
     }
 }

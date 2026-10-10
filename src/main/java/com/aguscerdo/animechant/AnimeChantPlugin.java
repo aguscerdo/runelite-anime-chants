@@ -123,7 +123,7 @@ public class AnimeChantPlugin extends Plugin {
         }
 
         // Manual spells did not match, try auto-cast.
-        displayText(chantResolver.handleAutocast(me));
+        displayText(chantResolver.handleAutoCast());
     }
 
     @Subscribe
