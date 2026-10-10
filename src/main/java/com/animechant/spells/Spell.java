@@ -1,5 +1,6 @@
 package com.animechant.spells;
 
+import com.animechant.presets.TextEntry;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSetMultimap;
@@ -317,6 +318,10 @@ public enum Spell {
         }
 
         return SPELLS_BY_NAME.getOrDefault(name.trim().toLowerCase(Locale.ROOT), UNKNOWN);
+    }
+
+    public TextEntry asTextEntry() {
+        return new TextEntry(name, null);
     }
 
     public boolean animationIdMatches(int animationId) {

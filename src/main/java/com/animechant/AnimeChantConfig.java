@@ -43,18 +43,6 @@ public interface AnimeChantConfig extends Config {
         return TextPreset.FANTASY;
     }
 
-//    @ConfigItem(
-//            keyName = "customSpellText",
-//            name = "Overrides",
-//            description = "Format: Spell name=Text; category:Fire=Text. Spell names beat categories. "
-//                    + "Repeat a key for random variants. You can also put a YAML file at "
-//                    + "~/.runelite/anime-chant/overrides.yaml (same format as the bundled presets).",
-//            section = SPELL_SECTION,
-//            position = 2
-//    )
-//    default String spellOverrides() {
-//        return "";
-//    }
 
     @Range(min = 0)
     @ConfigItem(
@@ -84,7 +72,8 @@ public interface AnimeChantConfig extends Config {
     @ConfigItem(
             keyName = "shoutSpells",
             name = "Shout Spells",
-            description = "Make spells more intense by adding ! at the end of every chant!",
+            description = "Make spells more intense by adding ! at the end of every chant! " +
+                    "No change if text ends with dot `.` or exclamation point `!`.",
             section = SPELL_SECTION,
             position = 5
     )
@@ -103,7 +92,7 @@ public interface AnimeChantConfig extends Config {
         return false;
     }
 
-    @Range(min = 3, max = 12)
+    @Range(min = 3, max = 15)
     @ConfigItem(
             keyName = "durationTicks",
             name = "Display duration (ticks)",

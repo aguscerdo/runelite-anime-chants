@@ -1,17 +1,33 @@
+version: 1
 name: Anime Mix
 spell_categories:
-  fire: "Explooooooosiooooon!!"
-  air: "Luminous Wind!"
-  earth: "Stone Cannon"
-  water: "Water Breathing, Fourth Form: Striking Tide!"
-  ice: "El Minya!"
-  blood: "Blood Demon Arts: Exploding Blood!"
-  shadow: "I am... Ā ť ø m î ċ"
-  smoke: "Moku Moku no Mi: Howaito Sunēku"
-  grasp: "Bakudō #61. Rikujōkōrō"
-  demonbane: "Zoltraak"
-  thrall: "Arise..."
-  alchemy: "Equivalent Exchange!"
-  teleport: "Instant Transmission!"
+  fire:
+    - "Explooooooosiooooon!!"
+    -
+  air:
+    - "Luminous Wind!"
+  earth:
+    - "Stone Cannon"
+  water:
+    - "Water Breathing, Fourth Form: Striking Tide!"
+  ice:
+    - "El Minya!"
+  blood:
+    - "Blood Demon Arts: Exploding Blood!"
+  shadow:
+    - "I am... Ā ť ø m î ċ"
+  smoke:
+    - "Moku Moku no Mi: Howaito Sunēku"
+  grasp:
+    - "Bakudō #61. Rikujōkōrō"
+  demonbane:
+    - "Zoltraak"
+  thrall:
+    - "Arise..."
+  alchemy:
+    - "Equivalent Exchange"
+  teleport:
+    - "Truck-kun!"
 spells:
-  high level alchemy: "cha-ching"
+  high level alchemy:
+    - "cha-ching"

@@ -1,10 +1,19 @@
+version: 1
 name: Palworld
 spell_categories:
-  fire: "Ignis Blast"
-  air: "Crosswind"
-  earth: "Stone Cannon"
-  water: "Hydro Jet"
-  ice: "Iceberg"
-  blood: "Soul Drain"
-  shadow: "Umbral Surge"
-  smoke: "Smoke Jet"
+  fire:
+    - "Ignis Blast"
+  air:
+    - "Crosswind"
+  earth:
+    - "Stone Cannon"
+  water:
+    - "Hydro Jet"
+  ice:
+    - "Iceberg"
+  blood:
+    - "Soul Drain"
+  shadow:
+    - "Umbral Surge"
+  smoke:
+    - "Smoke Jet"

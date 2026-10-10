@@ -1,5 +1,6 @@
 package com.animechant;
 
+import com.animechant.presets.TextEntry;
 import com.animechant.spells.SpellChantResolver;
 import com.animechant.spells.Spell;
 import com.google.common.collect.ImmutableMap;
@@ -115,7 +116,7 @@ public class AnimeChantPlugin extends Plugin {
             return;
         }
 
-        Optional<String> manualSpellText = chantResolver.handleManualSpell(me.getAnimation());
+        Optional<TextEntry> manualSpellText = chantResolver.handleManualSpell(me.getAnimation());
         if (manualSpellText.isPresent()) {
             displayText(manualSpellText.get());
             return;
@@ -173,23 +174,29 @@ public class AnimeChantPlugin extends Plugin {
         return "";
     }
 
-    private void displayText(String text) {
-        if (text == null || text.isEmpty()) {
+    private void displayText(TextEntry textEntry) {
+        if (textEntry == null || (textEntry.getText().isEmpty() && textEntry.getSound().isEmpty())) {
             return;
         }
+
 
         Player me = client.getLocalPlayer();
-        if (me == null) {
-            return;
+        if (me != null && !textEntry.getText().isBlank()) {
+            String text = textEntry.getText();
+            if (config.shoutSpells() && !(text.endsWith(".") || text.endsWith("!"))) {
+                text += "!";
+            }
+
+            me.setOverheadText(text);
+            textTicksLeft = config.durationTicks();
+            log.debug("Showing text: {}", textEntry);
         }
 
-        me.setOverheadText(text);
-        textTicksLeft = config.durationTicks();
+        // TODO handle sound file.
 
-        log.debug("Showing text: {}", text);
     }
 
-    private void displayText(Optional<String> text) {
+    private void displayText(Optional<TextEntry> text) {
         text.ifPresent(this::displayText);
     }
 

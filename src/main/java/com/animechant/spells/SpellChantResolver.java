@@ -5,6 +5,7 @@ import com.animechant.AnimeChantConfig;
 import com.animechant.TextPreset;
 import com.animechant.presets.PresetLoader;
 import com.animechant.presets.RawPresetData;
+import com.animechant.presets.TextEntry;
 import com.google.common.collect.ImmutableListMultimap;
 import com.google.common.collect.ListMultimap;
 import lombok.extern.slf4j.Slf4j;
@@ -13,7 +14,6 @@ import net.runelite.api.MenuAction;
 import net.runelite.api.NPC;
 import net.runelite.api.Player;
 import net.runelite.api.gameval.VarbitID;
-import org.apache.commons.lang3.tuple.Pair;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -27,19 +27,6 @@ import java.util.concurrent.ThreadLocalRandom;
 @Slf4j
 @Singleton
 public class SpellChantResolver {
-    @Inject
-    private Client client;
-
-    @Inject
-    private PresetLoader presetLoader;
-
-    @Inject
-    private AnimeChantConfig config;
-
-    private TextPreset currentSpellPreset;
-    private ImmutableListMultimap<Spell, String> presetSpellToText;
-    private ImmutableListMultimap<SpellCategory, String> presetSpellCategoryToText;
-
     private static final Set<MenuAction> NON_INTERRUPTING_ACTIONS = EnumSet.of(
             MenuAction.EXAMINE_OBJECT, MenuAction.EXAMINE_NPC,
             MenuAction.EXAMINE_ITEM_GROUND,
@@ -63,11 +50,24 @@ public class SpellChantResolver {
         }
     }
 
+    @Inject
+    private Client client;
+
+    @Inject
+    private PresetLoader presetLoader;
+
+    @Inject
+    private AnimeChantConfig config;
+
+    private TextPreset currentSpellPreset;
+
+    private ImmutableListMultimap<Spell, TextEntry> presetSpellToText;
+    private ImmutableListMultimap<SpellCategory, TextEntry> presetSpellCategoryToText;
+
 
     private Optional<SpellChantResolver.PendingCast> pendingCast = Optional.empty();
-
-    private final Map<SpellKey, Integer> lastCastTicks = new HashMap<>();
-    private final Map<SpellKey, Integer> lastDisplayTicks = new HashMap<>();
+    private final Map<Spell, Integer> lastCastTicks = new HashMap<>();
+    private final Map<Spell, Integer> lastDisplayTicks = new HashMap<>();
 
     public SpellChantResolver() {
         currentSpellPreset = TextPreset.NONE;
@@ -76,14 +76,16 @@ public class SpellChantResolver {
     }
 
     SpellChantResolver(TextPreset currentSpellPreset,
-                       ListMultimap<Spell, String> spellToText,
-                       ListMultimap<SpellCategory, String> spellCategoryToText) {
+                       ListMultimap<Spell, TextEntry> spellToText,
+                       ListMultimap<SpellCategory, TextEntry> spellCategoryToText) {
         this.currentSpellPreset = currentSpellPreset;
         this.presetSpellToText = ImmutableListMultimap.copyOf(spellToText);
         this.presetSpellCategoryToText = ImmutableListMultimap.copyOf(spellCategoryToText);
     }
 
-    /** Reloads all the states of the Chant Resolver */
+    /**
+     * Reloads all the states of the Chant Resolver
+     */
     public void reloadAll() {
         reloadPresets();
 
@@ -93,7 +95,9 @@ public class SpellChantResolver {
         lastDisplayTicks.clear();
     }
 
-    /** Reload Spell to Text presets if the current config differs from the actual user config */
+    /**
+     * Reload Spell to Text presets if the current config differs from the actual user config
+     */
     public void reloadPresets() {
         if (currentSpellPreset == config.spellPreset()) {
             return;
@@ -148,7 +152,7 @@ public class SpellChantResolver {
         pendingCast = Optional.of(new PendingCast(spell, client.getTickCount() + spell.timeouteTicks()));
     }
 
-    public Optional<String> handleManualSpell(int animationId) {
+    public Optional<TextEntry> handleManualSpell(int animationId) {
         if (pendingCast.isEmpty()) {
             return Optional.empty();
         }
@@ -166,10 +170,10 @@ public class SpellChantResolver {
             return Optional.empty();
         }
 
-        return processSpell(currentPendingCast.spell);
+        return processSpellToTextEntry(currentPendingCast.spell);
     }
 
-    public Optional<String> handleAutocast(Player me) {
+    public Optional<TextEntry> handleAutocast(Player me) {
         int varbit = client.getVarbitValue(VarbitID.AUTOCAST_SPELL);
         if (varbit == 0 || !(me.getInteracting() instanceof NPC)) {
             return Optional.empty();
@@ -189,7 +193,7 @@ public class SpellChantResolver {
             return Optional.empty();
         }
 
-        return processSpell(spell);
+        return processSpellToTextEntry(spell);
     }
 
 
@@ -199,19 +203,18 @@ public class SpellChantResolver {
      * @param spell the processed spell to convert to text
      * @return the text to display if any, or empty.
      */
-    private Optional<String> processSpell(Spell spell) {
-        Optional<Pair<String, SpellKey>> resolved = resolveSpellText(spell);
+    private Optional<TextEntry> processSpellToTextEntry(Spell spell) {
+        Optional<TextEntry> resolved = resolveSpellText(spell);
         if (resolved.isEmpty()) {
             log.debug("No text for spell `{}`", spell);
             return Optional.empty();
         }
 
-        String resolvedText = resolved.get().getLeft();
-        SpellKey key = resolved.get().getRight();
+        TextEntry resolvedText = resolved.get();
 
         int tick = client.getTickCount();
 
-        Integer lastCast = lastCastTicks.put(key, tick);
+        Integer lastCast = lastCastTicks.put(spell, tick);
         int castDelay = config.spellTextDelayFromLastCastTicks();
 
         if (castDelay > 0 && lastCast != null && tick - lastCast < castDelay) {
@@ -220,7 +223,7 @@ public class SpellChantResolver {
             return Optional.empty();
         }
 
-        Integer lastDisplay = lastDisplayTicks.getOrDefault(key, null);
+        Integer lastDisplay = lastDisplayTicks.getOrDefault(spell, null);
         int displayDelay = config.spellTextDelayTicks();
 
         if (displayDelay > 0 && lastDisplay != null && tick - lastDisplay < displayDelay) {
@@ -229,16 +232,13 @@ public class SpellChantResolver {
             return Optional.empty();
         }
 
-        if (resolvedText.isEmpty()) {
-            log.warn("Spell resolved to an empty string, this should not happen: {}", spell);
+        if (resolvedText.getText().isEmpty() && resolvedText.getSound().isEmpty()) {
+            log.warn("Resolved text entry has no text or sound: {}", spell);
             return Optional.empty();
         }
 
-        if (config.shoutSpells()) {
-            resolvedText += "!";
-        }
 
-        lastDisplayTicks.put(key, tick);
+        lastDisplayTicks.put(spell, tick);
         return Optional.of(resolvedText);
     }
 
@@ -246,32 +246,32 @@ public class SpellChantResolver {
     /**
      * Resolves a spell to the corresponding text to display, if any.
      */
-    private Optional<Pair<String, SpellKey>> resolveSpellText(Spell spell) {
+    private Optional<TextEntry> resolveSpellText(Spell spell) {
         if (spell.isUnknown()) {
             return Optional.empty();
         }
 
         if (currentSpellPreset == TextPreset.SPELL_NAME) {
-            return Optional.of(Pair.of(spell.getName(), new SpellKey(spell)));
+            return Optional.of(spell.asTextEntry());
         }
 
         // TODO handle user overrides
-        List<String> variants = presetSpellToText.get(spell);
+        List<TextEntry> variants = presetSpellToText.get(spell);
 
         if (variants != null && !variants.isEmpty()) {
-            return Optional.of(Pair.of(randomChoice(variants), new SpellKey(spell)));
+            return Optional.of(randomChoice(variants));
         }
 
         SpellCategory spellCategory = spell.getSpellCategory();
         if (spellCategory != SpellCategory.NONE) {
             variants = presetSpellCategoryToText.get(spellCategory);
             if (variants != null && !variants.isEmpty()) {
-                return Optional.of(Pair.of(randomChoice(variants), new SpellKey(spellCategory)));
+                return Optional.of(randomChoice(variants));
             }
         }
 
         if (config.fallbackToSpellName()) {
-            return Optional.of(Pair.of(spell.getName(), new SpellKey(spell)));
+            return Optional.of(spell.asTextEntry());
         }
 
         return Optional.empty();
@@ -280,7 +280,7 @@ public class SpellChantResolver {
     /**
      * Chooses a random string from a list
      */
-    private static String randomChoice(List<String> variants) {
+    private static TextEntry randomChoice(List<TextEntry> variants) {
         return variants.size() == 1 ? variants.get(0)
                 : variants.get(ThreadLocalRandom.current().nextInt(variants.size()));
     }

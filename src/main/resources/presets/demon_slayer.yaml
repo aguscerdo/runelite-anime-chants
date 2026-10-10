@@ -1,0 +1,101 @@
+version: 1
+name: Demon Slayer
+spell_categories:
+  fire:
+    - "Flame Breathing, First Form: Unknowing Fire"
+    - "Flame Breathing, Second Form: Rising Scorching Sun"
+    - "Flame Breathing, Third Form: Blazing Universe"
+    - "Flame Breathing, Fourth Form: Blooming Flame Undulation"
+    - "Flame Breathing, Fifth Form: Flame Tiger"
+    - "Flame Breathing, Ninth Form: Rengoku"
+  air:
+    - "Wind Breathing, First Form: Dust Whirlwind Cutter"
+    - "Wind Breathing, Second Form: Claws-Purifying Wind"
+    - "Wind Breathing, Third Form: Clear Storm Wind Tree"
+    - "Wind Breathing, Fourth Form: Rising Dust Storm"
+    - "Wind Breathing, Fifth Form: Cold Mountain Wind"
+    - "Wind Breathing, Sixth Form: Black Wind Mountain Mist"
+    - "Wind Breathing, Seventh Form: Gale, Sudden Gusts"
+    - "Wind Breathing, Eighth Form: Primary Gale Slash"
+    - "Wind Breathing, Ninth Form: Idaten Typhoon"
+  earth:
+    - "Stone Breathing, First Form: Serpentinite Bipolar"
+    - "Stone Breathing, Second Form: Upper Smash"
+    - "Stone Breathing, Third Form: Stone Skin"
+    - "Stone Breathing, Fourth Form: Volcanic Rock, Rapid Conquest"
+    - "Stone Breathing, Fifth Form: Arcs of Justice"
+  water:
+    - "Water Breathing, First Form: Water Surface Slash"
+    - "Water Breathing, Second Form: Water Wheel"
+    - "Water Breathing, Third Form: Flowing Dance"
+    - "Water Breathing, Fourth Form: Striking Tide"
+    - "Water Breathing, Fifth Form: Blessed Rain After the Drought"
+    - "Water Breathing, Seventh Form: Drop Ripple Thrust"
+    - "Water Breathing, Eighth Form: Waterfall Basin"
+    - "Water Breathing, Ninth Form: Splashing Water Flow, Turbulent"
+    - "Water Breathing, Tenth Form: Constant Flux"
+    - "Water Breathing, Eleventh Form: Dead Calm"
+  demonbane:
+    - "Hinokami Kagura, Dance"
+    - "Hinokami Kagura, Clear Blue Sky"
+    - "Hinokami Kagura, Raging Sun"
+    - "Hinokami Kagura, Burning Bones, Summer Sun"
+    - "Hinokami Kagura, Setting Sun Transformation"
+    - "Hinokami Kagura, Solar Heat Haze"
+    - "Hinokami Kagura, Beneficent Radiance"
+    - "Hinokami Kagura, Sunflower Thrust"
+    - "Hinokami Kagura, Sun Halo Dragon Head Dance"
+    - "Hinokami Kagura, Fire Wheel"
+    - "Hinokami Kagura, Fake Rainbow"
+    - "Hinokami Kagura, Flame Dance, Scorching Rush"
+    - "Hinokami Kagura, Thirteenth Form: Dance of the Fire God"
+  thrall:
+    - "Nezuko!"
+    - "Zenitsu!"
+    - "Inosuke!"
+  bind:
+    - "Blood Demon Art: Black Blood, Brambles"
+  ice:
+    - "Blood Demon Art: Cryokinesis"
+    - "Blood Demon Art: Frozen Lotus"
+    - "Blood Demon Art: Barren Hanging Garden"
+    - "Blood Demon Art: Freezing Clouds"
+    - "Blood Demon Art: Lotus Vines"
+    - "Blood Demon Art: Cold White Princesses"
+    - "Blood Demon Art: Wintry Icicles"
+    - "Blood Demon Art: Scattering Lotuses"
+    - "Blood Demon Art: Crystalline Divine Child"
+    - "Blood Demon Art: Rime-Water Lily Bodhisattva"
+  blood:
+    - "Blood Demon Arts: Exploding Blood!"
+    - "Blood Demon Arts: Flying Blood Sickles"
+    - "Blood Demon Arts: Rampant Arc Rampage"
+  shadow:
+    - "Blood Demon Arts: Ten Thousand Gliding Slime-Fish"
+    - "Blood Demon Arts: Dark Moon, Evening Palace"
+  smoke:
+    - "Mist Breathing, First Form: Low Clouds, Distant Haze"
+    - "Mist Breathing, Second Form: Eight-Layered Mist"
+    - "Mist Breathing, Third Form: Scattering Mist Splash"
+    - "Mist Breathing, Fourth Form: Shifting Flow Slash"
+    - "Mist Breathing, Fifth Form: Sea of Clouds and Haze"
+    - "Mist Breathing, Sixth Form: Lunar Dispersing Mist"
+    - "Mist Breathing, Seventh Form: Obscuring Clouds"
+  grasp:
+    - "Blood Demon Art: Black Blood, Brambles"
+  teleport:
+    - "Blood Demon Art: Portal Creation"
+spells:
+  dream:
+    - "Blood Demon Art: Scent Of Illusory Blood, Visual Dream"
+  shadow veil: 
+    - "Blood Demon Art: Blindfold"
+  shadow lure:
+    - "Blood Demon Art: Koketsu Arrow"
+  teleport to home:
+    - "Blood Demon Art: Infinity Castle"
+  vile vigour:
+    - "Blood Demon Art: Speed Boost"
+  death charge:
+    - "Blood Demon Art: Destructive Death"
+
