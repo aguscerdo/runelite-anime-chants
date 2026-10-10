@@ -19,7 +19,7 @@ Default: enabled
 ### **Spell Text Preset**
 
 Choose from a list of pre-made Spell-to-Text conversions. For a the full lists of spells refer to
-the [Github Repo](https://github.com/aguscerdo/runelite-anime-chants/tree/master/src).
+the [Github Repo](https://github.com/aguscerdo/runelite-anime-chants/tree/master/src/main/resources/com/aguscerdo/animechant/chantdata).
 
 * `None` - No presets, only overrides.
 * `Spell Name` - Chant the name of the spell. E.g. "High Level Alchemy"
