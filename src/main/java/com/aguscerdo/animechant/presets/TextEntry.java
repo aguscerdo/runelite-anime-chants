@@ -1,4 +1,4 @@
-package com.animechant.presets;
+package com.aguscerdo.animechant.presets;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;

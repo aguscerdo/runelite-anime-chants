@@ -1,8 +1,8 @@
-package com.animechant;
+package com.aguscerdo.animechant;
 
-import com.animechant.presets.TextEntry;
-import com.animechant.spells.SpellChantResolver;
-import com.animechant.spells.Spell;
+import com.aguscerdo.animechant.presets.TextEntry;
+import com.aguscerdo.animechant.spells.SpellChantResolver;
+import com.aguscerdo.animechant.spells.Spell;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.inject.Provides;

@@ -1,4 +1,4 @@
-package com.animechant.spells;
+package com.aguscerdo.animechant.spells;
 
 public enum SpellCastType {
     UNKNOWN,

@@ -1,4 +1,4 @@
-package com.animechant;
+package com.aguscerdo.animechant;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

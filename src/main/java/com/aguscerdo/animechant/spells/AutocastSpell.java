@@ -1,4 +1,4 @@
-package com.animechant.spells;
+package com.aguscerdo.animechant.spells;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

@@ -1,7 +1,7 @@
-package com.animechant.presets;
+package com.aguscerdo.animechant.presets;
 
-import com.animechant.spells.Spell;
-import com.animechant.spells.SpellCategory;
+import com.aguscerdo.animechant.spells.Spell;
+import com.aguscerdo.animechant.spells.SpellCategory;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.DeserializationFeature;

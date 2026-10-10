@@ -1,11 +1,11 @@
-package com.animechant.spells;
+package com.aguscerdo.animechant.spells;
 
 
-import com.animechant.AnimeChantConfig;
-import com.animechant.TextPreset;
-import com.animechant.presets.PresetLoader;
-import com.animechant.presets.RawPresetData;
-import com.animechant.presets.TextEntry;
+import com.aguscerdo.animechant.AnimeChantConfig;
+import com.aguscerdo.animechant.TextPreset;
+import com.aguscerdo.animechant.presets.PresetLoader;
+import com.aguscerdo.animechant.presets.RawPresetData;
+import com.aguscerdo.animechant.presets.TextEntry;
 import com.google.common.collect.ImmutableListMultimap;
 import com.google.common.collect.ListMultimap;
 import lombok.extern.slf4j.Slf4j;

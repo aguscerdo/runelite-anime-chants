@@ -1,4 +1,4 @@
-package com.animechant.spells;
+package com.aguscerdo.animechant.spells;
 
 /**
  * Groups of related spells. Used for text lookup and for delay tracking when a

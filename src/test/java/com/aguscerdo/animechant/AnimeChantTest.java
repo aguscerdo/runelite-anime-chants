@@ -1,4 +1,4 @@
-package com.animechant;
+package com.aguscerdo.animechant;
 
 import com.example.ExamplePlugin;
 import net.runelite.client.RuneLite;

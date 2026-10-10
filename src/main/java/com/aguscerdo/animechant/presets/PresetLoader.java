@@ -1,6 +1,6 @@
-package com.animechant.presets;
+package com.aguscerdo.animechant.presets;
 
-import com.animechant.TextPreset;
+import com.aguscerdo.animechant.TextPreset;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
@@ -18,7 +18,7 @@ import java.util.Optional;
 @Singleton
 public class PresetLoader {
     // Resource paths always use '/', regardless of OS (so no java.nio.file.Path here).
-    private static final String PRESETS_DIR = "/presets";
+    private static final String PRESETS_DIR = "/com/aguscerdo/animechant/presets";
 
     private static final ObjectMapper YAML_MAPPER = PresetYaml.createMapper();
 

@@ -1,4 +1,4 @@
-package com.animechant;
+package com.aguscerdo.animechant;
 
 import net.runelite.client.config.Config;
 import net.runelite.client.config.ConfigGroup;
