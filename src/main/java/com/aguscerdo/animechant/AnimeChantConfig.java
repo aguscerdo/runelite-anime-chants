@@ -21,7 +21,7 @@ public interface AnimeChantConfig extends Config {
 
     @ConfigItem(
             keyName = "spellsEnabled",
-            name = "Show text on spell cast",
+            name = "Enable Spell Chanting",
             description = "Display text when you cast a spell",
             section = SPELL_SECTION,
             position = 0
@@ -34,7 +34,7 @@ public interface AnimeChantConfig extends Config {
 
     @ConfigItem(
             keyName = SPELL_PRESET,
-            name = "Spell text list",
+            name = "Spell Text Preset",
             description = "Bundled list of spell text. Your overrides always take priority.",
             section = SPELL_SECTION,
             position = 1
