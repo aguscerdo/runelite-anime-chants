@@ -5,6 +5,7 @@ import com.aguscerdo.animechant.spells.SpellChantResolver;
 import com.aguscerdo.animechant.spells.Spell;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
+import com.google.inject.Binder;
 import com.google.inject.Provides;
 
 import java.util.*;
@@ -60,6 +61,10 @@ public class AnimeChantPlugin extends Plugin {
 
     private int textTicksLeft;
 
+    @Override
+    public void configure(Binder binder) {
+        binder.install(new AnimeChantModule());
+    }
 
     @Provides
     AnimeChantConfig provideConfig(ConfigManager configManager) {

@@ -11,12 +11,12 @@ public interface AnimeChantConfig extends Config {
     String GROUP = "anime-chant";
 
     @ConfigSection(
-            name = "Spell text",
+            name = "Spells",
             description = "Settings for text shown on spell cast",
             position = 1,
             closedByDefault = false
     )
-    String SPELL_SECTION = "spellSection";
+    String SPELL_SECTION = "anime-chant-spells";
 
 
     @ConfigItem(

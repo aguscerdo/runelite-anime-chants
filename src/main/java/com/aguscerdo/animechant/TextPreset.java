@@ -3,8 +3,6 @@ package com.aguscerdo.animechant;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-import java.util.Optional;
-
 /**
  * Bundled presets shown in the config dropdown. Contents live in
  * src/main/resources/com/animechant/presets/&lt;resourceName&gt;.
