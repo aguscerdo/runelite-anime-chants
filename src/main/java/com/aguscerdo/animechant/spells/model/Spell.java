@@ -1,4 +1,4 @@
-package com.aguscerdo.animechant.spells;
+package com.aguscerdo.animechant.spells.model;
 
 import com.aguscerdo.animechant.chantdata.TextEntry;
 import com.google.common.annotations.VisibleForTesting;
@@ -291,7 +291,7 @@ public enum Spell {
     @VisibleForTesting
     static final int WORLD_TARGETED_TIMEOUT_TICKS = 30;
     @VisibleForTesting
-    static final int INSTANT_TIMEOUT_TICKS = 6;
+    public static final int INSTANT_TIMEOUT_TICKS = 6;
 
     static {
         ImmutableMap.Builder<String, Spell> spellsByName = ImmutableMap.builder();

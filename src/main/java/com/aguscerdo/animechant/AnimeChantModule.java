@@ -2,10 +2,7 @@ package com.aguscerdo.animechant;
 
 import com.aguscerdo.animechant.chantdata.PresetLoader;
 import com.aguscerdo.animechant.chantdata.PresetLoaderImpl;
-import com.aguscerdo.animechant.spells.SpellCastDetector;
-import com.aguscerdo.animechant.spells.SpellCastDetectorImpl;
-import com.aguscerdo.animechant.spells.SpellTextResolver;
-import com.aguscerdo.animechant.spells.SpellTextResolverImpl;
+import com.aguscerdo.animechant.spells.*;
 import com.google.inject.AbstractModule;
 import com.google.inject.Singleton;
 
@@ -19,5 +16,6 @@ public class AnimeChantModule extends AbstractModule {
         bind(PresetLoader.class).to(PresetLoaderImpl.class).in(Singleton.class);
         bind(SpellCastDetector.class).to(SpellCastDetectorImpl.class).in(Singleton.class);
         bind(SpellTextResolver.class).to(SpellTextResolverImpl.class).in(Singleton.class);
+        bind(SpellPlugin.class).to(SpellPluginImpl.class).in(Singleton.class);
     }
 }

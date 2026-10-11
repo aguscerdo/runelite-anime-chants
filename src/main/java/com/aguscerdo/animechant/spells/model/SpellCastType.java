@@ -1,4 +1,4 @@
-package com.aguscerdo.animechant.spells;
+package com.aguscerdo.animechant.spells.model;
 
 /**
  * How a Spell is cast

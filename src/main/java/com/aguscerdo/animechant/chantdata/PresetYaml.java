@@ -1,7 +1,7 @@
 package com.aguscerdo.animechant.chantdata;
 
-import com.aguscerdo.animechant.spells.Spell;
-import com.aguscerdo.animechant.spells.SpellCategory;
+import com.aguscerdo.animechant.spells.model.Spell;
+import com.aguscerdo.animechant.spells.model.SpellCategory;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.*;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;

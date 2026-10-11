@@ -1,4 +1,4 @@
-package com.aguscerdo.animechant;
+package com.aguscerdo.animechant.spells.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,7 +9,7 @@ import lombok.Getter;
  */
 @AllArgsConstructor
 @Getter
-public enum TextPreset {
+public enum SpellTextPreset {
     NONE("None (overrides only)", ""),
     SPELL_NAME("Spell Name", ""),
     FANTASY("Fantasy", "fantasy.yaml"),

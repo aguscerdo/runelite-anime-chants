@@ -1,6 +1,7 @@
 package com.aguscerdo.animechant.spells;
 
 import com.aguscerdo.animechant.chantdata.TextEntry;
+import com.aguscerdo.animechant.spells.model.Spell;
 import com.google.inject.ImplementedBy;
 
 import java.util.Optional;

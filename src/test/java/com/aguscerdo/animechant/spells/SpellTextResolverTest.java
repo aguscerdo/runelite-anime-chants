@@ -1,10 +1,12 @@
 package com.aguscerdo.animechant.spells;
 
 import com.aguscerdo.animechant.AnimeChantConfig;
-import com.aguscerdo.animechant.TextPreset;
 import com.aguscerdo.animechant.chantdata.ChantData;
 import com.aguscerdo.animechant.chantdata.PresetLoader;
 import com.aguscerdo.animechant.chantdata.TextEntry;
+import com.aguscerdo.animechant.spells.model.Spell;
+import com.aguscerdo.animechant.spells.model.SpellCategory;
+import com.aguscerdo.animechant.spells.model.SpellTextPreset;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ImmutableListMultimap;
 import com.google.common.collect.ListMultimap;
@@ -78,13 +80,13 @@ public class SpellTextResolverTest {
         userSpellCategoryToText.put(SpellCategory.DEMONBANE, DEMONBANE_TEXT);
 
 
-        injectResolver(TextPreset.NONE);
+        injectResolver(SpellTextPreset.NONE);
 
         when(mockClient.getTickCount()).thenReturn(100);
     }
 
-    private void injectResolver(TextPreset textPreset) {
-        resolver = new SpellTextResolverImpl(textPreset,
+    private void injectResolver(SpellTextPreset spellTextPreset) {
+        resolver = new SpellTextResolverImpl(spellTextPreset,
                 spellToText,
                 categoryToText,
                 userSpellToText,
@@ -123,7 +125,7 @@ public class SpellTextResolverTest {
     public void resolve_userSpellOverridesPrioritizeOverPresets() {
         spellToText.put(Spell.BAKE_PIE, new TextEntry("I hate pies >:(", Optional.empty()));
         userSpellToText.put(Spell.BAKE_PIE, BAKE_PIE_TEXT);
-        injectResolver(TextPreset.NONE);
+        injectResolver(SpellTextPreset.NONE);
 
         assertThat(resolver.resolve(Spell.BAKE_PIE)).hasValue(BAKE_PIE_TEXT);
     }
@@ -133,7 +135,7 @@ public class SpellTextResolverTest {
     public void resolve_userSpellCategoryOverridesPrioritizeOverPresets() {
         categoryToText.put(SpellCategory.DEMONBANE, new TextEntry("Demons are great", Optional.empty()));
         userSpellCategoryToText.put(SpellCategory.DEMONBANE, DEMONBANE_TEXT);
-        injectResolver(TextPreset.NONE);
+        injectResolver(SpellTextPreset.NONE);
 
         assertThat(resolver.resolve(Spell.DARK_DEMONBANE)).hasValue(DEMONBANE_TEXT);
     }
@@ -153,7 +155,7 @@ public class SpellTextResolverTest {
 
     @Test
     public void resolve_spellNamePreset_returnsSpellNameEntry() {
-        injectResolver(TextPreset.SPELL_NAME);
+        injectResolver(SpellTextPreset.SPELL_NAME);
 
         assertThat(resolver.resolve(Spell.HIGH_LEVEL_ALCHEMY))
                 .hasValue(new TextEntry(Spell.HIGH_LEVEL_ALCHEMY.getName(), Optional.empty()));
@@ -163,7 +165,7 @@ public class SpellTextResolverTest {
     public void resolve_multipleVariants_returnsOneOfThem() {
         TextEntry otherTextEntry = new TextEntry("Fire 2", Optional.empty());
         spellToText.put(Spell.FIRE_STRIKE, otherTextEntry);
-        injectResolver(TextPreset.NONE);
+        injectResolver(SpellTextPreset.NONE);
 
         for (int i = 0; i < 20; i++) {
             Optional<TextEntry> result = resolver.resolve(Spell.FIRE_STRIKE);
@@ -177,7 +179,7 @@ public class SpellTextResolverTest {
     public void resolve_entryWithNoTextOrSound_returnsEmpty() {
         TextEntry otherTextEntry = new TextEntry("", Optional.empty());
         spellToText.put(Spell.WATER_WAVE, otherTextEntry);
-        injectResolver(TextPreset.NONE);
+        injectResolver(SpellTextPreset.NONE);
 
         assertThat(resolver.resolve(Spell.WATER_WAVE)).isEmpty();
     }
@@ -240,7 +242,7 @@ public class SpellTextResolverTest {
 
     @Test
     public void reloadAll_clearsThrottleState() {
-        when(config.spellPreset()).thenReturn(TextPreset.NONE);
+        when(config.spellPreset()).thenReturn(SpellTextPreset.NONE);
         when(config.spellTextDelayTicks()).thenReturn(10);
         when(mockClient.getTickCount()).thenReturn(CURRENT_TICK);
 
@@ -254,7 +256,7 @@ public class SpellTextResolverTest {
 
     @Test
     public void reloadPresets_noPresetChange_nothing() {
-        when(config.spellPreset()).thenReturn(TextPreset.NONE);
+        when(config.spellPreset()).thenReturn(SpellTextPreset.NONE);
 
         resolver.reloadPresets();
 
@@ -263,7 +265,7 @@ public class SpellTextResolverTest {
 
     @Test
     public void reloadPresets_presetsReturnsEmpty_emptyMaps() {
-        when(config.spellPreset()).thenReturn(TextPreset.FRIEREN);
+        when(config.spellPreset()).thenReturn(SpellTextPreset.FRIEREN);
         when(mockPresetLoader.loadPreset(any())).thenReturn(Optional.empty());
 
         assertThat(resolver.resolve(Spell.FIRE_STRIKE)).isPresent();
@@ -275,7 +277,7 @@ public class SpellTextResolverTest {
 
     @Test
     public void reloadPresets_updateFromPresets() {
-        when(config.spellPreset()).thenReturn(TextPreset.FRIEREN);
+        when(config.spellPreset()).thenReturn(SpellTextPreset.FRIEREN);
         when(mockPresetLoader.loadPreset(any())).thenReturn(Optional.of(
                 new ChantData("Frieren",
                         ImmutableListMultimap.of(SpellCategory.WATER, FIRE_TEXT),

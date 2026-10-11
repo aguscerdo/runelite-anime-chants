@@ -1,5 +1,6 @@
 package com.aguscerdo.animechant.spells;
 
+import com.aguscerdo.animechant.spells.model.Spell;
 import com.google.inject.Guice;
 import com.google.inject.testing.fieldbinder.Bind;
 import com.google.inject.testing.fieldbinder.BoundFieldModule;

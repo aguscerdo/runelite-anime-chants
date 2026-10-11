@@ -1,6 +1,6 @@
 package com.aguscerdo.animechant.chantdata;
 
-import com.aguscerdo.animechant.TextPreset;
+import com.aguscerdo.animechant.spells.model.SpellTextPreset;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
@@ -50,9 +50,9 @@ public class PresetLoaderImpl implements PresetLoader {
     }
 
     @Override
-    public Optional<ChantData> loadPreset(TextPreset preset) {
+    public Optional<ChantData> loadPreset(SpellTextPreset preset) {
         // Spell name doesn't need a mapping, use spell names directly.
-        if (preset == TextPreset.SPELL_NAME) {
+        if (preset == SpellTextPreset.SPELL_NAME) {
             return Optional.empty();
         }
 

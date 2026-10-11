@@ -1,5 +1,7 @@
 package com.aguscerdo.animechant.spells;
 
+import com.aguscerdo.animechant.spells.model.AutoCastSpell;
+import com.aguscerdo.animechant.spells.model.Spell;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Client;
 import net.runelite.api.MenuAction;

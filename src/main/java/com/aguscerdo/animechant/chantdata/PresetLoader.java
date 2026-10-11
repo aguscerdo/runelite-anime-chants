@@ -1,6 +1,6 @@
 package com.aguscerdo.animechant.chantdata;
 
-import com.aguscerdo.animechant.TextPreset;
+import com.aguscerdo.animechant.spells.model.SpellTextPreset;
 
 import java.util.Optional;
 
@@ -11,5 +11,5 @@ public interface PresetLoader {
      * @return the parsed preset, or empty if the preset has no backing file,
      * the resource is missing, or the file is invalid or an unsupported version.
      */
-    Optional<ChantData> loadPreset(TextPreset preset);
+    Optional<ChantData> loadPreset(SpellTextPreset preset);
 }

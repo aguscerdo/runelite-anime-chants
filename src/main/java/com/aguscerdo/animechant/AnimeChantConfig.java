@@ -1,5 +1,6 @@
 package com.aguscerdo.animechant;
 
+import com.aguscerdo.animechant.spells.model.SpellTextPreset;
 import net.runelite.client.config.*;
 
 @ConfigGroup(AnimeChantConfig.GROUP)
@@ -35,8 +36,8 @@ public interface AnimeChantConfig extends Config {
             section = SPELL_SECTION,
             position = 1
     )
-    default TextPreset spellPreset() {
-        return TextPreset.FANTASY;
+    default SpellTextPreset spellPreset() {
+        return SpellTextPreset.FANTASY;
     }
 
     String SPELL_OVERRIDES = "customSpellOverrides";
@@ -114,13 +115,35 @@ public interface AnimeChantConfig extends Config {
         return false;
     }
 
+    @ConfigItem(
+            keyName = "spellSoundsEnabled",
+            name = "Spell Sounds",
+            description = "Play sounds (if any) when chanting a spell.",
+            section = SPELL_SECTION,
+            position = 7
+    )
+    default boolean spellSoundsEnabled() {
+        return false;
+    }
+
+    @Range(min = 0, max = 100)
+    @ConfigItem(
+            keyName = "soundVolume",
+            name = "Sound Volume",
+            description = "Volume of chant sounds",
+            position = 5
+    )
+    default int soundVolume() {
+        return 65;
+    }
+
 
     @Range(min = 3, max = 15)
     @ConfigItem(
             keyName = "durationTicks",
             name = "Display duration (ticks)",
             description = "How long the text stays above your head",
-            position = 5
+            position = 6
     )
     default int durationTicks() {
         return 3;
@@ -131,7 +154,7 @@ public interface AnimeChantConfig extends Config {
             keyName = "scratchPad",
             name = "Scratchpad (no effect)",
             description = "A scratchpad to copy and paste differnet presets you may have.",
-            position = 6
+            position = 7
     )
     default String scratchPad() {
         return "";

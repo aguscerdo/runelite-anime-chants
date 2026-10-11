@@ -1,8 +1,10 @@
 package com.aguscerdo.animechant.spells;
 
 import com.aguscerdo.animechant.AnimeChantConfig;
-import com.aguscerdo.animechant.TextPreset;
 import com.aguscerdo.animechant.chantdata.*;
+import com.aguscerdo.animechant.spells.model.Spell;
+import com.aguscerdo.animechant.spells.model.SpellCategory;
+import com.aguscerdo.animechant.spells.model.SpellTextPreset;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableListMultimap;
 import com.google.common.collect.ListMultimap;
@@ -33,7 +35,7 @@ public class SpellTextResolverImpl implements SpellTextResolver {
     @Inject
     private AnimeChantConfig config;
 
-    private TextPreset currentSpellPreset;
+    private SpellTextPreset currentSpellPreset;
 
     private ImmutableListMultimap<Spell, TextEntry> presetSpellToText;
     private ImmutableListMultimap<Spell, TextEntry> userOverrideSpellToText;
@@ -47,12 +49,12 @@ public class SpellTextResolverImpl implements SpellTextResolver {
     private final Map<Spell, Integer> lastDisplayTicks = new HashMap<>();
 
     public SpellTextResolverImpl() {
-        currentSpellPreset = TextPreset.NONE;
+        currentSpellPreset = SpellTextPreset.NONE;
         presetSpellToText = ImmutableListMultimap.of();
         presetSpellCategoryToText = ImmutableListMultimap.of();
     }
 
-    SpellTextResolverImpl(TextPreset currentSpellPreset,
+    SpellTextResolverImpl(SpellTextPreset currentSpellPreset,
                           ListMultimap<Spell, TextEntry> presetSpellToText,
                           ListMultimap<SpellCategory, TextEntry> presetSpellCategoryToText,
                           ListMultimap<Spell, TextEntry> userSpellToText,
@@ -70,7 +72,7 @@ public class SpellTextResolverImpl implements SpellTextResolver {
 
     @Override
     public void clear() {
-        currentSpellPreset = TextPreset.NONE;
+        currentSpellPreset = SpellTextPreset.NONE;
 
         presetSpellToText = ImmutableListMultimap.of();
         presetSpellCategoryToText = ImmutableListMultimap.of();
@@ -187,7 +189,7 @@ public class SpellTextResolverImpl implements SpellTextResolver {
         }
 
         // Presets
-        if (currentSpellPreset == TextPreset.SPELL_NAME) {
+        if (currentSpellPreset == SpellTextPreset.SPELL_NAME) {
             log.debug("Resolved spell to its name: {}", spell);
             return Optional.of(spell.asTextEntry());
         }
