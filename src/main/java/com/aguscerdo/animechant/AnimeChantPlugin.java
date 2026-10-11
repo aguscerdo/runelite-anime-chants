@@ -15,6 +15,7 @@ import net.runelite.client.eventbus.EventBus;
 import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
+import net.runelite.client.util.Filepath;
 
 import javax.inject.Inject;
 import java.io.IOException;
@@ -22,7 +23,11 @@ import java.util.Optional;
 import java.util.concurrent.ScheduledExecutorService;
 
 @Slf4j
-@PluginDescriptor(name = "Anime Chant", description = "Shows custom text when you cast spells")
+@PluginDescriptor(
+        name = "Anime Chant",
+        description = "Shows custom text when you cast spells",
+        tags = {"anime", "spells", "sounds", "spec"},
+        internalName = "anime-chant")
 public class AnimeChantPlugin extends Plugin {
 
 
@@ -57,8 +62,17 @@ public class AnimeChantPlugin extends Plugin {
     @Override
     protected void startUp() {
         eventBus.register(spellPlugin);
-
         spellPlugin.startUp();
+
+        executor.execute(() -> {
+            try {
+                Filepath pluginDirectory = getPluginDirectory();
+                pluginDirectory.createDirectories();
+                log.debug("Anime chants plugin directory: {}", pluginDirectory);
+            } catch (Exception e) {
+                log.error("Failed to initialize directory.", e);
+            }
+        });
     }
 
     @Override
