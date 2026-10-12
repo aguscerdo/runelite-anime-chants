@@ -13,6 +13,8 @@ import java.io.Reader;
 import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 
+// TODO copy yaml files to plugin data for users to edit.
+
 @Slf4j
 @Singleton
 public class PresetLoaderImpl implements PresetLoader {
