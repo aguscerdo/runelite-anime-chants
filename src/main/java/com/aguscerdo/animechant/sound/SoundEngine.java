@@ -8,7 +8,6 @@ import net.runelite.client.util.Filepath;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.util.Optional;
-import java.util.concurrent.ScheduledExecutorService;
 
 @Singleton
 @Slf4j
@@ -20,17 +19,18 @@ public class SoundEngine {
     @Inject
     private AudioPlayer audioPlayer;
 
-    @Inject
-    private ScheduledExecutorService executor; // RuneLite's shared pool
-
-
     public void playSound(Filepath pluginDir, String soundFile) {
         if (config.soundVolume() == 0) {
             return;
         }
 
         Optional<Filepath> resolved = FileManager.resolvePath(pluginDir, soundFile);
-        if (resolved.isEmpty()) return;
+        if (resolved.isEmpty()) {
+            log.debug("Could not resolve sound file: {}", soundFile);
+            return;
+        }
+
+        log.debug("Playing sound at {}", resolved);
 
 
         float gain = 20f * (float) Math.log10(config.soundVolume() / 100f);

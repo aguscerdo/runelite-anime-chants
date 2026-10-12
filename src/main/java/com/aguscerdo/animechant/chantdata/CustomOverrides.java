@@ -90,7 +90,7 @@ public class CustomOverrides {
         }
 
         return new CustomOverridesResult(
-                new ChantData("custom", spellCategories, spells),
+                new ChantData("custom", "", spellCategories, spells),
                 invalidLines.build()
         );
     }

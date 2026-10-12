@@ -119,7 +119,6 @@ public enum Spell {
     // Handles both Arceuus and Standard Teleport
     APE_ATOLL_TELEPORT("Ape Atoll Teleport", SpellCategory.TELEPORT, SpellCastType.INSTANT, ImmutableList.of(714, 715, 3865, 6575)),
 
-
     // Standard - Teleother
     TELEOTHER_LUMBRIDGE("Teleother Lumbridge", SpellCategory.TELE_OTHER, SpellCastType.WORLD_TARGET, ImmutableList.of(1818)),
     TELEOTHER_FALADOR("Teleother Falador", SpellCategory.TELE_OTHER, SpellCastType.WORLD_TARGET, ImmutableList.of(1818)),
@@ -238,20 +237,28 @@ public enum Spell {
     TELE_GROUP_CATHERBY("Tele Group Catherby", SpellCategory.TELEPORT, SpellCastType.INSTANT, ImmutableList.of(1816)),
     TELE_GROUP_ICE_PLATEAU("Tele Group Ice Plateau", SpellCategory.TELEPORT, SpellCastType.INSTANT, ImmutableList.of(1816)),
 
-    // Lunar - Other
-    ASTRAL_CONTACT("Astral Contact", SpellCategory.UNKNOWN, SpellCastType.INSTANT, ImmutableList.of(11904)),
-    BAKE_PIE("Bake Pie", SpellCategory.UNKNOWN, SpellCastType.INSTANT, ImmutableList.of(4413)),
-    BOOST_POTION_SHARE("Boost Potion Share", SpellCategory.UNKNOWN, SpellCastType.INVENTORY_TARGET, ImmutableList.of(4413)),
+    // Lunar - Vengeance
+    VENGEANCE("Vengeance", SpellCategory.VENGEANCE, SpellCastType.INSTANT, ImmutableList.of(8316, 8317, 10626)),
+    VENGEANCE_OTHER("Vengeance Other", SpellCategory.VENGEANCE, SpellCastType.WORLD_TARGET, ImmutableList.of(8316, 8317, 10626)),
+
+    // Lunar - Cure
     CURE_GROUP("Cure Group", SpellCategory.CURE, SpellCastType.INSTANT, ImmutableList.of(4411)),
     CURE_ME("Cure Me", SpellCategory.CURE, SpellCastType.INSTANT, ImmutableList.of(4411)),
     CURE_OTHER("Cure Other", SpellCategory.CURE, SpellCastType.WORLD_TARGET, ImmutableList.of(4411)),
     CURE_PLANT("Cure Plant", SpellCategory.CURE, SpellCastType.WORLD_TARGET, ImmutableList.of(4432)), // 4432?
+
+    // Lunar - Heal
+    HEAL_GROUP("Heal Group", SpellCategory.HEAL, SpellCastType.INSTANT, ImmutableList.of(709)),
+    HEAL_OTHER("Heal Other", SpellCategory.HEAL, SpellCastType.WORLD_TARGET, ImmutableList.of(709)),
+
+    // Lunar - Other
+    ASTRAL_CONTACT("Astral Contact", SpellCategory.UNKNOWN, SpellCastType.INSTANT, ImmutableList.of(11904)),
+    BAKE_PIE("Bake Pie", SpellCategory.UNKNOWN, SpellCastType.INSTANT, ImmutableList.of(4413)),
+    BOOST_POTION_SHARE("Boost Potion Share", SpellCategory.UNKNOWN, SpellCastType.INVENTORY_TARGET, ImmutableList.of(4413)),
     DREAM("Dream", SpellCategory.UNKNOWN, SpellCastType.INSTANT, ImmutableList.of(7627)),
     ENERGY_TRANSFER("Energy Transfer", SpellCategory.UNKNOWN, SpellCastType.WORLD_TARGET, ImmutableList.of(4411)),
     FERTILE_SOIL("Fertile Soil", SpellCategory.UNKNOWN, SpellCastType.WORLD_TARGET, ImmutableList.of(4413)),
     GEOMANCY("Geomancy", SpellCategory.UNKNOWN, SpellCastType.INSTANT, ImmutableList.of(7118)),
-    HEAL_GROUP("Heal Group", SpellCategory.HEAL, SpellCastType.INSTANT, ImmutableList.of(709)),
-    HEAL_OTHER("Heal Other", SpellCategory.HEAL, SpellCastType.WORLD_TARGET, ImmutableList.of(709)),
     HUMIDIFY("Humidify", SpellCategory.UNKNOWN, SpellCastType.INSTANT, ImmutableList.of(6294)),
     HUNTER_KIT("Hunter Kit", SpellCategory.UNKNOWN, SpellCastType.INSTANT, ImmutableList.of(6303)),
     MAGIC_IMBUE("Magic Imbue", SpellCategory.UNKNOWN, SpellCastType.INSTANT, ImmutableList.of(722, 8970)),
@@ -264,9 +271,7 @@ public enum Spell {
     STAT_SPY("Stat Spy", SpellCategory.UNKNOWN, SpellCastType.WORLD_TARGET, ImmutableList.of(6293)),
     STRING_JEWELLERY("String Jewellery", SpellCategory.UNKNOWN, SpellCastType.INSTANT, ImmutableList.of(4412)),
     SUPERGLASS_MAKE("Superglass Make", SpellCategory.UNKNOWN, SpellCastType.INSTANT, ImmutableList.of(4413)),
-    TAN_LEATHER("Tan Leather", SpellCategory.UNKNOWN, SpellCastType.INSTANT, ImmutableList.of(712)),
-    VENGEANCE("Vengeance", SpellCategory.VENGEANCE, SpellCastType.INSTANT, ImmutableList.of(8316, 8317, 10626)),
-    VENGEANCE_OTHER("Vengeance Other", SpellCategory.VENGEANCE, SpellCastType.WORLD_TARGET, ImmutableList.of(8316, 8317, 10626));
+    TAN_LEATHER("Tan Leather", SpellCategory.UNKNOWN, SpellCastType.INSTANT, ImmutableList.of(712));
 
     private final String name;
     private final SpellCategory spellCategory;

@@ -1,0 +1,303 @@
+version: 1
+name: Shadowverse
+spell_sound_directory: shadowverse/spells
+spell_categories:
+  fire:
+    - text: Burn
+      sound: fire_1.wav
+    - text: Buuurn
+      sound: fire_2.wav
+    - text: Burn
+      sound: fire_3.wav
+    - text: Burn
+      sound: fire_4.wav
+    - text: Burn to nothing
+      sound: fire_5.wav
+  water:
+    - text: Flow like water
+      sound: water_1.wav
+    - text: Respect the sea
+      sound: water_2.wav
+    - text: Try this water
+      sound: water_3.wav
+    - text: Too humid for you?
+      sound: water_4.wav
+  earth:
+    - text: Embrace the earth
+      sound: earth_1.wav
+    - text: Turn to stone
+      sound: earth_2.wav
+    - text: Kiss the dirt
+      sound: earth_3.wav
+  air:
+    - text: Wind storm!!
+      sound: air_1.wav
+    - text: Wind... Wind!
+      sound: air_2.wav
+    - text: Let the wind blow
+      sound: air_3.wav
+    - text: Winds of Glory
+      sound: air_4.wav
+    - text: Can you stop the wind?
+      sound: air_5.wav
+    - text: Winds
+      sound: air_6.wav
+    - text: Whooosh
+      sound: air_7.wav
+  ice:
+    - text: Freeze
+      sound: ice_1.wav
+    - text: Don't be so cold
+      sound: ice_2.wav
+    - text: Freeze
+      sound: ice_3.wav
+    - text: It's cold, 'in it
+      sound: ice_4.wav
+  smoke:
+    - text: Turn to ash!
+      sound: smoke_1.wav
+    - text: To ash
+      sound: smoke_2.wav
+    - text: Your pathetic life, turn to ash!
+      sound: smoke_3.wav
+  shadow:
+    - text: Death from the shadows
+      sound: shadow_1.wav
+    - text: Wither in the shadows!
+      sound: shadow_2.wav
+  blood:
+    - text: Your blood is tasty.
+      sound: blood_1.wav
+    - text: Covenant of blood!
+      sound: blood_2.wav
+    - text: Shall we cross blood?
+      sound: blood_3.wav
+  alchemy:
+    - text: Time to make some money!
+      sound: alchemy_1.wav
+    - text: Money makes the world go roud.
+      sound: alchemy_2.wav
+    - text: Papa loves gold
+      sound: alchemy_3.wav
+  demonbane:
+    - text: Purification
+      sound: demonbane_1.wav
+    - text: Erradicate all demons
+      sound: demonbane_2.wav
+    - text: Up to heaven with you.
+      sound: demonbane_3.wav
+    - text: The word of heaven is truth!
+  thrall:
+    - text: Rise from the earth...
+      sound: thrall_1.wav
+    - text: Spirits
+      sound: thrall_2.wav
+  bind:
+    - text: Stay still
+      sound: bind_1.wav
+    - text: Geez, stay still
+      sound: bind_2.wav
+    - text: Don't move
+      sound: bind_3.wav
+    - text: Can't move, can you?
+      sound: bind_4.wav
+  curse:
+    - text: Curses upon you!
+      sound: curse_1.wav
+    - text: A curse upon you!
+      sound: curse_2.wav
+    - text: Wanna get cursed?
+      sound: curse_3.wav
+  enchant:
+    - text: Let the gems light your way to succes
+      sound: enchant.wav
+  reanimate:
+    - text: My kingdom rises again
+      sound: reanimate_1.wav
+    - text: The dead walk here
+      sound: reanimate_2.wav
+    - text: Why would the dead need a living wage?
+      sound: reanimate_3.wav
+  offering:
+    - text: I don't offer salvation. Just gratitude!
+      sound: offering_1.wav
+    - text: An offering
+      sound: offering_2.wav
+  corruption:
+    - text: The corrupted soulstyle will not turned it evil.
+      sound: corruption_1.wav
+    - text: Soar into a world of corruption!
+      sound: corruption_2.wav
+
+  cure:
+    - text: This'll cure what ails ya!
+      sound: cure_1.wav
+    - text: Purification!
+      sound: cure_2.wav
+  heal:
+    - text: Be healed, my heroes.
+      sound: heal_1.wav
+    - text: I fulfill my duty with healing light.
+      sound: heal_2.wav
+  teleport:
+    - text: Commencing transmission
+      sound: teleport_1.wav
+    - text: Reforming dimension
+      sound: teleport_2.wav
+  tele_other:
+    - text: Begone
+      sound: teleother_1.wav
+    - text: Begone
+      sound: teleother_2.wav
+  tele_group:
+    - text: Let's go!
+      sound: tele_group_1.wav
+    - text: Let's go everyone
+      sound: tele_group_2.wav
+    - text: Come on, let's go
+      sound: tele_group_3.wav
+  grasp:
+    - text: Grasp thy destiny
+      sound: grasp_1.wav
+
+spells:
+  flames of zamorak:
+    - text: I'll engulf the world in flame
+      sound: zamorak_1.wav
+  Lvl-1 enchant:
+    - text: Oh holy sapphire!
+      sound: sapphire.wav
+  Lvl-2 enchant:
+    - text: Emerald Light
+      sound: emerald.wav
+  Telekinetic grab:
+    - text: Yoink!
+      sound: telegrab_1.wav
+  Vengeance other:
+    - text: Take my vengeance
+      sound: venge_other.wav
+  Vengeance:
+    - text: Revenge
+      sound: vengeance_1.wav
+    - text: Revenge is all I desire
+      sound: vengeance_2.wav
+  Dream:
+    - text: Entering sleep mode
+      sound: dream_1.wav
+    - text: Ah, back to sleep
+      sound: dream_2.wav
+  Bones to Bananas:
+    - text: Bananas
+      sound: bananas_1.wav
+    - text: My king, look at these fruits
+      sound: fruit_1.wav
+  Bones to Peaches:
+    - text: My king, look at these fruits
+      sound: fruit_1.wav
+  Superheat item:
+    - text: Ah,we musn't forget to prepare the ore
+      sound: superheat_1.wav
+  Iban Blast:
+    - text: Blast off
+      sound: iban_blast_1.wav
+    - text: Magic is a blast
+      sound: iban_blast_2.wav
+  Crumble undead:
+    - text: Crumble, shatter and banish
+      sound: crumble_undead_1.wav
+    - text: All shall crumble before me
+      sound: crumble_undead_2.wav
+  Resurrect crops:
+    - text: Trees needs doctors too
+      sound: resurrect_crops_1.wav
+  Mark of Darkness:
+    - text: The darkness doesn't end
+      sound: mark_of_darkness_1.wav
+    - text: Even if darkness consumes me
+      sound: mark_of_darkness_2.wav
+  Ward of Arceuus:
+    - text: Godsworn wall, unmoving shield
+      sound: ward_1.wav
+  Death Charge:
+    - text: Your death will make me stronger
+      sound: death_charge_1.wav
+    - text: Yeah, yeah, you're relly special
+      sound: death_charge_2.wav
+  Dark Lure:
+    - text: Come
+      sound: dark_lure_1.wav
+    - text: Come now
+      sound: dark_lure_2.wav
+    - text: Come back!
+      sound: dark_lure_3.wav
+  Shadow Veil:
+    - text: Night's veil descends
+      sound: shadow_veil_1.wav
+    - text: Can you see me?
+      sound: shadow_veil_2.wav
+  Vile Vigour:
+    - text: How vile
+      sound: vile_vigour_1.wav
+  Degrime:
+    - text: Oh! A healing herb!
+      sound: degrime_1.wav
+    - text: I'll clean things up
+      sound: degrime_2.wav
+  Astral Contact:
+    - text: Link this world to the other realms
+      sound: astral_contact_1.wav
+  Energy Transfer:
+    - text: My music will pump you full of energy!
+      sound: energy_transfer_1.wav
+  Bake Pie:
+    - text: Cook like... without a cook book?
+      sound: bake_pie_1.wav
+    - text: Eat your veggies
+      sound: bake_pie_2.wav
+  Boost Potion Share:
+    - text: Quaff down this potion
+      sound: potion_1.wav
+  Fertile Soil:
+    - text: Did you say thank you to the soil?
+      sound: fertile_soil_1.wav
+  Geomancy:
+    - text: Seeing you grown is my reward
+      sound: geomancy_1.wav
+  Humidify:
+    - text: Fill it all up
+      sound: humidify_1.wav
+    - text: Feel my glass to the brim
+      sound: humidify_2.wav
+  Hunter Kit:
+    - text: I hope you enjoy my traps
+      sound: hunter_kit_1.wav
+  Magic Imbue:
+    - text: Gaze upon my lustrous runes
+      sound: imbue_1.wav
+  Plank Make:
+    - text: This isn't your run of the mill spell
+      sound: plank_make_1.wav
+  Spellbook Swap:
+    - text: Let's try this new spell
+      sound: spellbook_swap_1.wav
+    - text: A happy little spell just for you
+      sound: spellbook_swap_2.wav
+    - text: And a whoopsie-dipsi alakazam
+      sound: spellbook_swap_3.wav
+  Spin Flax:
+    - text: Now spin
+      sound: spin_flax_1.wav
+  String Jewelery:
+    - text: Tug my strings tight, sweetheart
+      sound: string_jewelery_1.wav
+  Superglass Make:
+    - text: I'd do anything for Glass
+      sound: superglass_make_1.wav
+  Tan Leather:
+    - text: Jealous of my pelt?
+      sound: tan_leather_1.wav
+
+specials:
+  armadyl godsword:
+    - text: From the heavens above justice is delivered!
+      sound: specs/ags.wav

@@ -118,7 +118,7 @@ public class SpellPluginImpl implements SpellPlugin {
         Optional<TextEntry> manualSpellText = castDetector.handleManualSpell(me.getAnimation()).flatMap(textResolver::resolve);
         if (manualSpellText.isPresent()) {
             displayText(manualSpellText.get());
-            return Optional.empty();
+            return manualSpellText;
         }
 
         // Manual spells did not match, try auto-cast.

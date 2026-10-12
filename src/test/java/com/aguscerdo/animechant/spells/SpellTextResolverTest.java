@@ -280,6 +280,7 @@ public class SpellTextResolverTest {
         when(config.spellPreset()).thenReturn(SpellTextPreset.FRIEREN);
         when(mockPresetLoader.loadPreset(any())).thenReturn(Optional.of(
                 new ChantData("Frieren",
+                        "",
                         ImmutableListMultimap.of(SpellCategory.WATER, FIRE_TEXT),
                         ImmutableListMultimap.of(Spell.FIRE_STRIKE, HIGH_LEVEL_ALCHEMY_TEXT)
                 )

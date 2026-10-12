@@ -106,6 +106,7 @@ public class AnimeChantPlugin extends Plugin {
 
         executor.execute(() -> {
             try {
+                // TODO merge path with file one.
                 soundEngine.playSound(getPluginDirectory(), soundFile.get());
             } catch (RuntimeException | IOException e) {
                 log.error("Failed to play sound file: {}", soundFile.get(), e);
