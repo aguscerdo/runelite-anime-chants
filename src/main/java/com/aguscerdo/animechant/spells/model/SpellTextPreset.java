@@ -10,13 +10,13 @@ import lombok.Getter;
 @AllArgsConstructor
 @Getter
 public enum SpellTextPreset {
-    NONE("None (overrides only)", ""),
+    NONE("None", ""),
     FANTASY("Fantasy", "fantasy.yaml"),
     ANIME_MIX("Anime Mix", "anime_mix.yaml"),
     FRIEREN("Frieren", "frieren.yaml"),
     PALWORLD("Palworld", "palworld.yaml"),
     DEMON_SLAYER("Demon Slayer", "demon_slayer.yaml"),
-    SHADOWVERSE("Shadowverse voicelines", "shadowverse.yaml");
+    SHADOWVERSE("Shadowverse", "shadowverse.yaml");
 
 
     private final String label;

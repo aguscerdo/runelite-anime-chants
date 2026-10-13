@@ -10,8 +10,8 @@ import lombok.Getter;
 @AllArgsConstructor
 @Getter
 public enum SpecWeaponTextPreset {
-    NONE("None (overrides and fallback only)", ""),
-    ANIME_MIX("Mix of anime phrases", "");
+    NONE("None", ""),
+    ANIME_MIX("Anime Mix", "");
 
 
     private final String label;

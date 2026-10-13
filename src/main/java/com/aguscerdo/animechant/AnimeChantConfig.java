@@ -9,11 +9,13 @@ import net.runelite.client.config.*;
 public interface AnimeChantConfig extends Config {
     String GROUP = "anime-chant";
 
+    // ------- Spells ------- //
+
     @ConfigSection(
             name = "Spells",
             description = "Settings for text shown on spell cast",
             position = 1,
-            closedByDefault = false
+            closedByDefault = true
     )
     String SPELL_SECTION = "anime-chant-spells";
 
@@ -41,8 +43,27 @@ public interface AnimeChantConfig extends Config {
     default SpellTextPreset spellPreset() {
         return SpellTextPreset.FANTASY;
     }
+    @ConfigSection(
+            name = "Special Attacks",
+            description = "Settings for text shown on special attacks",
+            position = 2,
+            closedByDefault = true
+    )
+    String SPECIAL_ATTACKS_SECTION = "anime-chant-special-attacks";
+
 
     String SPELL_OVERRIDES = "customSpellOverrides";
+
+    @ConfigItem(
+            keyName = "fallbackToSpellName",
+            name = "Fall back to Spell Name",
+            description = "When enabled fall back to displaying the spells name if there are no matches.",
+            section = SPELL_SECTION,
+            position = 2
+    )
+    default boolean fallbackToSpellName() {
+        return true;
+    }
 
     @ConfigItem(
             keyName = SPELL_OVERRIDES,
@@ -61,12 +82,34 @@ public interface AnimeChantConfig extends Config {
                     "- Setting a spell to <b>None</b> or <b>empty</b> will disable it<br>" +
                     "- Invalid lines will be ignored",
             section = SPELL_SECTION,
-            position = 2
+            position = 3
     )
     default String customSpellOverrides() {
         return "";
     }
 
+    @ConfigItem(
+            keyName = "shoutSpells",
+            name = "Shout Spells",
+            description = "Make spells more intense by adding ! at the end of every chant!<br>" +
+                    "No change if text ends with dot `.` or exclamation point `!`.",
+            section = SPELL_SECTION,
+            position = 4
+    )
+    default boolean shoutSpells() {
+        return false;
+    }
+
+    @ConfigItem(
+            keyName = "spellSoundsEnabled",
+            name = "Spell Sounds",
+            description = "Play sounds (if any) when chanting a spell.",
+            section = SPELL_SECTION,
+            position = 5
+    )
+    default boolean spellSoundsEnabled() {
+        return false;
+    }
 
     @Range(min = 0)
     @ConfigItem(
@@ -74,11 +117,13 @@ public interface AnimeChantConfig extends Config {
             name = "Spell text delay (ticks)",
             description = "Text is hidden if the same spell/category showed text less than N ticks ago.",
             section = SPELL_SECTION,
-            position = 3
+            position = 6
     )
     default int spellTextDelayTicks() {
         return 0;
     }
+
+    // ------- Special Attacks ------- //
 
     @Range(min = 0)
     @ConfigItem(
@@ -88,53 +133,12 @@ public interface AnimeChantConfig extends Config {
                     + "(even if that cast showed nothing).<br>" +
                     "Spell-name text and category text are tracked separately.",
             section = SPELL_SECTION,
-            position = 4
+            position = 7
     )
     default int spellTextDelayFromLastCastTicks() {
         return 0;
     }
 
-    @ConfigItem(
-            keyName = "shoutSpells",
-            name = "Shout Spells",
-            description = "Make spells more intense by adding ! at the end of every chant!<br>" +
-                    "No change if text ends with dot `.` or exclamation point `!`.",
-            section = SPELL_SECTION,
-            position = 5
-    )
-    default boolean shoutSpells() {
-        return false;
-    }
-
-    @ConfigItem(
-            keyName = "fallbackToSpellName",
-            name = "Fall back to Spell Name",
-            description = "When enabled fall back to displaying the spells name if there are no matches.",
-            section = SPELL_SECTION,
-            position = 6
-    )
-    default boolean fallbackToSpellName() {
-        return false;
-    }
-
-    @ConfigItem(
-            keyName = "spellSoundsEnabled",
-            name = "Spell Sounds",
-            description = "Play sounds (if any) when chanting a spell.",
-            section = SPELL_SECTION,
-            position = 7
-    )
-    default boolean spellSoundsEnabled() {
-        return false;
-    }
-
-    @ConfigSection(
-            name = "Special Attacks",
-            description = "Settings for text shown on special attacks",
-            position = 1,
-            closedByDefault = false
-    )
-    String SPECIAL_ATTACKS_SECTION = "anime-chant-special-attacks";
     String SPECIAL_ATTACK_PRESET = "specialAttackPreset";
     String SPECIAL_ATTACK_OVERRIDE = "customSpecialAttackOverride";
 
@@ -151,18 +155,34 @@ public interface AnimeChantConfig extends Config {
 
     @ConfigItem(
             keyName = SPECIAL_ATTACK_PRESET,
-            name = "Special Attack Text Preset",
+            name = "Spec Text Preset",
             description = "Bundled list of special attack text. Your overrides always take priority.",
             section = SPECIAL_ATTACKS_SECTION,
-            position = 2
+            position = 1
     )
     default SpecWeaponTextPreset specialAttackPreset() {
         return SpecWeaponTextPreset.NONE;
     }
 
+
+    @ConfigItem(
+            keyName = "specialAttackFallback",
+            name = "Spec Fallback",
+            description = "How to fallback when no Special Attack preset or override is matched.<br>" +
+                    "NONE: No fallback<br>" +
+                    "SPECIAL_ATTACK_NAME: The name of the special attack. (e.g. 'Quick smash' for Granite Mail)<br>" +
+                    "WEAPON_NAME: The name of the weapon (e.g. 'Excalibur', 'Abyssal Whip')",
+            section = SPECIAL_ATTACKS_SECTION,
+            position = 2
+    )
+    default SpecialAttackFallback specialAttackFallback() {
+        return SpecialAttackFallback.SPECIAL_ATTACK_NAME;
+    }
+
+
     @ConfigItem(
             keyName = SPECIAL_ATTACK_OVERRIDE,
-            name = "Custom Special Attack Overrides",
+            name = "Spec Overrides",
             description = "Custom user special attack overrides.<br>" +
                     "Each line must contain one entry formatted as follows:<br><br>" +
                     "--------------------------------------------------------<br>" +
@@ -177,7 +197,7 @@ public interface AnimeChantConfig extends Config {
                     "- Setting a weapon spec to <b>None</b> or <b>empty</b> will disable it<br>" +
                     "- Invalid lines will be ignored",
             section = SPECIAL_ATTACKS_SECTION,
-            position = 2
+            position = 3
     )
     default String customSpecialAttackOverrides() {
         return "";
@@ -186,28 +206,14 @@ public interface AnimeChantConfig extends Config {
 
     @ConfigItem(
             keyName = "shoutSpecialAttacks",
-            name = "Shout Special Attacks",
+            name = "Shout Specs",
             description = "Make your specs more intense by adding ! at the end of every chant!<br>" +
                     "No change if text ends with dot `.` or exclamation point `!`.",
             section = SPECIAL_ATTACKS_SECTION,
-            position = 5
+            position = 4
     )
     default boolean shoutSpecialAttacks() {
         return false;
-    }
-
-    @ConfigItem(
-            keyName = "specialAttackFallback",
-            name = "Special Attack Fallback",
-            description = "How to fallback when no Special Attack preset or override is matched.<br>" +
-                    "NONE: No fallback<br>" +
-                    "SPECIAL_ATTACK_NAME: The name of the special attack. (e.g. 'Quick smash' for Granite Mail)<br>" +
-                    "WEAPON_NAME: The name of the weapon (e.g. 'Excalibur', 'Abyssal Whip')",
-            section = SPECIAL_ATTACKS_SECTION,
-            position = 6
-    )
-    default SpecialAttackFallback specialAttackFallback() {
-        return SpecialAttackFallback.NONE;
     }
 
     @ConfigItem(
@@ -215,7 +221,7 @@ public interface AnimeChantConfig extends Config {
             name = "Special Attack Sounds",
             description = "Play sounds (if any) when performing a special attack.",
             section = SPECIAL_ATTACKS_SECTION,
-            position = 7
+            position = 6
     )
     default boolean specialAttackSoundsEnabled() {
         return false;
@@ -230,7 +236,7 @@ public interface AnimeChantConfig extends Config {
             position = 5
     )
     default int soundVolume() {
-        return 65;
+        return 30;
     }
 
 
