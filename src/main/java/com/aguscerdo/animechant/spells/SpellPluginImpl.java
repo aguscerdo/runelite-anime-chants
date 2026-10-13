@@ -1,12 +1,10 @@
 package com.aguscerdo.animechant.spells;
 
 import com.aguscerdo.animechant.AnimeChantConfig;
-import com.aguscerdo.animechant.chantdata.CustomOverrides;
-import com.aguscerdo.animechant.chantdata.TextEntry;
+import com.aguscerdo.animechant.chantdata.model.TextEntry;
 import com.aguscerdo.animechant.spells.model.Spell;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
-import com.google.inject.Provides;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Client;
 import net.runelite.api.MenuAction;
@@ -16,7 +14,6 @@ import net.runelite.api.events.MenuOptionClicked;
 import net.runelite.api.gameval.InterfaceID;
 import net.runelite.api.widgets.Widget;
 import net.runelite.api.widgets.WidgetUtil;
-import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.events.ConfigChanged;
 import net.runelite.client.util.Text;
@@ -58,23 +55,13 @@ public class SpellPluginImpl implements SpellPlugin {
     @Inject
     private SpellTextResolver textResolver;
 
-    private int textTicksLeft;
-
-    @Provides
-    AnimeChantConfig provideConfig(ConfigManager configManager) {
-        return configManager.getConfig(AnimeChantConfig.class);
-    }
 
     public void startUp() {
-        textTicksLeft = 0;
-
         castDetector.reset();
         textResolver.reloadAll();
     }
 
     public void shutDown() {
-        textTicksLeft = 0;
-
         textResolver.clear();
     }
 
@@ -117,26 +104,12 @@ public class SpellPluginImpl implements SpellPlugin {
 
         Optional<TextEntry> manualSpellText = castDetector.handleManualSpell(me.getAnimation()).flatMap(textResolver::resolve);
         if (manualSpellText.isPresent()) {
-            displayText(manualSpellText.get());
             return manualSpellText;
         }
 
         // Manual spells did not match, try auto-cast.
-        Optional<TextEntry> resolvedEntry = castDetector.handleAutoCast().flatMap(textResolver::resolve);
-        displayText(resolvedEntry);
-
-        return resolvedEntry;
+        return castDetector.handleAutoCast().flatMap(textResolver::resolve);
     }
-
-    /**
-     * Reduces and returns the number of text ticks left.
-     *
-     * @return Number of ticks left if >= 0 or -1 otherwise.
-     */
-    public int textTicksLeft() {
-        return textTicksLeft > 0 ? --textTicksLeft : -1;
-    }
-
 
     /**
      * Returns the spell name for a click that selects/casts a spell, otherwise null.
@@ -177,27 +150,4 @@ public class SpellPluginImpl implements SpellPlugin {
 
         return "";
     }
-
-    private void displayText(TextEntry textEntry) {
-        if (textEntry == null || (textEntry.getText().isEmpty() && textEntry.getSound().isEmpty())) {
-            return;
-        }
-
-        Player me = client.getLocalPlayer();
-        if (me != null && !textEntry.getText().isBlank() && !textEntry.getText().equals(CustomOverrides.NONE)) {
-            String text = textEntry.getText();
-            if (config.shoutSpells() && !(text.endsWith(".") || text.endsWith("!"))) {
-                text += "!";
-            }
-
-            me.setOverheadText(text);
-            textTicksLeft = config.durationTicks();
-            log.debug("Showing text: {}", textEntry);
-        }
-    }
-
-    private void displayText(Optional<TextEntry> text) {
-        text.ifPresent(this::displayText);
-    }
-
 }

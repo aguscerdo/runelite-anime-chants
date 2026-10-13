@@ -1,9 +1,9 @@
 package com.aguscerdo.animechant.spells;
 
 import com.aguscerdo.animechant.AnimeChantConfig;
-import com.aguscerdo.animechant.chantdata.ChantData;
 import com.aguscerdo.animechant.chantdata.PresetLoader;
-import com.aguscerdo.animechant.chantdata.TextEntry;
+import com.aguscerdo.animechant.chantdata.model.ChantData;
+import com.aguscerdo.animechant.chantdata.model.TextEntry;
 import com.aguscerdo.animechant.spells.model.Spell;
 import com.aguscerdo.animechant.spells.model.SpellCategory;
 import com.aguscerdo.animechant.spells.model.SpellTextPreset;
@@ -154,14 +154,6 @@ public class SpellTextResolverTest {
     }
 
     @Test
-    public void resolve_spellNamePreset_returnsSpellNameEntry() {
-        injectResolver(SpellTextPreset.SPELL_NAME);
-
-        assertThat(resolver.resolve(Spell.HIGH_LEVEL_ALCHEMY))
-                .hasValue(new TextEntry(Spell.HIGH_LEVEL_ALCHEMY.getName(), Optional.empty()));
-    }
-
-    @Test
     public void resolve_multipleVariants_returnsOneOfThem() {
         TextEntry otherTextEntry = new TextEntry("Fire 2", Optional.empty());
         spellToText.put(Spell.FIRE_STRIKE, otherTextEntry);
@@ -260,13 +252,13 @@ public class SpellTextResolverTest {
 
         resolver.reloadPresets();
 
-        verify(mockPresetLoader, never()).loadPreset(any());
+        verify(mockPresetLoader, never()).loadPreset(any(SpellTextPreset.class));
     }
 
     @Test
     public void reloadPresets_presetsReturnsEmpty_emptyMaps() {
         when(config.spellPreset()).thenReturn(SpellTextPreset.FRIEREN);
-        when(mockPresetLoader.loadPreset(any())).thenReturn(Optional.empty());
+        when(mockPresetLoader.loadPreset(any(SpellTextPreset.class))).thenReturn(Optional.empty());
 
         assertThat(resolver.resolve(Spell.FIRE_STRIKE)).isPresent();
 
@@ -278,11 +270,13 @@ public class SpellTextResolverTest {
     @Test
     public void reloadPresets_updateFromPresets() {
         when(config.spellPreset()).thenReturn(SpellTextPreset.FRIEREN);
-        when(mockPresetLoader.loadPreset(any())).thenReturn(Optional.of(
+        when(mockPresetLoader.loadPreset(any(SpellTextPreset.class))).thenReturn(Optional.of(
                 new ChantData("Frieren",
                         "",
+                        "",
                         ImmutableListMultimap.of(SpellCategory.WATER, FIRE_TEXT),
-                        ImmutableListMultimap.of(Spell.FIRE_STRIKE, HIGH_LEVEL_ALCHEMY_TEXT)
+                        ImmutableListMultimap.of(Spell.FIRE_STRIKE, HIGH_LEVEL_ALCHEMY_TEXT),
+                        ImmutableListMultimap.of()
                 )
         ));
 

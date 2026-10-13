@@ -5,13 +5,12 @@ import lombok.Getter;
 
 /**
  * Bundled chantdata shown in the config dropdown. Contents live in
- * src/main/resources/com/animechant/chantdata/&lt;resourceName&gt;.
+ * src/main/resources/com/animechant/chantdata/resourceName;.
  */
 @AllArgsConstructor
 @Getter
 public enum SpellTextPreset {
     NONE("None (overrides only)", ""),
-    SPELL_NAME("Spell Name", ""),
     FANTASY("Fantasy", "fantasy.yaml"),
     ANIME_MIX("Anime Mix", "anime_mix.yaml"),
     FRIEREN("Frieren", "frieren.yaml"),

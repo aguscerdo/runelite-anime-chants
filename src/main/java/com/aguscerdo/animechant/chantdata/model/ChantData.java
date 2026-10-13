@@ -1,5 +1,6 @@
-package com.aguscerdo.animechant.chantdata;
+package com.aguscerdo.animechant.chantdata.model;
 
+import com.aguscerdo.animechant.specials.model.SpecWeapon;
 import com.aguscerdo.animechant.spells.model.Spell;
 import com.aguscerdo.animechant.spells.model.SpellCategory;
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -26,15 +27,21 @@ public class ChantData {
 
     String name;
     String spellSoundDirectory;
+    String specWeaponSoundDirectory;
 
     ImmutableListMultimap<SpellCategory, TextEntry> spellCategories;
     ImmutableListMultimap<Spell, TextEntry> spells;
 
+    ImmutableListMultimap<SpecWeapon, TextEntry> specWeapons;
+
     public ChantData() {
         name = "";
         spellSoundDirectory = "";
+        specWeaponSoundDirectory = "";
+
         spellCategories = ImmutableListMultimap.of();
         spells = ImmutableListMultimap.of();
+        specWeapons = ImmutableListMultimap.of();
     }
 
     /**
@@ -44,25 +51,36 @@ public class ChantData {
     public ChantData(
             @JsonProperty("name") String name,
             @JsonProperty("spell_sound_directory") String spellSoundDirectory,
+            @JsonProperty("spec_weapon_sound_directory") String specWeaponSoundDirectory,
             @JsonProperty("spell_categories") Map<SpellCategory, List<TextEntry>> spellCategories,
-            @JsonProperty("spells") Map<Spell, List<TextEntry>> spells) {
+            @JsonProperty("spells") Map<Spell, List<TextEntry>> spells,
+            @JsonProperty("spec_weapons") Map<SpecWeapon, List<TextEntry>> specWeapons
+    ) {
         this.name = name;
         this.spellSoundDirectory = spellSoundDirectory;
+        this.specWeaponSoundDirectory = specWeaponSoundDirectory;
 
         this.spellCategories = copyOf(spellCategories, this.spellSoundDirectory);
         this.spells = copyOf(spells, this.spellSoundDirectory);
+        this.specWeapons = copyOf(specWeapons, this.specWeaponSoundDirectory);
     }
 
     public ChantData(
             String name,
             String spellSoundDirectory,
+            String specWeaponSoundDirectory,
             ImmutableListMultimap<SpellCategory, TextEntry> spellCategories,
-            ImmutableListMultimap<Spell, TextEntry> spells) {
+            ImmutableListMultimap<Spell, TextEntry> spells,
+            ImmutableListMultimap<SpecWeapon, TextEntry> specWeapons
+
+    ) {
         this.name = name;
         this.spellSoundDirectory = spellSoundDirectory;
+        this.specWeaponSoundDirectory = specWeaponSoundDirectory;
 
         this.spellCategories = spellCategories;
         this.spells = spells;
+        this.specWeapons = specWeapons;
     }
 
     /**

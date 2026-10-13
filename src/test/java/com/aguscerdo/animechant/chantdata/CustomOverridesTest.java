@@ -1,5 +1,8 @@
 package com.aguscerdo.animechant.chantdata;
 
+import com.aguscerdo.animechant.chantdata.model.TextEntry;
+import com.aguscerdo.animechant.chantdata.model.ValidationIssue;
+import com.aguscerdo.animechant.specials.model.SpecWeapon;
 import com.aguscerdo.animechant.spells.model.Spell;
 import com.aguscerdo.animechant.spells.model.SpellCategory;
 import com.google.common.collect.ImmutableListMultimap;
@@ -16,48 +19,47 @@ import static org.junit.Assert.assertEquals;
 public class CustomOverridesTest {
 
     @Test
-    public void parseSpellOverrides_nullText_empty() {
+    public void parseOverrides_nullText_empty() {
         assertEquals(
                 CustomOverrides.parseSpellOverrides(null),
-                new CustomOverrides.CustomOverridesResult()
+                new CustomOverrides.OverridesResult()
         );
     }
 
     @Test
-    public void parseSpellOverrides_blankText_empty() {
+    public void parseOverrides_blankText_empty() {
         assertEquals(
                 CustomOverrides.parseSpellOverrides("  "),
-                new CustomOverrides.CustomOverridesResult()
+                new CustomOverrides.OverridesResult()
         );
     }
 
+
     @Test
-    public void parseSpellOverrides_noEquals_invalid() {
+    public void parseOverrides_noEquals_invalid() {
         assertThat(CustomOverrides.parseSpellOverrides("key").getValidationIssues()).containsExactly(
                 new ValidationIssue("key", ValidationIssue.ValidationIssueReason.LINE_NOT_SEPARATED_BY_EQUALS)
         );
     }
 
     @Test
-    public void parseSpellOverrides_fileNotEndsInWav_invalid() {
+    public void parseOverrides_fileNotEndsInWav_invalid() {
         assertThat(CustomOverrides.parseSpellOverrides("my file=sounds.mp3").getValidationIssues()).containsExactly(
                 new ValidationIssue("my file=sounds.mp3", ValidationIssue.ValidationIssueReason.FILES_MUST_END_IN_WAV)
         );
     }
 
-
     @Test
-    public void parseSpellOverrides_noKeyMatches_invalid() {
-        assertThat(CustomOverrides.parseSpellOverrides("nope=nope").getValidationIssues()).containsExactly(
-                new ValidationIssue("nope=nope", ValidationIssue.ValidationIssueReason.KEY_DOESNT_MATCH_ANY_SPELL));
-    }
-
-    @Test
-    public void parseSpellOverrides_contentTooLong_invalid() {
+    public void parseOverrides_contentTooLong_invalid() {
         assertThat(CustomOverrides.parseSpellOverrides("key=1234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890abc").getValidationIssues()).containsExactly(
                 new ValidationIssue("key=123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123...", ValidationIssue.ValidationIssueReason.CONTENT_TOO_LONG));
     }
 
+    @Test
+    public void parseOverrides_noKeyMatches_invalid() {
+        assertThat(CustomOverrides.parseSpellOverrides("nope=nope").getValidationIssues()).containsExactly(
+                new ValidationIssue("nope=nope", ValidationIssue.ValidationIssueReason.KEY_DOESNT_MATCH_ANYTHING));
+    }
 
     @Test
     public void parseSpellOverrides_matchesSpell() {
@@ -133,6 +135,84 @@ public class CustomOverridesTest {
                 CustomOverrides.parseSpellOverrides("Teleport=Whoosh\nTeleport file=Whoosh.wav")
                         .getChantData().getSpellCategories(),
                 ImmutableListMultimap.of(SpellCategory.TELEPORT, new TextEntry("Whoosh", Optional.of("Whoosh.wav")))
+        );
+    }
+
+
+    @Test
+    public void parseSpecWeaponOverrides_matchesName() {
+        assertEquals(
+                CustomOverrides.parseSpecWeaponOverrides("Abyssal Whip=Whoosh").getChantData().getSpecWeapons(),
+                ImmutableListMultimap.of(SpecWeapon.ABYSSAL_WHIP, new TextEntry("Whoosh", Optional.empty()))
+        );
+    }
+
+    @Test
+    public void parseSpecWeaponOverrides_matchesSpellEmptyContent_contentSetToNone() {
+        assertEquals(
+                CustomOverrides.parseSpecWeaponOverrides("Abyssal Whip=").getChantData().getSpecWeapons(),
+                ImmutableListMultimap.of(SpecWeapon.ABYSSAL_WHIP, new TextEntry("NONE", Optional.empty()))
+        );
+    }
+
+    @Test
+    public void parseSpecWeaponOverrides_contentIsNoneCaseInsensitive_contentSetToNone() {
+        assertEquals(
+                CustomOverrides.parseSpecWeaponOverrides("Abyssal Whip=none").getChantData().getSpecWeapons(),
+                ImmutableListMultimap.of(SpecWeapon.ABYSSAL_WHIP, new TextEntry("NONE", Optional.empty()))
+        );
+    }
+
+    @Test
+    public void parseSpecWeaponOverrides_matchesSpecWeaponCaseInsensitive() {
+        assertEquals(
+                CustomOverrides.parseSpecWeaponOverrides("aBYsSaL WHiP=Whoosh").getChantData().getSpecWeapons(),
+                ImmutableListMultimap.of(SpecWeapon.ABYSSAL_WHIP, new TextEntry("Whoosh", Optional.empty()))
+        );
+    }
+
+    @Test
+    public void parseSpecWeaponOverrides_matchesSpecWeaponFile() {
+        assertEquals(
+                CustomOverrides.parseSpecWeaponOverrides("Abyssal Whip file=Whoosh.wav")
+                        .getChantData().getSpecWeapons(),
+                ImmutableListMultimap.of(SpecWeapon.ABYSSAL_WHIP, new TextEntry("", Optional.of("Whoosh.wav")))
+        );
+    }
+
+    @Test
+    public void parseSpecWeaponOverrides_weaponAndFileMerge() {
+        assertEquals(
+                CustomOverrides.parseSpecWeaponOverrides("Abyssal Whip=Whoosh\nAbyssal Whip file=Whoosh.wav")
+                        .getChantData().getSpecWeapons(),
+                ImmutableListMultimap.of(SpecWeapon.ABYSSAL_WHIP, new TextEntry("Whoosh", Optional.of("Whoosh.wav")))
+        );
+    }
+
+
+    @Test
+    public void parseSpecWeaponOverrides_matchesById() {
+        assertEquals(
+                CustomOverrides.parseSpecWeaponOverrides("4151=Whoosh").getChantData().getSpecWeapons(),
+                ImmutableListMultimap.of(SpecWeapon.ABYSSAL_WHIP, new TextEntry("Whoosh", Optional.empty()))
+        );
+    }
+
+    @Test
+    public void parseSpecWeaponOverrides_matchesbyIdFile() {
+        assertEquals(
+                CustomOverrides.parseSpecWeaponOverrides("4151 file=Whoosh.wav")
+                        .getChantData().getSpecWeapons(),
+                ImmutableListMultimap.of(SpecWeapon.ABYSSAL_WHIP, new TextEntry("", Optional.of("Whoosh.wav")))
+        );
+    }
+
+    @Test
+    public void parseSpecWeaponOverrides_byIdMergeTextAndFile() {
+        assertEquals(
+                CustomOverrides.parseSpecWeaponOverrides("4151=Whoosh\n4151 file=Whoosh.wav")
+                        .getChantData().getSpecWeapons(),
+                ImmutableListMultimap.of(SpecWeapon.ABYSSAL_WHIP, new TextEntry("Whoosh", Optional.of("Whoosh.wav")))
         );
     }
 

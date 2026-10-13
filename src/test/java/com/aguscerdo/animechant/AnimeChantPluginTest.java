@@ -1,7 +1,8 @@
 package com.aguscerdo.animechant;
 
-import com.aguscerdo.animechant.chantdata.TextEntry;
+import com.aguscerdo.animechant.chantdata.model.TextEntry;
 import com.aguscerdo.animechant.sound.SoundEngine;
+import com.aguscerdo.animechant.specials.SpecialAttackPlugin;
 import com.aguscerdo.animechant.spells.SpellPlugin;
 import com.google.inject.Guice;
 import com.google.inject.Inject;
@@ -53,8 +54,17 @@ public class AnimeChantPluginTest {
     @Bind
     private SpellPlugin mockSpellPlugin;
 
+    @Mock
+    @Bind
+    private SpecialAttackPlugin mockSpecialAttackPlugin;
+
+    @Mock
+    @Bind
+    private OverheadTextService mockOverheadTextService;
+
     @Inject
     private AnimeChantPlugin plugin;
+
 
     @Before
     public void setUp() {
@@ -64,31 +74,12 @@ public class AnimeChantPluginTest {
     }
 
     @Test
-    public void onGameTick_spellTicksLeftMinus1_notClearText() {
-        when(mockSpellPlugin.textTicksLeft()).thenReturn(-1);
-
+    public void onGameTick_callOverheadTextService() {
         plugin.onGameTick(new GameTick());
 
-        verify(mockPlayer, never()).setOverheadText(null);
+        verify(mockOverheadTextService, times(1)).onGameTick();
     }
 
-    @Test
-    public void onGameTick_spellTicksLeftZero_clearText() {
-        when(mockSpellPlugin.textTicksLeft()).thenReturn(0);
-
-        plugin.onGameTick(new GameTick());
-
-        verify(mockPlayer, times(1)).setOverheadText(null);
-    }
-
-    @Test
-    public void onGameTick_spellTicksGreaterThanZero_noClearText() {
-        when(mockSpellPlugin.textTicksLeft()).thenReturn(1);
-
-        plugin.onGameTick(new GameTick());
-
-        verify(mockPlayer, never()).setOverheadText(null);
-    }
 
     @Test
     public void onAnimationChanged_emptyTextEntry_nothing() {
@@ -98,6 +89,7 @@ public class AnimeChantPluginTest {
         plugin.onAnimationChanged(new AnimationChanged());
 
         verify(mockExecutor, never()).execute(any());
+        verify(mockOverheadTextService, never()).displayText(any(), anyBoolean());
     }
 
     @Test
@@ -139,6 +131,17 @@ public class AnimeChantPluginTest {
         plugin.onAnimationChanged(new AnimationChanged());
 
         verify(mockExecutor, times(1)).execute(any());
+    }
+
+
+    @Test
+    public void onAnimationChanged_textSentToOverheadService_sentToExecutor() {
+        when(mockConfig.spellSoundsEnabled()).thenReturn(false);
+        when(mockSpellPlugin.onAnimationChanged(any())).thenReturn(Optional.of(TEXT_ENTRY));
+
+        plugin.onAnimationChanged(new AnimationChanged());
+
+        verify(mockOverheadTextService, times(1)).displayText(any(), anyBoolean());
     }
 
 

@@ -1,0 +1,43 @@
+package com.aguscerdo.animechant.specials;
+
+import com.aguscerdo.animechant.chantdata.model.TextEntry;
+import com.aguscerdo.animechant.specials.model.SpecWeapon;
+import com.google.inject.ImplementedBy;
+
+import java.util.Optional;
+
+/**
+ * Converts a cast {@link SpecWeapon} into the text/sound entry to display, based on the user's
+ * configured presets and overrides.
+ */
+@ImplementedBy(SpecialAttackTextResolverImpl.class)
+public interface SpecialAttackTextResolver {
+
+    /**
+     * Clears all data structures from memory
+     */
+    void clear();
+
+    /**
+     * Reloads everything
+     */
+    void reloadAll();
+
+    /**
+     * Reload spec weapon to Text data from presets if the current config differs from the actual user config.
+     */
+    void reloadPresets();
+
+    /**
+     * Reloads spec weapon custom overrides
+     */
+    void reloadOverrides();
+
+    /**
+     * Resolves a {@link SpecWeapon} into the text to display IF it should be displayed based on the user configs.
+     *
+     * @param specWeapon the cast spell
+     * @return the text to display if any, or empty.
+     */
+    Optional<TextEntry> resolve(SpecWeapon specWeapon);
+}

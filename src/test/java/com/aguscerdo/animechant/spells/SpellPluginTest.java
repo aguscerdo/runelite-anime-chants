@@ -1,7 +1,7 @@
 package com.aguscerdo.animechant.spells;
 
 import com.aguscerdo.animechant.AnimeChantConfig;
-import com.aguscerdo.animechant.chantdata.TextEntry;
+import com.aguscerdo.animechant.chantdata.model.TextEntry;
 import com.aguscerdo.animechant.spells.model.Spell;
 import com.google.inject.Guice;
 import com.google.inject.Inject;
@@ -24,7 +24,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.Optional;
 
-import static org.junit.Assert.assertEquals;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
@@ -115,13 +115,11 @@ public class SpellPluginTest {
 
 
     @Test
-    public void onAnimationChanged_manualAnimationMatches_display_text() {
+    public void onAnimationChanged_manualAnimationMatches_returnResolvedText() {
         when(mockCastDetector.handleManualSpell(eq(HIGH_LEVEL_ALCHEMY_ANIMATION_ID))).thenReturn(Optional.of(Spell.HIGH_LEVEL_ALCHEMY));
         when(mockTextResolver.resolve(eq(Spell.HIGH_LEVEL_ALCHEMY))).thenReturn(Optional.of(HIGH_LEVEL_ALCHEMY_TEXT));
 
-        plugin.onAnimationChanged(makeAnimationEvent());
-
-        verify(mockPlayer, times(1)).setOverheadText(HIGH_LEVEL_ALCHEMY_TEXT.getText());
+        assertThat(plugin.onAnimationChanged(makeAnimationEvent())).hasValue(HIGH_LEVEL_ALCHEMY_TEXT);
     }
 
     @Test
@@ -130,9 +128,7 @@ public class SpellPluginTest {
         when(mockCastDetector.handleAutoCast()).thenReturn(Optional.empty());
         when(mockTextResolver.resolve(eq(Spell.HIGH_LEVEL_ALCHEMY))).thenReturn(Optional.of(HIGH_LEVEL_ALCHEMY_TEXT));
 
-        plugin.onAnimationChanged(makeAnimationEvent());
-
-        verify(mockPlayer, never()).setOverheadText(any());
+        assertThat(plugin.onAnimationChanged(makeAnimationEvent())).isEmpty();
     }
 
     @Test
@@ -141,9 +137,7 @@ public class SpellPluginTest {
         when(mockCastDetector.handleAutoCast()).thenReturn(Optional.empty());
         when(mockTextResolver.resolve(eq(Spell.HIGH_LEVEL_ALCHEMY))).thenReturn(Optional.empty());
 
-        plugin.onAnimationChanged(makeAnimationEvent());
-
-        verify(mockPlayer, never()).setOverheadText(any());
+        assertThat(plugin.onAnimationChanged(makeAnimationEvent())).isEmpty();
     }
 
     @Test
@@ -152,9 +146,7 @@ public class SpellPluginTest {
         when(mockCastDetector.handleAutoCast()).thenReturn(Optional.of((Spell.FIRE_WAVE)));
         when(mockTextResolver.resolve(eq(Spell.FIRE_WAVE))).thenReturn(Optional.of(FIRE_WAVE_TEXT));
 
-        plugin.onAnimationChanged(makeAnimationEvent());
-
-        verify(mockPlayer, times(1)).setOverheadText(FIRE_WAVE_TEXT.getText());
+        assertThat(plugin.onAnimationChanged(makeAnimationEvent())).hasValue(FIRE_WAVE_TEXT);
     }
 
     @Test
@@ -163,83 +155,7 @@ public class SpellPluginTest {
         when(mockCastDetector.handleAutoCast()).thenReturn(Optional.of((Spell.FIRE_WAVE)));
         when(mockTextResolver.resolve(eq(Spell.FIRE_WAVE))).thenReturn(Optional.empty());
 
-        plugin.onAnimationChanged(makeAnimationEvent());
-
-        verify(mockPlayer, never()).setOverheadText(FIRE_WAVE_TEXT.getText());
-    }
-
-    @Test
-    public void onAnimationChanged_emptyText_notDisplayed() {
-        when(mockCastDetector.handleManualSpell(eq(HIGH_LEVEL_ALCHEMY_ANIMATION_ID))).thenReturn(Optional.of(Spell.HIGH_LEVEL_ALCHEMY));
-        when(mockTextResolver.resolve(eq(Spell.HIGH_LEVEL_ALCHEMY))).thenReturn(Optional.of(new TextEntry("", Optional.empty())));
-
-        plugin.onAnimationChanged(makeAnimationEvent());
-
-        verify(mockPlayer, never()).setOverheadText(any());
-    }
-
-    @Test
-    public void onAnimationChanged_blankText_notDisplayed() {
-        when(mockCastDetector.handleManualSpell(eq(HIGH_LEVEL_ALCHEMY_ANIMATION_ID))).thenReturn(Optional.of(Spell.HIGH_LEVEL_ALCHEMY));
-        when(mockTextResolver.resolve(eq(Spell.HIGH_LEVEL_ALCHEMY))).thenReturn(Optional.of(new TextEntry("   ", Optional.empty())));
-
-        plugin.onAnimationChanged(makeAnimationEvent());
-
-        verify(mockPlayer, never()).setOverheadText(any());
-    }
-
-    @Test
-    public void onAnimationChanged_noneText_notDisplayed() {
-        when(mockCastDetector.handleManualSpell(eq(HIGH_LEVEL_ALCHEMY_ANIMATION_ID))).thenReturn(Optional.of(Spell.HIGH_LEVEL_ALCHEMY));
-        when(mockTextResolver.resolve(eq(Spell.HIGH_LEVEL_ALCHEMY))).thenReturn(Optional.of(new TextEntry("NONE", Optional.empty())));
-
-        plugin.onAnimationChanged(makeAnimationEvent());
-
-        verify(mockPlayer, never()).setOverheadText(any());
-    }
-
-    @Test
-    public void onAnimationChanged_playerBecomesNull_notDisplayed() {
-        when(mockCastDetector.handleManualSpell(eq(HIGH_LEVEL_ALCHEMY_ANIMATION_ID))).thenReturn(Optional.of(Spell.HIGH_LEVEL_ALCHEMY));
-        when(mockTextResolver.resolve(eq(Spell.HIGH_LEVEL_ALCHEMY))).thenReturn(Optional.of(HIGH_LEVEL_ALCHEMY_TEXT));
-        when(mockClient.getLocalPlayer()).thenReturn(mockPlayer).thenReturn(null);
-
-        plugin.onAnimationChanged(makeAnimationEvent());
-
-        verify(mockPlayer, never()).setOverheadText(any());
-    }
-
-    @Test
-    public void onAnimationChanged_exclaimText_displayExclamation() {
-        when(mockCastDetector.handleManualSpell(eq(HIGH_LEVEL_ALCHEMY_ANIMATION_ID))).thenReturn(Optional.of(Spell.HIGH_LEVEL_ALCHEMY));
-        when(mockTextResolver.resolve(eq(Spell.HIGH_LEVEL_ALCHEMY))).thenReturn(Optional.of(HIGH_LEVEL_ALCHEMY_TEXT));
-        when(mockConfig.shoutSpells()).thenReturn(true);
-
-        plugin.onAnimationChanged(makeAnimationEvent());
-
-        verify(mockPlayer, times(1)).setOverheadText(HIGH_LEVEL_ALCHEMY_TEXT.getText() + "!");
-    }
-
-    @Test
-    public void onAnimationChanged_exclaimTextAlreadyEndsOnExclamation_noSecondExclamation() {
-        when(mockCastDetector.handleManualSpell(eq(HIGH_LEVEL_ALCHEMY_ANIMATION_ID))).thenReturn(Optional.of(Spell.HIGH_LEVEL_ALCHEMY));
-        when(mockTextResolver.resolve(eq(Spell.HIGH_LEVEL_ALCHEMY))).thenReturn(Optional.of(new TextEntry("HI!", Optional.empty())));
-        when(mockConfig.shoutSpells()).thenReturn(true);
-
-        plugin.onAnimationChanged(makeAnimationEvent());
-
-        verify(mockPlayer, times(1)).setOverheadText("HI!");
-    }
-
-    @Test
-    public void onAnimationChanged_exclaimTextEndsOnPeriod_noExclamation() {
-        when(mockCastDetector.handleManualSpell(eq(HIGH_LEVEL_ALCHEMY_ANIMATION_ID))).thenReturn(Optional.of(Spell.HIGH_LEVEL_ALCHEMY));
-        when(mockTextResolver.resolve(eq(Spell.HIGH_LEVEL_ALCHEMY))).thenReturn(Optional.of(new TextEntry("HI...", Optional.empty())));
-        when(mockConfig.shoutSpells()).thenReturn(true);
-
-        plugin.onAnimationChanged(makeAnimationEvent());
-
-        verify(mockPlayer, times(1)).setOverheadText("HI...");
+        assertThat(plugin.onAnimationChanged(makeAnimationEvent())).isEmpty();
     }
 
     @Test
@@ -370,23 +286,6 @@ public class SpellPluginTest {
         verify(mockCastDetector, times(1)).processManualCastEventIntent(eq(Spell.UNKNOWN), any());
     }
 
-    @Test
-    public void textTicksLeft_onZero_minusOne() {
-        assertEquals(plugin.textTicksLeft(), -1);
-    }
-
-    @Test
-    public void textTicksLeft_displayedText_countsDown() {
-        when(mockConfig.durationTicks()).thenReturn(3);
-        when(mockCastDetector.handleManualSpell(eq(HIGH_LEVEL_ALCHEMY_ANIMATION_ID))).thenReturn(Optional.of(Spell.HIGH_LEVEL_ALCHEMY));
-        when(mockTextResolver.resolve(eq(Spell.HIGH_LEVEL_ALCHEMY))).thenReturn(Optional.of(HIGH_LEVEL_ALCHEMY_TEXT));
-        plugin.onAnimationChanged(makeAnimationEvent());
-
-        assertEquals(plugin.textTicksLeft(), 2);
-        assertEquals(plugin.textTicksLeft(), 1);
-        assertEquals(plugin.textTicksLeft(), 0);
-        assertEquals(plugin.textTicksLeft(), -1);
-    }
 
     @Test
     public void onConfigChanged_notThisPlugin_ignore() {
@@ -400,14 +299,14 @@ public class SpellPluginTest {
     }
 
     @Test
-    public void onConfigChanged_notPresets_ignore() {
+    public void onConfigChanged_overrides_reload() {
         ConfigChanged configChanged = new ConfigChanged();
         configChanged.setGroup(AnimeChantConfig.GROUP);
-        configChanged.setKey("Volume");
+        configChanged.setKey(AnimeChantConfig.SPELL_OVERRIDES);
 
         plugin.onConfigChanged(configChanged);
 
-        verify(mockTextResolver, never()).reloadPresets();
+        verify(mockTextResolver, times(1)).reloadOverrides();
     }
 
     @Test

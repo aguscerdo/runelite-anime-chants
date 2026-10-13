@@ -1,7 +1,11 @@
 package com.aguscerdo.animechant.spells;
 
 import com.aguscerdo.animechant.AnimeChantConfig;
-import com.aguscerdo.animechant.chantdata.*;
+import com.aguscerdo.animechant.chantdata.CustomOverrides;
+import com.aguscerdo.animechant.chantdata.PresetLoader;
+import com.aguscerdo.animechant.chantdata.model.ChantData;
+import com.aguscerdo.animechant.chantdata.model.TextEntry;
+import com.aguscerdo.animechant.chantdata.model.ValidationIssue;
 import com.aguscerdo.animechant.spells.model.Spell;
 import com.aguscerdo.animechant.spells.model.SpellCategory;
 import com.aguscerdo.animechant.spells.model.SpellTextPreset;
@@ -117,7 +121,7 @@ public class SpellTextResolverImpl implements SpellTextResolver {
 
     @Override
     public void reloadOverrides() {
-        CustomOverrides.CustomOverridesResult result = CustomOverrides.parseSpellOverrides(config.customSpellOverrides());
+        CustomOverrides.OverridesResult result = CustomOverrides.parseSpellOverrides(config.customSpellOverrides());
 
         overrideValidationIssues = result.getValidationIssues();
         userOverrideSpellToText = result.getChantData().getSpells();
@@ -188,11 +192,6 @@ public class SpellTextResolverImpl implements SpellTextResolver {
             }
         }
 
-        // Presets
-        if (currentSpellPreset == SpellTextPreset.SPELL_NAME) {
-            log.debug("Resolved spell to its name: {}", spell);
-            return Optional.of(spell.asTextEntry());
-        }
 
         variants = presetSpellToText.get(spell);
         if (variants != null && !variants.isEmpty()) {

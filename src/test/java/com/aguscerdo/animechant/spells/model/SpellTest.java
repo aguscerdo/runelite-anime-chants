@@ -1,7 +1,7 @@
 package com.aguscerdo.animechant.spells.model;
 
 
-import com.aguscerdo.animechant.chantdata.TextEntry;
+import com.aguscerdo.animechant.chantdata.model.TextEntry;
 import org.junit.Test;
 
 import java.util.Optional;

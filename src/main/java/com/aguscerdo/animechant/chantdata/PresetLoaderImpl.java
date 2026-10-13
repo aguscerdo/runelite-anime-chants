@@ -1,5 +1,7 @@
 package com.aguscerdo.animechant.chantdata;
 
+import com.aguscerdo.animechant.chantdata.model.ChantData;
+import com.aguscerdo.animechant.specials.model.SpecWeaponTextPreset;
 import com.aguscerdo.animechant.spells.model.SpellTextPreset;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -53,16 +55,20 @@ public class PresetLoaderImpl implements PresetLoader {
 
     @Override
     public Optional<ChantData> loadPreset(SpellTextPreset preset) {
-        // Spell name doesn't need a mapping, use spell names directly.
-        if (preset == SpellTextPreset.SPELL_NAME) {
+        return loadPresetFile(preset.getFileName());
+    }
+
+    @Override
+    public Optional<ChantData> loadPreset(SpecWeaponTextPreset preset) {
+        return loadPresetFile(preset.getFileName());
+    }
+
+    private Optional<ChantData> loadPresetFile(String fileName) {
+        if (fileName.isEmpty()) {
             return Optional.empty();
         }
 
-        if (preset.getFileName().isEmpty()) {
-            return Optional.empty();
-        }
-
-        String resourcePath = PRESETS_DIR + "/" + preset.getFileName();
+        String resourcePath = PRESETS_DIR + "/" + fileName;
         try (InputStream in = PresetLoaderImpl.class.getResourceAsStream(resourcePath)) {
             if (in == null) {
                 log.warn("Preset resource {} not found", resourcePath);

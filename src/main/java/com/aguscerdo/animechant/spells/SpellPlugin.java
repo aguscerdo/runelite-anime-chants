@@ -1,6 +1,7 @@
 package com.aguscerdo.animechant.spells;
 
-import com.aguscerdo.animechant.chantdata.TextEntry;
+import com.aguscerdo.animechant.chantdata.model.TextEntry;
+import com.google.inject.ImplementedBy;
 import net.runelite.api.events.AnimationChanged;
 import net.runelite.api.events.MenuOptionClicked;
 import net.runelite.client.eventbus.Subscribe;
@@ -11,6 +12,7 @@ import java.util.Optional;
 /**
  * Handles Spell related plugin actions for Anime Chant.
  */
+@ImplementedBy(SpellPluginImpl.class)
 public interface SpellPlugin {
 
     void startUp();
@@ -37,12 +39,4 @@ public interface SpellPlugin {
      */
     @Subscribe
     void onConfigChanged(ConfigChanged event);
-
-    /**
-     * Advances the overhead text countdown by one tick.
-     *
-     * @return the number of ticks remaining after this call, or -1 once the
-     * text has expired (or when no text is being displayed)
-     */
-    int textTicksLeft();
 }

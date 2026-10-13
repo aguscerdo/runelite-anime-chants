@@ -1,7 +1,8 @@
 package com.aguscerdo.animechant;
 
-import com.aguscerdo.animechant.chantdata.TextEntry;
+import com.aguscerdo.animechant.chantdata.model.TextEntry;
 import com.aguscerdo.animechant.sound.SoundEngine;
+import com.aguscerdo.animechant.specials.SpecialAttackPlugin;
 import com.aguscerdo.animechant.spells.SpellPlugin;
 import com.google.inject.Binder;
 import com.google.inject.Provides;
@@ -10,6 +11,8 @@ import net.runelite.api.Client;
 import net.runelite.api.Player;
 import net.runelite.api.events.AnimationChanged;
 import net.runelite.api.events.GameTick;
+import net.runelite.api.events.VarbitChanged;
+import net.runelite.client.callback.ClientThread;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.EventBus;
 import net.runelite.client.eventbus.Subscribe;
@@ -41,13 +44,22 @@ public class AnimeChantPlugin extends Plugin {
     private ScheduledExecutorService executor; // RuneLite's shared pool
 
     @Inject
+    private ClientThread clientThread;
+
+    @Inject
     private AnimeChantConfig config;
 
     @Inject
     private SoundEngine soundEngine;
 
     @Inject
+    private OverheadTextService overheadTextService;
+
+    @Inject
     private SpellPlugin spellPlugin;
+
+    @Inject
+    private SpecialAttackPlugin specialAttackPlugin;
 
     @Override
     public void configure(Binder binder) {
@@ -64,6 +76,9 @@ public class AnimeChantPlugin extends Plugin {
         eventBus.register(spellPlugin);
         spellPlugin.startUp();
 
+        eventBus.register(specialAttackPlugin);
+        specialAttackPlugin.startUp();
+
         executor.execute(() -> {
             try {
                 Filepath pluginDirectory = getPluginDirectory();
@@ -77,28 +92,45 @@ public class AnimeChantPlugin extends Plugin {
 
     @Override
     protected void shutDown() {
-        clearText();
+        eventBus.unregister(spellPlugin);
+        eventBus.unregister(specialAttackPlugin);
+
+        clientThread.invokeLater(this::clearText);
 
         spellPlugin.shutDown();
+        specialAttackPlugin.shutDown();
     }
 
 
     @Subscribe
     public void onGameTick(GameTick tick) {
-        int spellTicks = spellPlugin.textTicksLeft();
-
-        if (spellTicks == 0) {
-            clearText();
-        }
+        overheadTextService.onGameTick();
     }
 
     @Subscribe
     public void onAnimationChanged(AnimationChanged event) {
         Optional<TextEntry> resolvedText = spellPlugin.onAnimationChanged(event);
+        if (resolvedText.isEmpty()) return;
+
+        overheadTextService.displayText(resolvedText.get(), config.shoutSpells());
+
         if (config.spellSoundsEnabled()) {
             playSound(resolvedText);
         }
     }
+
+    @Subscribe
+    public void onVarbitChanged(VarbitChanged event) {
+        Optional<TextEntry> resolvedText = specialAttackPlugin.onVarbitChanged(event);
+        if (resolvedText.isEmpty()) return;
+
+        overheadTextService.displayText(resolvedText.get(), config.shoutSpecialAttacks());
+
+        if (config.specialAttackSoundsEnabled()) {
+            playSound(resolvedText);
+        }
+    }
+
 
     private void playSound(Optional<TextEntry> textEntry) {
         Optional<String> soundFile = textEntry.flatMap(TextEntry::getSound);
