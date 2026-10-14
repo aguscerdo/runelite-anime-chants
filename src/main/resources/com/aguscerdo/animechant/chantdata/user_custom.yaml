@@ -1,0 +1,14 @@
+version: 1
+name: User Custom
+spell_sound_directory: user_custom/spells
+spell_categories:
+  fire:
+    - Hot hot hooooot
+spells:
+  High Level Alchemy:
+    - Custom money gains
+spec_weapons:
+  Dragon Dagger:
+    - Stand and Deliver!
+  Dorgeshuun Crossbow:
+    - Dorgeshkan not Dorgeshkan't

@@ -117,6 +117,8 @@ public class CustomOverrides {
         ImmutableList.Builder<ValidationIssue> invalidLines = ImmutableList.builder();
 
         for (String line : (Iterable<String>) overrides.lines()::iterator) {
+            if (line.isBlank()) continue;
+            
             String[] lineParts = line.split("=", 2);
             if (lineParts.length != 2) {
                 invalidLines.add(new ValidationIssue(line, ValidationIssueReason.LINE_NOT_SEPARATED_BY_EQUALS));

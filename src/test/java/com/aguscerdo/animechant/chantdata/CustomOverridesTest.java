@@ -70,6 +70,16 @@ public class CustomOverridesTest {
     }
 
     @Test
+    public void parseOverrides_skipEmptyLines_valid() {
+        assertEquals(
+                CustomOverrides.parseSpellOverrides("Varrock Teleport=Whoosh\n  \n\n\n  \n").getChantData().getSpells(),
+                ImmutableListMultimap.of(Spell.VARROCK_TELEPORT, new TextEntry("Whoosh", Optional.empty()))
+        );
+
+    }
+
+
+    @Test
     public void parseSpellOverrides_matchesSpellEmptyContent_contentSetToNone() {
         assertEquals(
                 CustomOverrides.parseSpellOverrides("Varrock Teleport=").getChantData().getSpells(),

@@ -11,7 +11,6 @@ import java.io.InputStream;
 import java.io.Reader;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
 import java.util.Optional;
 
 @Slf4j
@@ -98,11 +97,11 @@ public class FileManager {
                     return;
                 }
 
-                destinationPath.write(in.readAllBytes(), StandardOpenOption.WRITE);
+                destinationPath.write(in.readAllBytes());
                 log.info("Successfully copied yaml preset to plugin data: {}", destinationPath);
             }
         } catch (IOException e) {
-            log.warn("Failed to copy yaml preset from resource to plugin: {}", fileName);
+            log.warn("Failed to copy yaml preset from resource to plugin: {}", fileName, e);
         }
     }
 }

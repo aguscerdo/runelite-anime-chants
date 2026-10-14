@@ -3,8 +3,6 @@ package com.aguscerdo.animechant.spells.model;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-import static com.aguscerdo.animechant.tools.StringUtils.removeSuffix;
-
 /**
  * Bundled chantdata shown in the config dropdown. Contents live in
  * src/main/resources/com/animechant/chantdata/resourceName;.
@@ -18,7 +16,8 @@ public enum SpellTextPreset {
     FRIEREN("Frieren", "frieren", "frieren.yaml"),
     PALWORLD("Palworld", "palworld", "palworld.yaml"),
     DEMON_SLAYER("Demon Slayer", "demon_slayer", "demon_slayer.yaml"),
-    SHADOWVERSE("Shadowverse", "shadowverse", "shadowverse.yaml");
+    SHADOWVERSE("Shadowverse", "shadowverse", "shadowverse.yaml"),
+    USER_CUSTOM("User Custom", "user_custom", "user_custom.yaml");
 
 
     private final String label;
@@ -29,9 +28,5 @@ public enum SpellTextPreset {
     @Override
     public String toString() {
         return label;
-    }
-
-    public String fileNameNoPrefix() {
-        return removeSuffix(fileName, ".yaml");
     }
 }
