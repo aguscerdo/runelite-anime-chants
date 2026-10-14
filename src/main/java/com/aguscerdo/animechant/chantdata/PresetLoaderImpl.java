@@ -56,7 +56,6 @@ public class PresetLoaderImpl implements PresetLoader {
         }
     }
 
-    // TODO need to run on executor threads non-blocking.
     @Override
     public Optional<ChantData> loadPreset(SpellTextPreset preset) {
         return loadPresetFile(preset.getDirectoryName(), preset.getFileName());
