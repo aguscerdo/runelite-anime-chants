@@ -19,7 +19,7 @@ import java.util.Optional;
  * add a class for the new version and convert older ones into this shape in PresetLoader.
  * <p>
  * Keys are unique in YAML; each key maps to a list of entries, which is why the
- * in-memory form is a multimap (one spell -> many entries, each with its own sound).
+ * in-memory form is a multimap (one spell -> many entries, each with its own files).
  */
 @Value
 public class ChantData {

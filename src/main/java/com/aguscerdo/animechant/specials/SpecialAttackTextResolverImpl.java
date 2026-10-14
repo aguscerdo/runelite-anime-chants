@@ -18,6 +18,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
@@ -35,6 +36,9 @@ public class SpecialAttackTextResolverImpl implements SpecialAttackTextResolver 
 
     @Inject
     private AnimeChantConfig config;
+
+    @Inject
+    ScheduledExecutorService executor;
 
     private SpecWeaponTextPreset currentPreset;
 
@@ -91,14 +95,16 @@ public class SpecialAttackTextResolverImpl implements SpecialAttackTextResolver 
             return;
         }
 
-        currentPreset = config.specialAttackPreset();
-        Optional<ChantData> presetData = presetLoader.loadPreset(currentPreset);
+        executor.execute(() -> {
+            currentPreset = config.specialAttackPreset();
+            Optional<ChantData> presetData = presetLoader.loadPreset(currentPreset);
 
-        if (presetData.isPresent()) {
-            presetSpecWeaponToText = ImmutableListMultimap.copyOf(presetData.get().getSpecWeapons());
-        } else {
-            presetSpecWeaponToText = ImmutableListMultimap.of();
-        }
+            if (presetData.isPresent()) {
+                presetSpecWeaponToText = ImmutableListMultimap.copyOf(presetData.get().getSpecWeapons());
+            } else {
+                presetSpecWeaponToText = ImmutableListMultimap.of();
+            }
+        });
     }
 
     @Override

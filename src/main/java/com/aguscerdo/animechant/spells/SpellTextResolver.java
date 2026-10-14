@@ -7,7 +7,7 @@ import com.google.inject.ImplementedBy;
 import java.util.Optional;
 
 /**
- * Converts a cast {@link Spell} into the text/sound entry to display, based on the user's
+ * Converts a cast {@link Spell} into the text/files entry to display, based on the user's
  * configured chantdata and display throttling. Knows nothing about how the cast was detected.
  */
 @ImplementedBy(SpellTextResolverImpl.class)

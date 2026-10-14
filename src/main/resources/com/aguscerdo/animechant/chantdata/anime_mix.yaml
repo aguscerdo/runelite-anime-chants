@@ -1,6 +1,6 @@
 version: 1
 name: Anime Mix
-spell_sound_directory: anime/spells
+spell_sound_directory: anime_mix/spells
 spell_categories:
   fire:
     - text: "Explooooooosiooooon!!"

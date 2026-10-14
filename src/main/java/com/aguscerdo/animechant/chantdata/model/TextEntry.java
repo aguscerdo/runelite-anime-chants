@@ -14,13 +14,13 @@ import java.io.IOException;
 import java.util.Optional;
 
 /**
- * One chant for a spell or category: the text, plus an optional sound file.
+ * One chant for a spell or category: the text, plus an optional files file.
  * Sound paths are relative to the chantdata resource directory.
  * <p>
  * YAML accepts either a bare string (text only) or an object:
  * - "Burn bright"
  * - text: "Burn bright"
- * sound: fire/burn_bright.ogg
+ * files: fire/burn_bright.ogg
  */
 @Value
 @With
@@ -49,8 +49,8 @@ public class TextEntry {
                 throw JsonMappingException.from(p, "Preset entry must be a string or an object with 'text'");
             }
 
-            Optional<String> sound = node.hasNonNull("sound")
-                    ? Optional.of(node.get("sound").asText())
+            Optional<String> sound = node.hasNonNull("files")
+                    ? Optional.of(node.get("files").asText())
                     : Optional.empty();
             if (sound.isPresent() && sound.get().isBlank()) {
                 sound = Optional.empty();

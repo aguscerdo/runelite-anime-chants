@@ -1,4 +1,4 @@
-package com.aguscerdo.animechant.sound;
+package com.aguscerdo.animechant.files;
 
 import com.aguscerdo.animechant.AnimeChantConfig;
 import lombok.extern.slf4j.Slf4j;
@@ -24,13 +24,13 @@ public class SoundEngine {
             return;
         }
 
-        Optional<Filepath> resolved = FileManager.resolvePath(pluginDir, soundFile);
+        Optional<Filepath> resolved = FileManager.resolveSoundFile(pluginDir, soundFile);
         if (resolved.isEmpty()) {
-            log.debug("Could not resolve sound file: {}", soundFile);
+            log.debug("Could not resolve files file: {}", soundFile);
             return;
         }
 
-        log.debug("Playing sound at {}", resolved);
+        log.debug("Playing files at {}", resolved);
 
 
         float gain = 20f * (float) Math.log10(config.soundVolume() / 100f);

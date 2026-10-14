@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
@@ -38,6 +39,9 @@ public class SpellTextResolverImpl implements SpellTextResolver {
 
     @Inject
     private AnimeChantConfig config;
+
+    @Inject
+    ScheduledExecutorService executor;
 
     private SpellTextPreset currentSpellPreset;
 
@@ -108,15 +112,18 @@ public class SpellTextResolverImpl implements SpellTextResolver {
         }
 
         currentSpellPreset = config.spellPreset();
-        Optional<ChantData> presetData = presetLoader.loadPreset(currentSpellPreset);
 
-        if (presetData.isPresent()) {
-            presetSpellToText = ImmutableListMultimap.copyOf(presetData.get().getSpells());
-            presetSpellCategoryToText = ImmutableListMultimap.copyOf(presetData.get().getSpellCategories());
-        } else {
-            presetSpellToText = ImmutableListMultimap.of();
-            presetSpellCategoryToText = ImmutableListMultimap.of();
-        }
+        executor.execute(() -> {
+            Optional<ChantData> presetData = presetLoader.loadPreset(currentSpellPreset);
+
+            if (presetData.isPresent()) {
+                presetSpellToText = ImmutableListMultimap.copyOf(presetData.get().getSpells());
+                presetSpellCategoryToText = ImmutableListMultimap.copyOf(presetData.get().getSpellCategories());
+            } else {
+                presetSpellToText = ImmutableListMultimap.of();
+                presetSpellCategoryToText = ImmutableListMultimap.of();
+            }
+        });
     }
 
     @Override
@@ -160,7 +167,7 @@ public class SpellTextResolverImpl implements SpellTextResolver {
         }
 
         if (resolvedText.getText().isEmpty() && resolvedText.getSound().isEmpty()) {
-            log.warn("Resolved text entry has no text or sound: {}", spell);
+            log.warn("Resolved text entry has no text or files: {}", spell);
             return Optional.empty();
         }
 

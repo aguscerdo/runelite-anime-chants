@@ -21,6 +21,7 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.Optional;
+import java.util.concurrent.ScheduledExecutorService;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -39,6 +40,11 @@ public class SpecialAttackTextResolverTest {
     @Mock
     @Bind
     private Client mockClient;
+
+    @Mock
+    @Bind
+    private ScheduledExecutorService mockExecutor;
+
 
     @Mock
     @Bind
@@ -63,6 +69,13 @@ public class SpecialAttackTextResolverTest {
         userSpecWeaponToText.put(SpecWeapon.DRAGON_CLAWS, USER_DRAGON_CLAWS_TEXT);
 
         when(config.specialAttackFallback()).thenReturn(SpecialAttackFallback.NONE);
+
+        doAnswer(invocation -> {
+            Runnable command = invocation.getArgument(0);
+            command.run();
+            return null;
+        }).when(mockExecutor).execute(any(Runnable.class));
+
 
         injectResolver(SpecWeaponTextPreset.NONE);
     }

@@ -1,7 +1,7 @@
 package com.aguscerdo.animechant;
 
 import com.aguscerdo.animechant.chantdata.model.TextEntry;
-import com.aguscerdo.animechant.sound.SoundEngine;
+import com.aguscerdo.animechant.files.SoundEngine;
 import com.aguscerdo.animechant.specials.SpecialAttackPlugin;
 import com.aguscerdo.animechant.spells.SpellPlugin;
 import com.google.inject.Guice;
@@ -26,7 +26,7 @@ import static org.mockito.Mockito.*;
 @RunWith(MockitoJUnitRunner.Silent.class)
 public class AnimeChantPluginTest {
 
-    private static final TextEntry TEXT_ENTRY = new TextEntry("text", Optional.of("sound.wav"));
+    private static final TextEntry TEXT_ENTRY = new TextEntry("text", Optional.of("files.wav"));
 
     @Mock
     @Bind

@@ -1,37 +1,42 @@
 package com.aguscerdo.animechant.chantdata;
 
+import com.aguscerdo.animechant.Annotations;
 import com.aguscerdo.animechant.chantdata.model.ChantData;
+import com.aguscerdo.animechant.files.FileManager;
 import com.aguscerdo.animechant.specials.model.SpecWeaponTextPreset;
 import com.aguscerdo.animechant.spells.model.SpellTextPreset;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
+import net.runelite.client.util.Filepath;
 
+import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.Reader;
-import java.nio.charset.StandardCharsets;
 import java.util.Optional;
-
-// TODO copy yaml files to plugin data for users to edit.
 
 @Slf4j
 @Singleton
 public class PresetLoaderImpl implements PresetLoader {
-    // Resource paths always use '/', regardless of OS (so no java.nio.file.Path here).
-    private static final String PRESETS_DIR = "/com/aguscerdo/animechant/chantdata";
-
     private static final ObjectMapper YAML_MAPPER = PresetYaml.createMapper();
 
+    private final Filepath pluginDirectory;
+
+
+    @Inject
+    public PresetLoaderImpl(@Annotations.PluginFilePath
+                            Filepath pluginDirectory
+    ) {
+        this.pluginDirectory = pluginDirectory;
+    }
+
     /**
-     * Reads the file into a tree, checks "version", then binds with that version's
-     * schema. Every version ends up as the same canonical RawPresetData.
+     * Reads the tree, checks "version", binds with that version's schema. Closes the reader.
      */
     private static Optional<ChantData> loadFromYaml(Reader reader, String source) {
-        try {
-            JsonNode root = YAML_MAPPER.readTree(reader);
+        try (Reader r = reader) {
+            JsonNode root = YAML_MAPPER.readTree(r);
             if (root == null || root.isMissingNode() || !root.isObject()) {
                 log.warn("Preset {} is empty or not a mapping", source);
                 return Optional.empty();
@@ -42,43 +47,28 @@ public class PresetLoaderImpl implements PresetLoader {
 
             if (version == 1) {
                 return Optional.of(YAML_MAPPER.treeToValue(root, ChantData.class));
-            } else {
-                log.error("Unsupported yaml schema version: {}\n{}", version, source);
-                return Optional.empty();
             }
-
+            log.error("Unsupported yaml schema version: {} in {}", version, source);
+            return Optional.empty();
         } catch (IOException e) {
             log.warn("Invalid YAML in {}", source, e);
             return Optional.empty();
         }
     }
 
+    // TODO need to run on executor threads non-blocking.
     @Override
     public Optional<ChantData> loadPreset(SpellTextPreset preset) {
-        return loadPresetFile(preset.getFileName());
+        return loadPresetFile(preset.getDirectoryName(), preset.getFileName());
     }
 
     @Override
     public Optional<ChantData> loadPreset(SpecWeaponTextPreset preset) {
-        return loadPresetFile(preset.getFileName());
+        return loadPresetFile(preset.getDirectoryName(), preset.getFileName());
     }
 
-    private Optional<ChantData> loadPresetFile(String fileName) {
-        if (fileName.isEmpty()) {
-            return Optional.empty();
-        }
-
-        String resourcePath = PRESETS_DIR + "/" + fileName;
-        try (InputStream in = PresetLoaderImpl.class.getResourceAsStream(resourcePath)) {
-            if (in == null) {
-                log.warn("Preset resource {} not found", resourcePath);
-                return Optional.empty();
-            }
-
-            return loadFromYaml(new InputStreamReader(in, StandardCharsets.UTF_8), resourcePath);
-        } catch (IOException e) {
-            log.warn("Failed reading preset {}", resourcePath, e);
-            return Optional.empty();
-        }
+    private Optional<ChantData> loadPresetFile(String directoryName, String fileName) {
+        return FileManager.getPresetFileReader(pluginDirectory, directoryName, fileName)
+                .flatMap(reader -> loadFromYaml(reader, fileName));
     }
 }

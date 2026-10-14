@@ -43,6 +43,7 @@ public interface AnimeChantConfig extends Config {
     default SpellTextPreset spellPreset() {
         return SpellTextPreset.FANTASY;
     }
+
     @ConfigSection(
             name = "Special Attacks",
             description = "Settings for text shown on special attacks",
@@ -65,28 +66,7 @@ public interface AnimeChantConfig extends Config {
         return true;
     }
 
-    @ConfigItem(
-            keyName = SPELL_OVERRIDES,
-            name = "Custom Spell Overrides",
-            description = "Custom user spell overrides.<br>" +
-                    "Each line must contain one entry formatted as follows:<br><br>" +
-                    "--------------------------------------------------------<br>" +
-                    "Spell Name=Text to Display<br>" +
-                    "Spell Category name=Text to Display<br>" +
-                    "Spell Name File=Path to <b>.wav</b> sound file from runescape folder<br>" +
-                    "--------------------------------------------------------<br><br>" +
-                    "<b>Usage Notes:</b><br>" +
-                    "- Multiple entries with the same name will all be used<br>" +
-                    "- Multiple file paths for the same spell will be applied in order<br>" +
-                    "- User entries take priority over spell presets or spell names<br>" +
-                    "- Setting a spell to <b>None</b> or <b>empty</b> will disable it<br>" +
-                    "- Invalid lines will be ignored",
-            section = SPELL_SECTION,
-            position = 3
-    )
-    default String customSpellOverrides() {
-        return "";
-    }
+    String RELOAD_PRESET_FILES = "reloadPresetFiles";
 
     @ConfigItem(
             keyName = "shoutSpells",
@@ -179,27 +159,26 @@ public interface AnimeChantConfig extends Config {
         return SpecialAttackFallback.SPECIAL_ATTACK_NAME;
     }
 
-
     @ConfigItem(
-            keyName = SPECIAL_ATTACK_OVERRIDE,
-            name = "Spec Overrides",
-            description = "Custom user special attack overrides.<br>" +
+            keyName = SPELL_OVERRIDES,
+            name = "Custom Spell Overrides",
+            description = "Custom user spell overrides.<br>" +
                     "Each line must contain one entry formatted as follows:<br><br>" +
                     "--------------------------------------------------------<br>" +
-                    "Weapon Name=Text to Display<br>" +
-                    "Weapoin Item Id=Text to Display<br>" +
-                    "Weapon Name file=Path to <b>.wav</b> sound file from runescape folder<br>" +
+                    "Spell Name=Text to Display<br>" +
+                    "Spell Category name=Text to Display<br>" +
+                    "Spell Name File=Path to <b>.wav</b> files file from runescape folder<br>" +
                     "--------------------------------------------------------<br><br>" +
                     "<b>Usage Notes:</b><br>" +
                     "- Multiple entries with the same name will all be used<br>" +
-                    "- Multiple file paths for the same weapon will be applied in order<br>" +
-                    "- User entries take priority over weapon spec presets or spec name names<br>" +
-                    "- Setting a weapon spec to <b>None</b> or <b>empty</b> will disable it<br>" +
+                    "- Multiple file paths for the same spell will be applied in order<br>" +
+                    "- User entries take priority over spell presets or spell names<br>" +
+                    "- Setting a spell to <b>None</b> or <b>empty</b> will disable it<br>" +
                     "- Invalid lines will be ignored",
-            section = SPECIAL_ATTACKS_SECTION,
+            section = SPELL_SECTION,
             position = 3
     )
-    default String customSpecialAttackOverrides() {
+    default String customSpellOverrides() {
         return "";
     }
 
@@ -260,5 +239,40 @@ public interface AnimeChantConfig extends Config {
     )
     default String scratchPad() {
         return "";
+    }
+
+    @ConfigItem(
+            keyName = SPECIAL_ATTACK_OVERRIDE,
+            name = "Spec Overrides",
+            description = "Custom user special attack overrides.<br>" +
+                    "Each line must contain one entry formatted as follows:<br><br>" +
+                    "--------------------------------------------------------<br>" +
+                    "Weapon Name=Text to Display<br>" +
+                    "Weapoin Item Id=Text to Display<br>" +
+                    "Weapon Name file=Path to <b>.wav</b> files file from runescape folder<br>" +
+                    "--------------------------------------------------------<br><br>" +
+                    "<b>Usage Notes:</b><br>" +
+                    "- Multiple entries with the same name will all be used<br>" +
+                    "- Multiple file paths for the same weapon will be applied in order<br>" +
+                    "- User entries take priority over weapon spec presets or spec name names<br>" +
+                    "- Setting a weapon spec to <b>None</b> or <b>empty</b> will disable it<br>" +
+                    "- Invalid lines will be ignored",
+            section = SPECIAL_ATTACKS_SECTION,
+            position = 3
+    )
+    default String customSpecialAttackOverrides() {
+        return "";
+    }
+
+    @ConfigItem(
+            keyName = RELOAD_PRESET_FILES,
+            name = "[Reload preset files]",
+            description = "Reloads the plugin's preset files with the latest ones.<br>" +
+                    "Reload happens when checkbox is toggled on or off.",
+            position = 8
+    )
+
+    default boolean reloadPresetFiles() {
+        return false;
     }
 }

@@ -15,13 +15,14 @@ import java.util.*;
 import java.util.function.Function;
 
 import static com.aguscerdo.animechant.chantdata.model.ValidationIssue.ValidationIssueReason;
+import static com.aguscerdo.animechant.tools.StringUtils.removeSuffix;
 
 /**
  * Handles custom override parsing (spells, spell categories, spec weapons).
  * <p>
  * Syntax, one override per line:
  * key = text
- * keyFile = sound.wav
+ * keyFile = files.wav
  */
 public class CustomOverrides {
     public static String NONE = "NONE";
@@ -162,7 +163,7 @@ public class CustomOverrides {
             existingEntries.add(
                     new TextEntry(
                             /*text=*/ !isFile ? content : "",
-                            /*sound=*/ isFile ? Optional.of(content) : Optional.empty()));
+                            /*files=*/ isFile ? Optional.of(content) : Optional.empty()));
         }
     }
 
@@ -187,7 +188,7 @@ public class CustomOverrides {
     }
 
     /**
-     * Attempts to merge textentries to match text and sound files in order.
+     * Attempts to merge textentries to match text and files files in order.
      */
     private static boolean maybeMergeTextEntries(String content, boolean isFile, List<TextEntry> entries) {
         if (entries.isEmpty()) {
@@ -211,11 +212,6 @@ public class CustomOverrides {
         return false;
     }
 
-    private static String removeSuffix(String s, String suffix) {
-        return s.endsWith(suffix)
-                ? s.substring(0, s.length() - suffix.length()).trim()
-                : s;
-    }
 
     /**
      * Intermediate result of the generic single-key parse.

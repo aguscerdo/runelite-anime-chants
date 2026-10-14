@@ -21,6 +21,7 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.Optional;
+import java.util.concurrent.ScheduledExecutorService;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -46,6 +47,10 @@ public class SpellTextResolverTest {
     @Mock
     @Bind
     private Client mockClient;
+
+    @Mock
+    @Bind
+    private ScheduledExecutorService mockExecutor;
 
     @Mock
     @Bind
@@ -83,6 +88,11 @@ public class SpellTextResolverTest {
         injectResolver(SpellTextPreset.NONE);
 
         when(mockClient.getTickCount()).thenReturn(100);
+        doAnswer(invocation -> {
+            Runnable command = invocation.getArgument(0);
+            command.run();
+            return null;
+        }).when(mockExecutor).execute(any(Runnable.class));
     }
 
     private void injectResolver(SpellTextPreset spellTextPreset) {

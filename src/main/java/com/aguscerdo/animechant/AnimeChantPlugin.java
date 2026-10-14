@@ -1,10 +1,10 @@
 package com.aguscerdo.animechant;
 
 import com.aguscerdo.animechant.chantdata.model.TextEntry;
-import com.aguscerdo.animechant.sound.SoundEngine;
+import com.aguscerdo.animechant.files.FileManager;
+import com.aguscerdo.animechant.files.SoundEngine;
 import com.aguscerdo.animechant.specials.SpecialAttackPlugin;
 import com.aguscerdo.animechant.spells.SpellPlugin;
-import com.google.inject.Binder;
 import com.google.inject.Provides;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Client;
@@ -16,12 +16,14 @@ import net.runelite.client.callback.ClientThread;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.EventBus;
 import net.runelite.client.eventbus.Subscribe;
+import net.runelite.client.events.ConfigChanged;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
 import net.runelite.client.util.Filepath;
 
 import javax.inject.Inject;
 import java.io.IOException;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.ScheduledExecutorService;
 
@@ -32,6 +34,7 @@ import java.util.concurrent.ScheduledExecutorService;
         tags = {"anime", "spells", "sounds", "spec"},
         internalName = "anime-chant")
 public class AnimeChantPlugin extends Plugin {
+    private static TextEntry YAML_RELOAD = new TextEntry("Reloading all presets...", Optional.empty());
 
 
     @Inject
@@ -41,7 +44,7 @@ public class AnimeChantPlugin extends Plugin {
     private EventBus eventBus;
 
     @Inject
-    private ScheduledExecutorService executor; // RuneLite's shared pool
+    private ScheduledExecutorService executor;
 
     @Inject
     private ClientThread clientThread;
@@ -61,14 +64,21 @@ public class AnimeChantPlugin extends Plugin {
     @Inject
     private SpecialAttackPlugin specialAttackPlugin;
 
-    @Override
-    public void configure(Binder binder) {
-        binder.install(new AnimeChantModule());
-    }
-
     @Provides
     AnimeChantConfig provideConfig(ConfigManager configManager) {
         return configManager.getConfig(AnimeChantConfig.class);
+    }
+
+    @Provides
+    @Annotations.PluginFilePath
+    Filepath providePluginFilePath() {
+        try {
+            return getPluginDirectory();
+
+        } catch (IOException e) {
+            log.warn("Failed to get plugin directory.");
+            return null;
+        }
     }
 
     @Override
@@ -83,9 +93,9 @@ public class AnimeChantPlugin extends Plugin {
             try {
                 Filepath pluginDirectory = getPluginDirectory();
                 pluginDirectory.createDirectories();
-                log.debug("Anime chants plugin directory: {}", pluginDirectory);
+                FileManager.writePresetFiles(pluginDirectory, /* force= */false);
             } catch (Exception e) {
-                log.error("Failed to initialize directory.", e);
+                log.error("Failed to initialize directories.", e);
             }
         });
     }
@@ -99,6 +109,31 @@ public class AnimeChantPlugin extends Plugin {
 
         spellPlugin.shutDown();
         specialAttackPlugin.shutDown();
+    }
+
+
+    @Subscribe
+    public void onConfigChanged(ConfigChanged event) {
+        if (!event.getGroup().equals(AnimeChantConfig.GROUP)) return;
+
+        // TODO figure out if there's a way for pop-up buttons and warnings.
+        if (Objects.equals(event.getKey(), AnimeChantConfig.RELOAD_PRESET_FILES)) {
+            try {
+                log.info("Reloading anime chant yaml preset files...");
+                Filepath pluginDirectory = getPluginDirectory();
+                executor.execute(
+                        () -> {
+                            overheadTextService.displayText(YAML_RELOAD, false);
+                            FileManager.writePresetFiles(pluginDirectory, /* force= */true);
+
+                            spellPlugin.startUp();
+                            specialAttackPlugin.startUp();
+                        }
+                );
+            } catch (IOException e) {
+                log.warn("Failed to get plugin directory for reload.");
+            }
+        }
     }
 
 
@@ -138,10 +173,9 @@ public class AnimeChantPlugin extends Plugin {
 
         executor.execute(() -> {
             try {
-                // TODO merge path with file one.
                 soundEngine.playSound(getPluginDirectory(), soundFile.get());
             } catch (RuntimeException | IOException e) {
-                log.error("Failed to play sound file: {}", soundFile.get(), e);
+                log.error("Failed to play files file: {}", soundFile.get(), e);
             }
         });
 

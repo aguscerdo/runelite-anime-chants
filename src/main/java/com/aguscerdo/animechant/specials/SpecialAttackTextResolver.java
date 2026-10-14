@@ -7,7 +7,7 @@ import com.google.inject.ImplementedBy;
 import java.util.Optional;
 
 /**
- * Converts a cast {@link SpecWeapon} into the text/sound entry to display, based on the user's
+ * Converts a cast {@link SpecWeapon} into the text/files entry to display, based on the user's
  * configured presets and overrides.
  */
 @ImplementedBy(SpecialAttackTextResolverImpl.class)
