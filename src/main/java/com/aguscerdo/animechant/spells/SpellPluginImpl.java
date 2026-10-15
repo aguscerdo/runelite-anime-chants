@@ -73,8 +73,7 @@ public class SpellPluginImpl implements SpellPlugin {
 
         if (Objects.equals(event.getKey(), AnimeChantConfig.SPELL_PRESET)) {
             textResolver.reloadPresets();
-        }
-        if (Objects.equals(event.getKey(), AnimeChantConfig.SPELL_OVERRIDES)) {
+        } else if (Objects.equals(event.getKey(), AnimeChantConfig.SPELL_OVERRIDES)) {
             textResolver.reloadOverrides();
         }
     }

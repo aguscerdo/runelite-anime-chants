@@ -1,8 +1,8 @@
 package com.aguscerdo.animechant.chantdata;
 
-import com.aguscerdo.animechant.Annotations;
 import com.aguscerdo.animechant.chantdata.model.ChantData;
 import com.aguscerdo.animechant.files.FileManager;
+import com.aguscerdo.animechant.files.PluginDirectory;
 import com.aguscerdo.animechant.specials.model.SpecWeaponTextPreset;
 import com.aguscerdo.animechant.spells.model.SpellTextPreset;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -21,15 +21,8 @@ import java.util.Optional;
 public class PresetLoaderImpl implements PresetLoader {
     private static final ObjectMapper YAML_MAPPER = PresetYaml.createMapper();
 
-    private final Filepath pluginDirectory;
-
-
     @Inject
-    public PresetLoaderImpl(@Annotations.PluginFilePath
-                            Filepath pluginDirectory
-    ) {
-        this.pluginDirectory = pluginDirectory;
-    }
+    private PluginDirectory pluginDirectoryGetter;
 
     /**
      * Reads the tree, checks "version", binds with that version's schema. Closes the reader.
@@ -66,8 +59,14 @@ public class PresetLoaderImpl implements PresetLoader {
         return loadPresetFile(preset.getDirectoryName(), preset.getFileName());
     }
 
+    @SuppressWarnings("OptionalIsPresent")
     private Optional<ChantData> loadPresetFile(String directoryName, String fileName) {
-        return FileManager.getPresetFileReader(pluginDirectory, directoryName, fileName)
+        Optional<Filepath> filepath = pluginDirectoryGetter.getPluginDirectory();
+        if (filepath.isEmpty()) {
+            return Optional.empty();
+        }
+
+        return FileManager.getPresetFileReader(filepath.get(), directoryName, fileName)
                 .flatMap(reader -> loadFromYaml(reader, fileName));
     }
 }

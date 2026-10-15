@@ -9,6 +9,7 @@ import net.runelite.api.events.GameStateChanged;
 import net.runelite.api.events.VarbitChanged;
 import net.runelite.api.gameval.InventoryID;
 import net.runelite.api.gameval.VarPlayerID;
+import net.runelite.api.gameval.VarbitID;
 import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.events.ConfigChanged;
 
@@ -28,7 +29,11 @@ public class SpecialAttackPluginImpl implements SpecialAttackPlugin {
     @Inject
     private SpecialAttackTextResolver textResolver;
 
-    private int lastSpecPercent = -1;
+    private int specPercent = -1;
+
+    // Goes to zero as it is charged.
+    private int dfsRecharge = -1;
+    private int dfwRecharge = -1;
 
 
     public void startUp() {
@@ -37,7 +42,7 @@ public class SpecialAttackPluginImpl implements SpecialAttackPlugin {
 
 
     public void shutDown() {
-        lastSpecPercent = -1;
+        specPercent = -1;
 
         textResolver.clear();
     }
@@ -51,8 +56,7 @@ public class SpecialAttackPluginImpl implements SpecialAttackPlugin {
 
         if (Objects.equals(event.getKey(), AnimeChantConfig.SPECIAL_ATTACK_PRESET)) {
             textResolver.reloadPresets();
-        }
-        if (Objects.equals(event.getKey(), AnimeChantConfig.SPECIAL_ATTACK_OVERRIDE)) {
+        } else if (Objects.equals(event.getKey(), AnimeChantConfig.SPECIAL_ATTACK_OVERRIDE)) {
             textResolver.reloadOverrides();
         }
     }
@@ -61,30 +65,71 @@ public class SpecialAttackPluginImpl implements SpecialAttackPlugin {
     public void onGameStateChanged(GameStateChanged state) {
         GameState gs = state.getGameState();
         if (gs == GameState.LOGIN_SCREEN || gs == GameState.HOPPING || gs == GameState.CONNECTION_LOST) {
-            lastSpecPercent = -1;   // reseed on next varp update
+            specPercent = -1;
         }
     }
 
+
+    // TODO handle wyvern shield via animations or chat text.
     public Optional<TextEntry> onVarbitChanged(VarbitChanged event) {
-        if (event.getVarpId() != VarPlayerID.SA_ENERGY) return Optional.empty();
-
-        int spec = event.getValue();
-        log.debug("Varbit change SA event: {} - {} -> {}", event, lastSpecPercent, spec);
-
-        if (lastSpecPercent != -1 && spec < lastSpecPercent) {
-            lastSpecPercent = spec;
-            return handleSpecialAttack();
+        if (event.getVarpId() == VarPlayerID.SA_ENERGY) {
+            return handleSpecialAttack(event);
         }
 
-        lastSpecPercent = spec;
+        if (event.getVarbitId() == VarbitID.DRAGONFIRE_SHIELD_RECHARGE
+                && event.getVarbitId() == VarbitID.DRAGONFIRE_WARD_RECHARGE
+        ) {
+            return handleAltSpecialAttack(event);
+        }
+
         return Optional.empty();
+
+
     }
 
-    private Optional<TextEntry> handleSpecialAttack() {
+
+    private Optional<TextEntry> handleSpecialAttack(VarbitChanged event) {
+        int newSpec = event.getValue();
+        int currentSpec = this.specPercent;
+        this.specPercent = newSpec;
+
+        if (!config.specialAttacksEnabled()) return Optional.empty();
+
+        if (currentSpec == -1 || newSpec >= currentSpec) {
+            return Optional.empty();
+        }
+
         int weaponId = getWeaponId();
         if (weaponId == -1) return Optional.empty();
 
         SpecWeapon specWeapon = SpecWeapon.fromId(weaponId);
+
+        return textResolver.resolve(specWeapon);
+    }
+
+    private Optional<TextEntry> handleAltSpecialAttack(VarbitChanged event) {
+        int newValue = event.getValue();
+        int oldValue;
+        SpecWeapon specWeapon;
+
+        if (event.getVarbitId() == VarbitID.DRAGONFIRE_SHIELD_RECHARGE) {
+            oldValue = dfsRecharge;
+            dfsRecharge = newValue;
+            specWeapon = SpecWeapon.DRAGONFIRE_SHIELD;
+        } else if (event.getVarbitId() == VarbitID.DRAGONFIRE_WARD_RECHARGE) {
+            oldValue = dfwRecharge;
+            dfwRecharge = newValue;
+            specWeapon = SpecWeapon.DRAGONFIRE_WARD;
+        } else {
+            return Optional.empty();
+        }
+
+        if (!config.specialAttacksEnabled()) return Optional.empty();
+
+        // Setting initial value, gaining charges or emptying.
+        if (oldValue == -1 || newValue - oldValue > 1) {
+            return Optional.empty();
+        }
 
         return textResolver.resolve(specWeapon);
     }

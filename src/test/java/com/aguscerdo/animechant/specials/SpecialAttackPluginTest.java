@@ -7,6 +7,7 @@ import com.google.inject.Inject;
 import com.google.inject.testing.fieldbinder.Bind;
 import com.google.inject.testing.fieldbinder.BoundFieldModule;
 import net.runelite.api.*;
+import net.runelite.api.events.AnimationChanged;
 import net.runelite.api.events.GameStateChanged;
 import net.runelite.api.events.VarbitChanged;
 import net.runelite.api.gameval.InventoryID;
@@ -83,12 +84,12 @@ public class SpecialAttackPluginTest {
 
     @Test
     public void shutDown_resetsLastSpec_ignore() {
-        assertThat(plugin.onVarbitChanged(makeVarbitChanged(1000))).isEmpty();
+        assertThat(plugin.onVarbitChanged(makeSpecVarbitChanged(1000))).isEmpty();
 
         plugin.shutDown();
 
         // Baseline was cleared, so this lower value only reseeds
-        assertThat(plugin.onVarbitChanged(makeVarbitChanged(500))).isEmpty();
+        assertThat(plugin.onVarbitChanged(makeSpecVarbitChanged(500))).isEmpty();
     }
 
     @Test
@@ -141,37 +142,37 @@ public class SpecialAttackPluginTest {
 
     @Test
     public void onGameStateChanged_loginScreen_resetsLastSpec_ignore() {
-        assertThat(plugin.onVarbitChanged(makeVarbitChanged(1000))).isEmpty();
+        assertThat(plugin.onVarbitChanged(makeSpecVarbitChanged(1000))).isEmpty();
         plugin.onGameStateChanged(makeGameStateChanged(GameState.LOGIN_SCREEN));
-        assertThat(plugin.onVarbitChanged(makeVarbitChanged(500))).isEmpty();
+        assertThat(plugin.onVarbitChanged(makeSpecVarbitChanged(500))).isEmpty();
     }
 
     @Test
     public void onGameStateChanged_hopping_resetsLastSpec_ignore() {
-        assertThat(plugin.onVarbitChanged(makeVarbitChanged(1000))).isEmpty();
+        assertThat(plugin.onVarbitChanged(makeSpecVarbitChanged(1000))).isEmpty();
         plugin.onGameStateChanged(makeGameStateChanged(GameState.HOPPING));
-        assertThat(plugin.onVarbitChanged(makeVarbitChanged(500))).isEmpty();
+        assertThat(plugin.onVarbitChanged(makeSpecVarbitChanged(500))).isEmpty();
     }
 
     @Test
     public void onGameStateChanged_connectionLost_resetsLastSpec_ignore() {
-        assertThat(plugin.onVarbitChanged(makeVarbitChanged(1000))).isEmpty();
+        assertThat(plugin.onVarbitChanged(makeSpecVarbitChanged(1000))).isEmpty();
         plugin.onGameStateChanged(makeGameStateChanged(GameState.CONNECTION_LOST));
-        assertThat(plugin.onVarbitChanged(makeVarbitChanged(500))).isEmpty();
+        assertThat(plugin.onVarbitChanged(makeSpecVarbitChanged(500))).isEmpty();
     }
 
     @Test
     public void onGameStateChanged_loggedIn_keepsLastSpec() {
-        assertThat(plugin.onVarbitChanged(makeVarbitChanged(1000))).isEmpty();
+        assertThat(plugin.onVarbitChanged(makeSpecVarbitChanged(1000))).isEmpty();
         plugin.onGameStateChanged(makeGameStateChanged(GameState.LOGGED_IN));
-        assertThat(plugin.onVarbitChanged(makeVarbitChanged(500))).contains(GRANITE_MAUL_TEXT_ENTRY);
+        assertThat(plugin.onVarbitChanged(makeSpecVarbitChanged(500))).contains(GRANITE_MAUL_TEXT_ENTRY);
     }
 
     @Test
     public void onGameStateChanged_loading_keepsLastSpec() {
-        assertThat(plugin.onVarbitChanged(makeVarbitChanged(1000))).isEmpty();
+        assertThat(plugin.onVarbitChanged(makeSpecVarbitChanged(1000))).isEmpty();
         plugin.onGameStateChanged(makeGameStateChanged(GameState.LOADING));
-        assertThat(plugin.onVarbitChanged(makeVarbitChanged(500))).contains(GRANITE_MAUL_TEXT_ENTRY);
+        assertThat(plugin.onVarbitChanged(makeSpecVarbitChanged(500))).contains(GRANITE_MAUL_TEXT_ENTRY);
     }
 
     @Test
@@ -188,55 +189,67 @@ public class SpecialAttackPluginTest {
 
     @Test
     public void onVarbitChanged_lastSpecMinusOne_seedsBaselineOnly() {
-        assertThat(plugin.onVarbitChanged(makeVarbitChanged(1000))).isEmpty();
+        assertThat(plugin.onVarbitChanged(makeSpecVarbitChanged(1000))).isEmpty();
 
         verify(mockTextResolver, never()).resolve(any());
     }
 
     @Test
     public void onVarbitChanged_specNotReduced_ignore() {
-        assertThat(plugin.onVarbitChanged(makeVarbitChanged(500))).isEmpty();
-        assertThat(plugin.onVarbitChanged(makeVarbitChanged(600))).isEmpty();
+        assertThat(plugin.onVarbitChanged(makeSpecVarbitChanged(500))).isEmpty();
+        assertThat(plugin.onVarbitChanged(makeSpecVarbitChanged(600))).isEmpty();
     }
 
     @Test
     public void onVarbitChanged_specUnchanged_ignore() {
-        assertThat(plugin.onVarbitChanged(makeVarbitChanged(500))).isEmpty();
-        assertThat(plugin.onVarbitChanged(makeVarbitChanged(500))).isEmpty();
+        assertThat(plugin.onVarbitChanged(makeSpecVarbitChanged(500))).isEmpty();
+        assertThat(plugin.onVarbitChanged(makeSpecVarbitChanged(500))).isEmpty();
     }
 
     @Test
     public void onVarbitChanged_specReduced_returnsText() {
-        assertThat(plugin.onVarbitChanged(makeVarbitChanged(1000))).isEmpty();
-        assertThat(plugin.onVarbitChanged(makeVarbitChanged(500))).contains(GRANITE_MAUL_TEXT_ENTRY);
+        assertThat(plugin.onVarbitChanged(makeSpecVarbitChanged(1000))).isEmpty();
+        assertThat(plugin.onVarbitChanged(makeSpecVarbitChanged(500))).contains(GRANITE_MAUL_TEXT_ENTRY);
 
         verify(mockTextResolver, times(1)).resolve(any());
     }
 
     @Test
+    public void onVarbitChanged_specialAttacksDisabled_stillModifiesCurrentSpec() {
+        when(mockConfig.specialAttacksEnabled()).thenReturn(false)
+                .thenReturn(false)
+                .thenReturn(true);
+
+        assertThat(plugin.onVarbitChanged(makeSpecVarbitChanged(1000))).isEmpty();
+        assertThat(plugin.onVarbitChanged(makeSpecVarbitChanged(500))).isEmpty();
+        assertThat(plugin.onVarbitChanged(makeSpecVarbitChanged(0))).hasValue(GRANITE_MAUL_TEXT_ENTRY);
+    }
+
+
+    @Test
     public void onVarbitChanged_specReducedTwice_returnsTextTwice() {
-        assertThat(plugin.onVarbitChanged(makeVarbitChanged(1000))).isEmpty();
-        assertThat(plugin.onVarbitChanged(makeVarbitChanged(500))).contains(GRANITE_MAUL_TEXT_ENTRY);
-        assertThat(plugin.onVarbitChanged(makeVarbitChanged(0))).contains(GRANITE_MAUL_TEXT_ENTRY);
+        assertThat(plugin.onVarbitChanged(makeSpecVarbitChanged(1000))).isEmpty();
+        assertThat(plugin.onVarbitChanged(makeSpecVarbitChanged(500))).contains(GRANITE_MAUL_TEXT_ENTRY);
+        assertThat(plugin.onVarbitChanged(makeSpecVarbitChanged(0))).contains(GRANITE_MAUL_TEXT_ENTRY);
 
         verify(mockTextResolver, times(2)).resolve(any());
     }
 
     @Test
     public void onVarbitChanged_specRegenThenReduced_returnsText() {
-        assertThat(plugin.onVarbitChanged(makeVarbitChanged(500))).isEmpty();
-        assertThat(plugin.onVarbitChanged(makeVarbitChanged(600))).isEmpty();
-        assertThat(plugin.onVarbitChanged(makeVarbitChanged(100))).contains(GRANITE_MAUL_TEXT_ENTRY);
+        assertThat(plugin.onVarbitChanged(makeSpecVarbitChanged(500))).isEmpty();
+        assertThat(plugin.onVarbitChanged(makeSpecVarbitChanged(600))).isEmpty();
+        assertThat(plugin.onVarbitChanged(makeSpecVarbitChanged(100))).contains(GRANITE_MAUL_TEXT_ENTRY);
     }
 
     @Test
     public void onVarbitChanged_afterRelog_firstValueSeedsThenDropTriggers() {
-        assertThat(plugin.onVarbitChanged(makeVarbitChanged(1000))).isEmpty();
+        assertThat(plugin.onVarbitChanged(makeSpecVarbitChanged(1000))).isEmpty();
         plugin.onGameStateChanged(makeGameStateChanged(GameState.LOGIN_SCREEN));
         plugin.onGameStateChanged(makeGameStateChanged(GameState.LOGGED_IN));
 
-        assertThat(plugin.onVarbitChanged(makeVarbitChanged(700))).isEmpty();
-        assertThat(plugin.onVarbitChanged(makeVarbitChanged(200))).contains(GRANITE_MAUL_TEXT_ENTRY);
+        assertThat(plugin.onVarbitChanged(makeSpecVarbitChanged(700))).isEmpty();
+        assertThat(plugin.onVarbitChanged(makeSpecVarbitChanged(200))).contains(GRANITE_MAUL_TEXT_ENTRY);
     }
 
     @Test
@@ -244,16 +257,16 @@ public class SpecialAttackPluginTest {
         // Client returns garbage; the plugin must rely on the event's value
         when(mockClient.getVarpValue(any(Integer.class))).thenReturn(-1);
 
-        assertThat(plugin.onVarbitChanged(makeVarbitChanged(1000))).isEmpty();
-        assertThat(plugin.onVarbitChanged(makeVarbitChanged(500))).contains(GRANITE_MAUL_TEXT_ENTRY);
+        assertThat(plugin.onVarbitChanged(makeSpecVarbitChanged(1000))).isEmpty();
+        assertThat(plugin.onVarbitChanged(makeSpecVarbitChanged(500))).contains(GRANITE_MAUL_TEXT_ENTRY);
     }
 
     @Test
     public void onVarbitChanged_specReduced_noWornContainer_ignore() {
         when(mockClient.getItemContainer(InventoryID.WORN)).thenReturn(null);
 
-        assertThat(plugin.onVarbitChanged(makeVarbitChanged(1000))).isEmpty();
-        assertThat(plugin.onVarbitChanged(makeVarbitChanged(500))).isEmpty();
+        assertThat(plugin.onVarbitChanged(makeSpecVarbitChanged(1000))).isEmpty();
+        assertThat(plugin.onVarbitChanged(makeSpecVarbitChanged(500))).isEmpty();
 
         verify(mockTextResolver, never()).resolve(any());
     }
@@ -262,8 +275,8 @@ public class SpecialAttackPluginTest {
     public void onVarbitChanged_specReduced_noWeapon_ignore() {
         when(mockWornContainer.getItem(EquipmentInventorySlot.WEAPON.getSlotIdx())).thenReturn(null);
 
-        assertThat(plugin.onVarbitChanged(makeVarbitChanged(1000))).isEmpty();
-        assertThat(plugin.onVarbitChanged(makeVarbitChanged(500))).isEmpty();
+        assertThat(plugin.onVarbitChanged(makeSpecVarbitChanged(1000))).isEmpty();
+        assertThat(plugin.onVarbitChanged(makeSpecVarbitChanged(500))).isEmpty();
 
         verify(mockTextResolver, never()).resolve(any());
     }
@@ -272,22 +285,24 @@ public class SpecialAttackPluginTest {
     public void onVarbitChanged_specReduced_resolverEmpty_ignore() {
         when(mockTextResolver.resolve(any())).thenReturn(Optional.empty());
 
-        assertThat(plugin.onVarbitChanged(makeVarbitChanged(1000))).isEmpty();
-        assertThat(plugin.onVarbitChanged(makeVarbitChanged(500))).isEmpty();
+        assertThat(plugin.onVarbitChanged(makeSpecVarbitChanged(1000))).isEmpty();
+        assertThat(plugin.onVarbitChanged(makeSpecVarbitChanged(500))).isEmpty();
 
         verify(mockTextResolver, times(1)).resolve(any());
     }
 
     @Test
     public void onVarbitChanged_specNotReduced_resolverNotCalled() {
-        plugin.onVarbitChanged(makeVarbitChanged(500));
-        plugin.onVarbitChanged(makeVarbitChanged(600));
+        plugin.onVarbitChanged(makeSpecVarbitChanged(500));
+        plugin.onVarbitChanged(makeSpecVarbitChanged(600));
 
         verify(mockTextResolver, never()).resolve(any());
     }
 
 
-    private VarbitChanged makeVarbitChanged(int value) {
+    // TODO add alt-spec tests.
+
+    private VarbitChanged makeSpecVarbitChanged(int value) {
         VarbitChanged varbit = new VarbitChanged();
         varbit.setVarpId(VarPlayerID.SA_ENERGY);
         varbit.setValue(value);
@@ -300,5 +315,13 @@ public class SpecialAttackPluginTest {
         event.setGameState(gameState);
 
         return event;
+    }
+
+
+    private AnimationChanged makeAnimationEvent() {
+        AnimationChanged animation = new AnimationChanged();
+        animation.setActor(mockPlayer);
+
+        return animation;
     }
 }

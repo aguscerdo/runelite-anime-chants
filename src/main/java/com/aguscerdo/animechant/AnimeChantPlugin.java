@@ -2,7 +2,6 @@ package com.aguscerdo.animechant;
 
 import com.aguscerdo.animechant.chantdata.model.TextEntry;
 import com.aguscerdo.animechant.files.FileManager;
-import com.aguscerdo.animechant.files.SoundEngine;
 import com.aguscerdo.animechant.specials.SpecialAttackPlugin;
 import com.aguscerdo.animechant.spells.SpellPlugin;
 import com.google.inject.Provides;
@@ -12,6 +11,7 @@ import net.runelite.api.Player;
 import net.runelite.api.events.AnimationChanged;
 import net.runelite.api.events.GameTick;
 import net.runelite.api.events.VarbitChanged;
+import net.runelite.api.gameval.VarPlayerID;
 import net.runelite.client.callback.ClientThread;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.EventBus;
@@ -53,10 +53,7 @@ public class AnimeChantPlugin extends Plugin {
     private AnimeChantConfig config;
 
     @Inject
-    private SoundEngine soundEngine;
-
-    @Inject
-    private OverheadTextService overheadTextService;
+    private TextAndSoundService textAndSoundService;
 
     @Inject
     private SpellPlugin spellPlugin;
@@ -123,7 +120,7 @@ public class AnimeChantPlugin extends Plugin {
                 Filepath pluginDirectory = getPluginDirectory();
                 executor.execute(
                         () -> {
-                            overheadTextService.displayText(YAML_RELOAD, false);
+                            textAndSoundService.displayText(YAML_RELOAD, false);
                             FileManager.writePresetFiles(pluginDirectory, /* force= */true);
 
                             spellPlugin.startUp();
@@ -139,45 +136,37 @@ public class AnimeChantPlugin extends Plugin {
 
     @Subscribe
     public void onGameTick(GameTick tick) {
-        overheadTextService.onGameTick();
+        textAndSoundService.onGameTick();
     }
 
+
+    // TODO consider injecting the sound service as singleton and handling these directly.
     @Subscribe
     public void onAnimationChanged(AnimationChanged event) {
         Optional<TextEntry> resolvedText = spellPlugin.onAnimationChanged(event);
         if (resolvedText.isEmpty()) return;
 
-        overheadTextService.displayText(resolvedText.get(), config.shoutSpells());
-
-        if (config.spellSoundsEnabled()) {
-            playSound(resolvedText);
-        }
+        processTextEntry(resolvedText.get(), config.shoutSpells(), config.spellSoundsEnabled());
     }
 
     @Subscribe
     public void onVarbitChanged(VarbitChanged event) {
+        if (event.getVarpId() != VarPlayerID.SA_ENERGY) return;
+
         Optional<TextEntry> resolvedText = specialAttackPlugin.onVarbitChanged(event);
         if (resolvedText.isEmpty()) return;
 
-        overheadTextService.displayText(resolvedText.get(), config.shoutSpecialAttacks());
-
-        if (config.specialAttackSoundsEnabled()) {
-            playSound(resolvedText);
-        }
+        processTextEntry(resolvedText.get(), config.shoutSpecialAttacks(), config.specialAttackSoundsEnabled());
     }
 
+    private void processTextEntry(TextEntry textEntry,
+                                  boolean shout,
+                                  boolean playSound) {
+        textAndSoundService.displayText(textEntry, shout);
 
-    private void playSound(Optional<TextEntry> textEntry) {
-        Optional<String> soundFile = textEntry.flatMap(TextEntry::getSound);
-        if (soundFile.isEmpty() || soundFile.get().isEmpty()) return;
-
-        executor.execute(() -> {
-            try {
-                soundEngine.playSound(getPluginDirectory(), soundFile.get());
-            } catch (RuntimeException | IOException e) {
-                log.error("Failed to play files file: {}", soundFile.get(), e);
-            }
-        });
+        if (playSound) {
+            textAndSoundService.playSound(textEntry);
+        }
 
     }
 

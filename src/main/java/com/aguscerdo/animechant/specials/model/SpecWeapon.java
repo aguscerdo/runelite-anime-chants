@@ -366,12 +366,12 @@ public enum SpecWeapon {
     ZAMORAK_GODSWORD("Zamorak godsword", "Ice Cleave", ImmutableList.of(
             ItemID.ZGS,
             ItemID.ZGSG)),
-    ANCIENT_WYVERN_SHIELD("Ancient wyvern shield", "None", ImmutableList.of(
+    ANCIENT_WYVERN_SHIELD("Ancient wyvern shield", "Ancient Flames", ImmutableList.of(
             ItemID.WYVERN_SHIELD)),
-    DRAGONFIRE_SHIELD("Dragonfire shield", "None", ImmutableList.of(
+    DRAGONFIRE_SHIELD("Dragonfire shield", "Dragon's Breath", ImmutableList.of(
             ItemID.DRAGONFIRE_SHIELD,
             ItemID.BR_DRAGONFIRE_SHIELD)),
-    DRAGONFIRE_WARD("Dragonfire ward", "None", ImmutableList.of(
+    DRAGONFIRE_WARD("Dragonfire ward", "Dragon's Fire", ImmutableList.of(
             ItemID.DRAGONFIRE_WARD)),
     SOULREAPER_AXE("Soulreaper axe", "Behead", ImmutableList.of(
             ItemID.SOULREAPER,
