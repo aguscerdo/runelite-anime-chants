@@ -5,13 +5,17 @@ import com.aguscerdo.animechant.chantdata.model.TextEntry;
 import com.aguscerdo.animechant.specials.model.SpecWeapon;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.*;
+import net.runelite.api.events.ChatMessage;
 import net.runelite.api.events.GameStateChanged;
+import net.runelite.api.events.ItemContainerChanged;
 import net.runelite.api.events.VarbitChanged;
 import net.runelite.api.gameval.InventoryID;
+import net.runelite.api.gameval.ItemID;
 import net.runelite.api.gameval.VarPlayerID;
 import net.runelite.api.gameval.VarbitID;
 import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.events.ConfigChanged;
+import net.runelite.client.util.Text;
 
 import javax.inject.Inject;
 import java.util.Objects;
@@ -19,6 +23,8 @@ import java.util.Optional;
 
 @Slf4j
 public class SpecialAttackPluginImpl implements SpecialAttackPlugin {
+    // TODO fix this.
+    private static final String WYVERN_SPEC_MESSAGE = "ancient wyvern shield";
 
     @Inject
     private Client client;
@@ -35,6 +41,8 @@ public class SpecialAttackPluginImpl implements SpecialAttackPlugin {
     private int dfsRecharge = -1;
     private int dfwRecharge = -1;
 
+    private boolean wyvernShieldEquipped = false;
+
 
     public void startUp() {
         textResolver.reloadAll();
@@ -43,6 +51,10 @@ public class SpecialAttackPluginImpl implements SpecialAttackPlugin {
 
     public void shutDown() {
         specPercent = -1;
+        dfsRecharge = -1;
+        dfwRecharge = -1;
+
+        wyvernShieldEquipped = false;
 
         textResolver.clear();
     }
@@ -66,11 +78,14 @@ public class SpecialAttackPluginImpl implements SpecialAttackPlugin {
         GameState gs = state.getGameState();
         if (gs == GameState.LOGIN_SCREEN || gs == GameState.HOPPING || gs == GameState.CONNECTION_LOST) {
             specPercent = -1;
+            dfsRecharge = -1;
+            dfwRecharge = -1;
+
+            wyvernShieldEquipped = false;
         }
     }
 
 
-    // TODO handle wyvern shield via animations or chat text.
     public Optional<TextEntry> onVarbitChanged(VarbitChanged event) {
         if (event.getVarpId() == VarPlayerID.SA_ENERGY) {
             return handleSpecialAttack(event);
@@ -85,6 +100,35 @@ public class SpecialAttackPluginImpl implements SpecialAttackPlugin {
         return Optional.empty();
 
 
+    }
+
+    @Subscribe
+    public void onItemContainerChanged(ItemContainerChanged event) {
+        if (event.getContainerId() != InventoryID.WORN) {
+            return;
+        }
+
+        ItemContainer worn = event.getItemContainer();
+        if (worn == null) return;
+
+        Item shield = worn.getItem(EquipmentInventorySlot.SHIELD.getSlotIdx());
+        wyvernShieldEquipped = shield != null && (shield.getId() == ItemID.WYVERN_SHIELD);
+    }
+
+    public Optional<TextEntry> onChatMessage(ChatMessage event) {
+        if (!wyvernShieldEquipped || !config.specialAttacksEnabled()) {
+            return Optional.empty();
+        }
+        if (event.getType() != ChatMessageType.GAMEMESSAGE) {
+            return Optional.empty();
+        }
+
+        String msg = Text.removeTags(event.getMessage()).toLowerCase();
+        if (!msg.contains(WYVERN_SPEC_MESSAGE)) {
+            return Optional.empty();
+        }
+
+        return textResolver.resolve(SpecWeapon.ANCIENT_WYVERN_SHIELD);
     }
 
 
