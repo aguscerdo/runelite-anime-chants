@@ -32,6 +32,7 @@ public class SpecialAttackPluginImpl implements SpecialAttackPlugin {
     private TextAndSoundService textAndSoundService;
 
     private int specPercent = -1;
+    private int sraStacks = 0;
 
 
     public void startUp() {
@@ -41,6 +42,7 @@ public class SpecialAttackPluginImpl implements SpecialAttackPlugin {
 
     public void shutDown() {
         specPercent = -1;
+        sraStacks = 0;
 
         textResolver.clear();
     }
@@ -64,6 +66,7 @@ public class SpecialAttackPluginImpl implements SpecialAttackPlugin {
         GameState gs = state.getGameState();
         if (gs == GameState.LOGIN_SCREEN || gs == GameState.HOPPING || gs == GameState.CONNECTION_LOST) {
             specPercent = -1;
+            sraStacks = 0;
         }
     }
 
@@ -72,6 +75,9 @@ public class SpecialAttackPluginImpl implements SpecialAttackPlugin {
     public void onVarbitChanged(VarbitChanged event) {
         if (event.getVarpId() == VarPlayerID.SA_ENERGY) {
             handleSpecialAttack(event);
+            return;
+        } else if (event.getVarpId() == VarPlayerID.SOULREAPER_STACKS) {
+            handleSoulReaperAxe(event);
             return;
         }
 
@@ -100,6 +106,17 @@ public class SpecialAttackPluginImpl implements SpecialAttackPlugin {
         SpecWeapon specWeapon = SpecWeapon.fromId(weaponId);
 
         textResolver.resolve(specWeapon).ifPresent(this::processTextEntry);
+    }
+
+    private void handleSoulReaperAxe(VarbitChanged event) {
+        int newStacks = event.getValue();
+        int oldStacks = sraStacks;
+        sraStacks = newStacks;
+
+        if (!config.specialAttacksEnabled()) return;
+        if (newStacks != 0 || oldStacks - newStacks < 2) return;
+
+        textResolver.resolve(SpecWeapon.SOULREAPER_AXE).ifPresent(this::processTextEntry);
     }
 
     private void handleAltSpecialAttack(VarbitChanged event) {

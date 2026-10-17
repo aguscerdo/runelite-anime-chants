@@ -382,6 +382,58 @@ public class SpecialAttackPluginTest {
         verify(mockTextAndSoundService, times(0)).processTextEntry(any(), anyBoolean(), anyBoolean());
     }
 
+    @Test
+    public void onVarbitChanged_sraDecreaseOfLessThanTwo_ignored() {
+        plugin.onVarbitChanged(makePlayerVarbit(VarPlayerID.SOULREAPER_STACKS, 5));
+        plugin.onVarbitChanged(makePlayerVarbit(VarPlayerID.SOULREAPER_STACKS, 4));
+
+        verify(mockTextResolver, times(0)).resolve(any());
+        verify(mockTextAndSoundService, times(0)).processTextEntry(any(), anyBoolean(), anyBoolean());
+    }
+
+    @Test
+    public void onVarbitChanged_sraIncrease_ignored() {
+        plugin.onVarbitChanged(makePlayerVarbit(VarPlayerID.SOULREAPER_STACKS, 4));
+        plugin.onVarbitChanged(makePlayerVarbit(VarPlayerID.SOULREAPER_STACKS, 5));
+
+        verify(mockTextResolver, times(0)).resolve(any());
+        verify(mockTextAndSoundService, times(0)).processTextEntry(any(), anyBoolean(), anyBoolean());
+    }
+
+    @Test
+    public void onVarbitChanged_sraDecreaseAllStacksNoTextEntry_ignore() {
+        when(mockTextResolver.resolve(any())).thenReturn(Optional.empty());
+
+        plugin.onVarbitChanged(makePlayerVarbit(VarPlayerID.SOULREAPER_STACKS, 4));
+        plugin.onVarbitChanged(makePlayerVarbit(VarPlayerID.SOULREAPER_STACKS, 0));
+
+        verify(mockTextResolver, times(1)).resolve(any());
+        verify(mockTextAndSoundService, times(0)).processTextEntry(any(), anyBoolean(), anyBoolean());
+    }
+
+    @Test
+    public void onVarbitChanged_sraDecreaseAllStacksWithTextEntry_display() {
+        when(mockTextResolver.resolve(any())).thenReturn(Optional.of(GRANITE_MAUL_TEXT_ENTRY));
+
+        plugin.onVarbitChanged(makePlayerVarbit(VarPlayerID.SOULREAPER_STACKS, 4));
+        plugin.onVarbitChanged(makePlayerVarbit(VarPlayerID.SOULREAPER_STACKS, 0));
+
+        verify(mockTextResolver, times(1)).resolve(any());
+        verify(mockTextAndSoundService, times(1)).processTextEntry(any(), anyBoolean(), anyBoolean());
+    }
+
+
+    @Test
+    public void onVarbitChanged_sraDecreaseNotTo0_ignored() {
+        when(mockTextResolver.resolve(any())).thenReturn(Optional.empty());
+
+        plugin.onVarbitChanged(makePlayerVarbit(VarPlayerID.SOULREAPER_STACKS, 4));
+        plugin.onVarbitChanged(makePlayerVarbit(VarPlayerID.SOULREAPER_STACKS, 2));
+
+        verify(mockTextResolver, times(0)).resolve(any());
+        verify(mockTextAndSoundService, times(0)).processTextEntry(any(), anyBoolean(), anyBoolean());
+    }
+
     private VarbitChanged makeSpecVarbitChanged(int value) {
         VarbitChanged varbit = new VarbitChanged();
         varbit.setVarpId(VarPlayerID.SA_ENERGY);
@@ -393,6 +445,14 @@ public class SpecialAttackPluginTest {
     private VarbitChanged makeVarbit(int varbitId, int value) {
         VarbitChanged varbit = new VarbitChanged();
         varbit.setVarbitId(varbitId);
+        varbit.setValue(value);
+
+        return varbit;
+    }
+
+    private VarbitChanged makePlayerVarbit(int varbitId, int value) {
+        VarbitChanged varbit = new VarbitChanged();
+        varbit.setVarpId(varbitId);
         varbit.setValue(value);
 
         return varbit;
