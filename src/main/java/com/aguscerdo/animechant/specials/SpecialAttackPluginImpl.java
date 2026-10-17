@@ -114,6 +114,7 @@ public class SpecialAttackPluginImpl implements SpecialAttackPlugin {
         sraStacks = newStacks;
 
         if (!config.specialAttacksEnabled()) return;
+        // TODO figure out how to handle using spec with 1 stack and no false-triggers with decrease.
         if (newStacks != 0 || oldStacks - newStacks < 2) return;
 
         textResolver.resolve(SpecWeapon.SOULREAPER_AXE).ifPresent(this::processTextEntry);
