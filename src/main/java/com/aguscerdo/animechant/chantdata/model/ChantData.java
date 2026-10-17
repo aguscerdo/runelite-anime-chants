@@ -25,6 +25,7 @@ import java.util.Optional;
 public class ChantData {
     public static final int CURRENT_VERSION = 1;
 
+    float version;
     String name;
     String spellSoundDirectory;
     String specWeaponSoundDirectory;
@@ -35,6 +36,7 @@ public class ChantData {
     ImmutableListMultimap<SpecWeapon, TextEntry> specWeapons;
 
     public ChantData() {
+        version = 0.f;
         name = "";
         spellSoundDirectory = "";
         specWeaponSoundDirectory = "";
@@ -49,6 +51,7 @@ public class ChantData {
      */
     @JsonCreator
     public ChantData(
+            @JsonProperty("version") Float version,
             @JsonProperty("name") String name,
             @JsonProperty("spell_sound_directory") String spellSoundDirectory,
             @JsonProperty("spec_weapon_sound_directory") String specWeaponSoundDirectory,
@@ -56,6 +59,7 @@ public class ChantData {
             @JsonProperty("spells") Map<Spell, List<TextEntry>> spells,
             @JsonProperty("spec_weapons") Map<SpecWeapon, List<TextEntry>> specWeapons
     ) {
+        this.version = version;
         this.name = name;
         this.spellSoundDirectory = spellSoundDirectory;
         this.specWeaponSoundDirectory = specWeaponSoundDirectory;
@@ -66,6 +70,7 @@ public class ChantData {
     }
 
     public ChantData(
+            float version,
             String name,
             String spellSoundDirectory,
             String specWeaponSoundDirectory,
@@ -74,6 +79,7 @@ public class ChantData {
             ImmutableListMultimap<SpecWeapon, TextEntry> specWeapons
 
     ) {
+        this.version = version;
         this.name = name;
         this.spellSoundDirectory = spellSoundDirectory;
         this.specWeaponSoundDirectory = specWeaponSoundDirectory;

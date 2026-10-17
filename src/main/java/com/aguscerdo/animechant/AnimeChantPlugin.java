@@ -7,11 +7,7 @@ import com.aguscerdo.animechant.spells.SpellPlugin;
 import com.google.inject.Provides;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Client;
-import net.runelite.api.Player;
-import net.runelite.api.events.AnimationChanged;
 import net.runelite.api.events.GameTick;
-import net.runelite.api.events.VarbitChanged;
-import net.runelite.api.gameval.VarPlayerID;
 import net.runelite.client.callback.ClientThread;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.EventBus;
@@ -71,7 +67,6 @@ public class AnimeChantPlugin extends Plugin {
     Filepath providePluginFilePath() {
         try {
             return getPluginDirectory();
-
         } catch (IOException e) {
             log.warn("Failed to get plugin directory.");
             return null;
@@ -102,7 +97,7 @@ public class AnimeChantPlugin extends Plugin {
         eventBus.unregister(spellPlugin);
         eventBus.unregister(specialAttackPlugin);
 
-        clientThread.invokeLater(this::clearText);
+        clientThread.invokeLater(textAndSoundService::clear);
 
         spellPlugin.shutDown();
         specialAttackPlugin.shutDown();
@@ -137,43 +132,5 @@ public class AnimeChantPlugin extends Plugin {
     @Subscribe
     public void onGameTick(GameTick tick) {
         textAndSoundService.onGameTick();
-    }
-
-
-    // TODO consider injecting the sound service as singleton and handling these directly.
-    @Subscribe
-    public void onAnimationChanged(AnimationChanged event) {
-        Optional<TextEntry> resolvedText = spellPlugin.onAnimationChanged(event);
-        if (resolvedText.isEmpty()) return;
-
-        processTextEntry(resolvedText.get(), config.shoutSpells(), config.spellSoundsEnabled());
-    }
-
-    @Subscribe
-    public void onVarbitChanged(VarbitChanged event) {
-        if (event.getVarpId() != VarPlayerID.SA_ENERGY) return;
-
-        Optional<TextEntry> resolvedText = specialAttackPlugin.onVarbitChanged(event);
-        if (resolvedText.isEmpty()) return;
-
-        processTextEntry(resolvedText.get(), config.shoutSpecialAttacks(), config.specialAttackSoundsEnabled());
-    }
-
-    private void processTextEntry(TextEntry textEntry,
-                                  boolean shout,
-                                  boolean playSound) {
-        textAndSoundService.displayText(textEntry, shout);
-
-        if (playSound) {
-            textAndSoundService.playSound(textEntry);
-        }
-
-    }
-
-    private void clearText() {
-        Player me = client.getLocalPlayer();
-        if (me != null) {
-            me.setOverheadText(null);
-        }
     }
 }

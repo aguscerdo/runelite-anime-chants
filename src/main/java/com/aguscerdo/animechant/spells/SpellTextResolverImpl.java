@@ -96,8 +96,8 @@ public class SpellTextResolverImpl implements SpellTextResolver {
 
 
     @Override
-    public void reloadAll() {
-        reloadPresets();
+    public void reloadAll(boolean force) {
+        reloadPresets(force);
         reloadOverrides();
 
         lastCastTicks.clear();
@@ -106,8 +106,8 @@ public class SpellTextResolverImpl implements SpellTextResolver {
 
 
     @Override
-    public void reloadPresets() {
-        if (currentSpellPreset == config.spellPreset()) {
+    public void reloadPresets(boolean force) {
+        if (!force && currentSpellPreset == config.spellPreset()) {
             return;
         }
 

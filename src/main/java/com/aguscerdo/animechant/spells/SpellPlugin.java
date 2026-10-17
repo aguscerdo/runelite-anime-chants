@@ -1,13 +1,10 @@
 package com.aguscerdo.animechant.spells;
 
-import com.aguscerdo.animechant.chantdata.model.TextEntry;
 import com.google.inject.ImplementedBy;
 import net.runelite.api.events.AnimationChanged;
 import net.runelite.api.events.MenuOptionClicked;
 import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.events.ConfigChanged;
-
-import java.util.Optional;
 
 /**
  * Handles Spell related plugin actions for Anime Chant.
@@ -24,7 +21,7 @@ public interface SpellPlugin {
      * spell animation (manual or autocast) that resolves to chant text, the
      * text is shown as overhead text.
      */
-    Optional<TextEntry> onAnimationChanged(AnimationChanged event);
+    void onAnimationChanged(AnimationChanged event);
 
     /**
      * Handles a menu option click, working out which spell (if any) the player

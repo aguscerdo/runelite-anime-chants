@@ -21,12 +21,12 @@ public interface SpecialAttackTextResolver {
     /**
      * Reloads everything
      */
-    void reloadAll();
+    void reloadAll(boolean force);
 
     /**
      * Reload spec weapon to Text data from presets if the current config differs from the actual user config.
      */
-    void reloadPresets();
+    void reloadPresets(boolean force);
 
     /**
      * Reloads spec weapon custom overrides

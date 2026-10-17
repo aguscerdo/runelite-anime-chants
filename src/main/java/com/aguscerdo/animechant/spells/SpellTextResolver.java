@@ -21,12 +21,12 @@ public interface SpellTextResolver {
     /**
      * Reloads chantdata and clears all throttling state.
      */
-    void reloadAll();
+    void reloadAll(boolean force);
 
     /**
      * Reload Spell to Text chantdata if the current config differs from the actual user config.
      */
-    void reloadPresets();
+    void reloadPresets(boolean force);
 
     /**
      * Reloads spell custom overrides

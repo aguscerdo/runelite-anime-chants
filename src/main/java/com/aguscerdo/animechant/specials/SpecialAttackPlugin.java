@@ -1,14 +1,9 @@
 package com.aguscerdo.animechant.specials;
 
-import com.aguscerdo.animechant.chantdata.model.TextEntry;
 import com.google.inject.ImplementedBy;
-import net.runelite.api.events.ChatMessage;
 import net.runelite.api.events.GameStateChanged;
-import net.runelite.api.events.ItemContainerChanged;
 import net.runelite.api.events.VarbitChanged;
 import net.runelite.client.events.ConfigChanged;
-
-import java.util.Optional;
 
 /**
  * Handles Spell related plugin actions for Anime Chant.
@@ -28,18 +23,7 @@ public interface SpecialAttackPlugin {
     /**
      * Handles a varbit change for special attack.
      */
-    Optional<TextEntry> onVarbitChanged(VarbitChanged e);
-
-    /**
-     * Watch for item changes of alt-spec shields like Ancient Wyvern Shield.
-     */
-    void onItemContainerChanged(ItemContainerChanged event);
-
-    /**
-     * Resolve alt-spec weapons that rely on chat messages
-     */
-    Optional<TextEntry> onChatMessage(ChatMessage event);
-
+    void onVarbitChanged(VarbitChanged e);
 
     /**
      * Handles config changes; reloads the spell text presets when the spell

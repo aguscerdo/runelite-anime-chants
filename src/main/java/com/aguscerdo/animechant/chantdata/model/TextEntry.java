@@ -49,8 +49,8 @@ public class TextEntry {
                 throw JsonMappingException.from(p, "Preset entry must be a string or an object with 'text'");
             }
 
-            Optional<String> sound = node.hasNonNull("files")
-                    ? Optional.of(node.get("files").asText())
+            Optional<String> sound = node.hasNonNull("sound")
+                    ? Optional.of(node.get("sound").asText())
                     : Optional.empty();
             if (sound.isPresent() && sound.get().isBlank()) {
                 sound = Optional.empty();

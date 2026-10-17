@@ -251,7 +251,7 @@ public class SpellTextResolverTest {
         assertThat(resolver.resolve(Spell.FIRE_STRIKE)).isPresent();
         assertThat(resolver.resolve(Spell.FIRE_STRIKE)).isEmpty();
 
-        resolver.reloadAll();
+        resolver.reloadAll(false);
 
         assertThat(resolver.resolve(Spell.FIRE_STRIKE)).isPresent();
     }
@@ -260,7 +260,7 @@ public class SpellTextResolverTest {
     public void reloadPresets_noPresetChange_nothing() {
         when(config.spellPreset()).thenReturn(SpellTextPreset.NONE);
 
-        resolver.reloadPresets();
+        resolver.reloadPresets(false);
 
         verify(mockPresetLoader, never()).loadPreset(any(SpellTextPreset.class));
     }
@@ -272,7 +272,7 @@ public class SpellTextResolverTest {
 
         assertThat(resolver.resolve(Spell.FIRE_STRIKE)).isPresent();
 
-        resolver.reloadPresets();
+        resolver.reloadPresets(false);
 
         assertThat(resolver.resolve(Spell.FIRE_STRIKE)).isEmpty();
     }
@@ -281,7 +281,7 @@ public class SpellTextResolverTest {
     public void reloadPresets_updateFromPresets() {
         when(config.spellPreset()).thenReturn(SpellTextPreset.FRIEREN);
         when(mockPresetLoader.loadPreset(any(SpellTextPreset.class))).thenReturn(Optional.of(
-                new ChantData("Frieren",
+                new ChantData(0.f, "Frieren",
                         "",
                         "",
                         ImmutableListMultimap.of(SpellCategory.WATER, FIRE_TEXT),
@@ -292,7 +292,7 @@ public class SpellTextResolverTest {
 
         assertThat(resolver.resolve(Spell.FIRE_STRIKE)).hasValue(FIRE_STRIKE_TEXT);
 
-        resolver.reloadPresets();
+        resolver.reloadPresets(false);
 
         assertThat(resolver.resolve(Spell.FIRE_STRIKE)).hasValue(HIGH_LEVEL_ALCHEMY_TEXT);
         assertThat(resolver.resolve(Spell.WATER_BLAST)).hasValue(FIRE_TEXT);

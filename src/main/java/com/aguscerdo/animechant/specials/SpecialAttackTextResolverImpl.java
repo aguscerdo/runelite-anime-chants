@@ -84,13 +84,13 @@ public class SpecialAttackTextResolverImpl implements SpecialAttackTextResolver 
     }
 
     @Override
-    public void reloadAll() {
-        reloadPresets();
+    public void reloadAll(boolean force) {
+        reloadPresets(force);
         reloadOverrides();
     }
 
     @Override
-    public void reloadPresets() {
+    public void reloadPresets(boolean force) {
         if (currentPreset == config.specialAttackPreset()) {
             return;
         }

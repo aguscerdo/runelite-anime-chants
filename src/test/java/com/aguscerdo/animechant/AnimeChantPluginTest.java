@@ -9,7 +9,6 @@ import com.google.inject.testing.fieldbinder.Bind;
 import com.google.inject.testing.fieldbinder.BoundFieldModule;
 import net.runelite.api.Client;
 import net.runelite.api.Player;
-import net.runelite.api.events.AnimationChanged;
 import net.runelite.api.events.GameTick;
 import net.runelite.api.events.VarbitChanged;
 import net.runelite.api.gameval.VarPlayerID;
@@ -74,101 +73,6 @@ public class AnimeChantPluginTest {
         plugin.onGameTick(new GameTick());
 
         verify(mockTextAndSoundService, times(1)).onGameTick();
-    }
-
-
-    @Test
-    public void onAnimationChanged_emptySpellAndSpecTextEntry_nothing() {
-        when(mockConfig.spellSoundsEnabled()).thenReturn(true);
-        when(mockSpellPlugin.onAnimationChanged(any())).thenReturn(Optional.empty());
-
-        plugin.onAnimationChanged(new AnimationChanged());
-
-        verify(mockExecutor, never()).execute(any());
-        verify(mockTextAndSoundService, never()).displayText(any(), anyBoolean());
-    }
-
-    @Test
-    public void onAnimationChanged_spellTextSentToOverheadService_sentToExecutor() {
-        when(mockConfig.spellSoundsEnabled()).thenReturn(false);
-        when(mockSpellPlugin.onAnimationChanged(any())).thenReturn(Optional.of(TEXT_ENTRY));
-
-        plugin.onAnimationChanged(new AnimationChanged());
-
-        verify(mockTextAndSoundService, times(1)).displayText(any(), anyBoolean());
-    }
-
-
-    @Test
-    public void onAnimationChanged_spellSoundsDisabled_nothing() {
-        when(mockConfig.spellSoundsEnabled()).thenReturn(false);
-        when(mockSpellPlugin.onAnimationChanged(any())).thenReturn(Optional.of(TEXT_ENTRY));
-
-        plugin.onAnimationChanged(new AnimationChanged());
-
-        verify(mockExecutor, never()).execute(any());
-    }
-
-    @Test
-    public void onAnimationChanged_emptySoundFile_nothing() {
-        when(mockConfig.spellSoundsEnabled()).thenReturn(true);
-        when(mockSpellPlugin.onAnimationChanged(any())).thenReturn(Optional.of(TEXT_ENTRY.withSound(Optional.empty())));
-
-        plugin.onAnimationChanged(new AnimationChanged());
-
-        verify(mockExecutor, never()).execute(any());
-    }
-
-    @Test
-    public void onAnimationChanged_emptyTextSoundFile_nothing() {
-        when(mockConfig.spellSoundsEnabled()).thenReturn(true);
-        when(mockSpellPlugin.onAnimationChanged(any())).thenReturn(Optional.of(TEXT_ENTRY.withSound(Optional.of(""))));
-
-        plugin.onAnimationChanged(new AnimationChanged());
-
-        verify(mockExecutor, never()).execute(any());
-    }
-
-
-    @Test
-    public void onAnimationChanged_soundFile_sentToExecutor() {
-        when(mockConfig.spellSoundsEnabled()).thenReturn(true);
-        when(mockSpellPlugin.onAnimationChanged(any())).thenReturn(Optional.of(TEXT_ENTRY));
-
-        plugin.onAnimationChanged(new AnimationChanged());
-
-        verify(mockTextAndSoundService, times(1)).playSound(any());
-    }
-
-
-    @Test
-    public void onVarbitChanged_notSpec_nothing() {
-        VarbitChanged varbit = new VarbitChanged();
-        varbit.setVarpId(VarPlayerID.MUSIC_CURRENT_ID);
-
-        plugin.onVarbitChanged(varbit);
-
-        verify(mockSpecialAttackPlugin, never()).onVarbitChanged(any());
-    }
-
-    @Test
-    public void onVarbitChanged_returnEmpty_nothing() {
-        when(mockSpecialAttackPlugin.onVarbitChanged(any())).thenReturn(Optional.empty());
-
-        plugin.onVarbitChanged(makeVarbitChanged(1000));
-
-        verify(mockTextAndSoundService, never()).displayText(any(), anyBoolean());
-    }
-
-    @Test
-    public void onVarbitChanged_returnsTextEntry_soundAndText() {
-        when(mockSpecialAttackPlugin.onVarbitChanged(any())).thenReturn(Optional.of(TEXT_ENTRY));
-        when(mockConfig.specialAttackSoundsEnabled()).thenReturn(true);
-
-        plugin.onVarbitChanged(makeVarbitChanged(1000));
-
-        verify(mockTextAndSoundService, times(1)).displayText(any(), anyBoolean());
-        verify(mockTextAndSoundService, times(1)).playSound(any());
     }
 
 

@@ -1,6 +1,7 @@
 package com.aguscerdo.animechant.spells;
 
 import com.aguscerdo.animechant.AnimeChantConfig;
+import com.aguscerdo.animechant.TextAndSoundService;
 import com.aguscerdo.animechant.chantdata.model.TextEntry;
 import com.aguscerdo.animechant.spells.model.Spell;
 import com.google.common.collect.ImmutableMap;
@@ -55,10 +56,13 @@ public class SpellPluginImpl implements SpellPlugin {
     @Inject
     private SpellTextResolver textResolver;
 
+    @Inject
+    private TextAndSoundService textAndSoundService;
+
 
     public void startUp() {
         castDetector.reset();
-        textResolver.reloadAll();
+        textResolver.reloadAll(true);
     }
 
     public void shutDown() {
@@ -72,7 +76,7 @@ public class SpellPluginImpl implements SpellPlugin {
         }
 
         if (Objects.equals(event.getKey(), AnimeChantConfig.SPELL_PRESET)) {
-            textResolver.reloadPresets();
+            textResolver.reloadPresets(false);
         } else if (Objects.equals(event.getKey(), AnimeChantConfig.SPELL_OVERRIDES)) {
             textResolver.reloadOverrides();
         }
@@ -91,23 +95,24 @@ public class SpellPluginImpl implements SpellPlugin {
         castDetector.processManualCastEventIntent(spell, action);
     }
 
-    public Optional<TextEntry> onAnimationChanged(AnimationChanged event) {
+    @Subscribe
+    public void onAnimationChanged(AnimationChanged event) {
         if (!config.spellsEnabled()) {
-            return Optional.empty();
+            return;
         }
 
         Player me = client.getLocalPlayer();
         if (me == null || event.getActor() != me || me.getAnimation() == -1) {
-            return Optional.empty();
+            return;
         }
 
         Optional<TextEntry> manualSpellText = castDetector.handleManualSpell(me.getAnimation()).flatMap(textResolver::resolve);
         if (manualSpellText.isPresent()) {
-            return manualSpellText;
+            manualSpellText.ifPresent(this::processTextEntry);
         }
 
         // Manual spells did not match, try auto-cast.
-        return castDetector.handleAutoCast().flatMap(textResolver::resolve);
+        castDetector.handleAutoCast().flatMap(textResolver::resolve).ifPresent(this::processTextEntry);
     }
 
     /**
@@ -149,4 +154,10 @@ public class SpellPluginImpl implements SpellPlugin {
 
         return "";
     }
+
+    private void processTextEntry(TextEntry textEntry) {
+        textAndSoundService.processTextEntry(textEntry, config.shoutSpells(), config.spellSoundsEnabled());
+    }
+
+
 }

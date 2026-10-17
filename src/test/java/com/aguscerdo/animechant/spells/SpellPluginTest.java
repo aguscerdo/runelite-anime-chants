@@ -1,6 +1,7 @@
 package com.aguscerdo.animechant.spells;
 
 import com.aguscerdo.animechant.AnimeChantConfig;
+import com.aguscerdo.animechant.TextAndSoundService;
 import com.aguscerdo.animechant.chantdata.model.TextEntry;
 import com.aguscerdo.animechant.spells.model.Spell;
 import com.google.inject.Guice;
@@ -24,7 +25,6 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.Optional;
 
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
@@ -58,6 +58,12 @@ public class SpellPluginTest {
     @Bind
     private SpellTextResolver mockTextResolver;
 
+
+    @Mock
+    @Bind
+    private TextAndSoundService mockTextAndSoundService;
+
+
     @Inject
     private SpellPluginImpl plugin;
 
@@ -81,7 +87,7 @@ public class SpellPluginTest {
 
         plugin.onAnimationChanged(new AnimationChanged());
 
-        verify(mockClient, never()).getLocalPlayer();
+        verify(mockClient, times(0)).getLocalPlayer();
     }
 
     @Test
@@ -90,7 +96,7 @@ public class SpellPluginTest {
 
         plugin.onAnimationChanged(new AnimationChanged());
 
-        verify(mockCastDetector, never()).handleManualSpell(anyInt());
+        verify(mockCastDetector, times(0)).handleManualSpell(anyInt());
     }
 
     @Test
@@ -101,7 +107,7 @@ public class SpellPluginTest {
 
         plugin.onAnimationChanged(event);
 
-        verify(mockCastDetector, never()).handleManualSpell(anyInt());
+        verify(mockCastDetector, times(0)).handleManualSpell(anyInt());
     }
 
     @Test
@@ -110,25 +116,31 @@ public class SpellPluginTest {
 
         plugin.onAnimationChanged(makeAnimationEvent());
 
-        verify(mockCastDetector, never()).handleManualSpell(anyInt());
+        verify(mockCastDetector, times(0)).handleManualSpell(anyInt());
     }
 
 
     @Test
-    public void onAnimationChanged_manualAnimationMatches_returnResolvedText() {
+    public void onAnimationChanged_manualAnimationMatches_sentToTextSound() {
         when(mockCastDetector.handleManualSpell(eq(HIGH_LEVEL_ALCHEMY_ANIMATION_ID))).thenReturn(Optional.of(Spell.HIGH_LEVEL_ALCHEMY));
         when(mockTextResolver.resolve(eq(Spell.HIGH_LEVEL_ALCHEMY))).thenReturn(Optional.of(HIGH_LEVEL_ALCHEMY_TEXT));
 
-        assertThat(plugin.onAnimationChanged(makeAnimationEvent())).hasValue(HIGH_LEVEL_ALCHEMY_TEXT);
+        plugin.onAnimationChanged(makeAnimationEvent());
+
+        verify(mockTextAndSoundService, times(1)).processTextEntry(any(), anyBoolean(), anyBoolean());
     }
 
+    // todo
     @Test
     public void onAnimationChanged_spellNotMatched_noText() {
         when(mockCastDetector.handleManualSpell(eq(HIGH_LEVEL_ALCHEMY_ANIMATION_ID))).thenReturn(Optional.empty());
         when(mockCastDetector.handleAutoCast()).thenReturn(Optional.empty());
         when(mockTextResolver.resolve(eq(Spell.HIGH_LEVEL_ALCHEMY))).thenReturn(Optional.of(HIGH_LEVEL_ALCHEMY_TEXT));
 
-        assertThat(plugin.onAnimationChanged(makeAnimationEvent())).isEmpty();
+        plugin.onAnimationChanged(makeAnimationEvent());
+
+        verify(mockTextResolver, times(0)).resolve(any());
+        verify(mockTextAndSoundService, times(0)).processTextEntry(any(), anyBoolean(), anyBoolean());
     }
 
     @Test
@@ -137,7 +149,9 @@ public class SpellPluginTest {
         when(mockCastDetector.handleAutoCast()).thenReturn(Optional.empty());
         when(mockTextResolver.resolve(eq(Spell.HIGH_LEVEL_ALCHEMY))).thenReturn(Optional.empty());
 
-        assertThat(plugin.onAnimationChanged(makeAnimationEvent())).isEmpty();
+        plugin.onAnimationChanged(makeAnimationEvent());
+
+        verify(mockTextAndSoundService, times(0)).processTextEntry(any(), anyBoolean(), anyBoolean());
     }
 
     @Test
@@ -146,7 +160,9 @@ public class SpellPluginTest {
         when(mockCastDetector.handleAutoCast()).thenReturn(Optional.of((Spell.FIRE_WAVE)));
         when(mockTextResolver.resolve(eq(Spell.FIRE_WAVE))).thenReturn(Optional.of(FIRE_WAVE_TEXT));
 
-        assertThat(plugin.onAnimationChanged(makeAnimationEvent())).hasValue(FIRE_WAVE_TEXT);
+        plugin.onAnimationChanged(makeAnimationEvent());
+
+        verify(mockTextAndSoundService, times(1)).processTextEntry(any(), anyBoolean(), anyBoolean());
     }
 
     @Test
@@ -155,7 +171,10 @@ public class SpellPluginTest {
         when(mockCastDetector.handleAutoCast()).thenReturn(Optional.of((Spell.FIRE_WAVE)));
         when(mockTextResolver.resolve(eq(Spell.FIRE_WAVE))).thenReturn(Optional.empty());
 
-        assertThat(plugin.onAnimationChanged(makeAnimationEvent())).isEmpty();
+        plugin.onAnimationChanged(makeAnimationEvent());
+
+        verify(mockTextResolver, times(1)).resolve(any());
+        verify(mockTextAndSoundService, times(0)).processTextEntry(any(), anyBoolean(), anyBoolean());
     }
 
     @Test
@@ -164,7 +183,7 @@ public class SpellPluginTest {
 
         plugin.onMenuOptionClicked(makeMenuOptionClicked());
 
-        verify(mockCastDetector, never()).processManualCastEventIntent(any(), any());
+        verify(mockCastDetector, times(0)).processManualCastEventIntent(any(), any());
     }
 
 
@@ -295,7 +314,7 @@ public class SpellPluginTest {
 
         plugin.onConfigChanged(configChanged);
 
-        verify(mockTextResolver, never()).reloadPresets();
+        verify(mockTextResolver, times(0)).reloadPresets(anyBoolean());
     }
 
     @Test
@@ -317,7 +336,7 @@ public class SpellPluginTest {
 
         plugin.onConfigChanged(configChanged);
 
-        verify(mockTextResolver, times(1)).reloadPresets();
+        verify(mockTextResolver, times(1)).reloadPresets(anyBoolean());
     }
 
     private AnimationChanged makeAnimationEvent() {

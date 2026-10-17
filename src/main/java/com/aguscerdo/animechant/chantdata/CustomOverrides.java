@@ -56,6 +56,7 @@ public class CustomOverrides {
 
         return new OverridesResult(
                 new ChantData(
+                        /* version= */ 0.f,
                         /* name=*/ "custom",
                         /* spellSoundDirectory */ "",
                         /* specWeaponSoundDirectory= */"",
@@ -72,6 +73,7 @@ public class CustomOverrides {
 
         return new OverridesResult(
                 new ChantData(
+                        /* version= */ 0.f,
                         /* name=*/ "custom",
                         /* spellSoundDirectory */ "",
                         /* specWeaponSoundDirectory= */"",

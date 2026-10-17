@@ -15,7 +15,7 @@ public class PluginDirectoryImpl implements PluginDirectory {
     @Annotations.PluginFilePath
     Provider<Filepath> pluginDirectoryProvider;
 
-    private Optional<Filepath> pluginDirectory;
+    private Optional<Filepath> pluginDirectory = Optional.empty();
 
 
     @Override

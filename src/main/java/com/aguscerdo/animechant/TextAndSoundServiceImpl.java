@@ -59,6 +59,20 @@ public class TextAndSoundServiceImpl implements TextAndSoundService {
         ourText = "";
     }
 
+    public void processTextEntry(TextEntry textEntry, boolean shoutText, boolean soundsEnabled) {
+        displayText(textEntry, shoutText);
+
+        if (soundsEnabled) {
+            playSound(textEntry);
+        }
+    }
+
+    public void processTextEntryOpt(Optional<TextEntry> textEntry, boolean shoutText, boolean soundsEnabled) {
+        if (textEntry.isEmpty()) return;
+        processTextEntry(textEntry.get(), shoutText, soundsEnabled);
+    }
+
+
     public void displayText(TextEntry entry, boolean shout) {
         if (entry == null) return;
 

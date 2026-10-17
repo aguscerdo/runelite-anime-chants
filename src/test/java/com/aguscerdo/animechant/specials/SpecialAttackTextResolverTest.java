@@ -197,7 +197,7 @@ public class SpecialAttackTextResolverTest {
     public void reloadPresets_noPresetChange_nothing() {
         when(config.specialAttackPreset()).thenReturn(SpecWeaponTextPreset.NONE);
 
-        resolver.reloadPresets();
+        resolver.reloadPresets(false);
 
         verify(mockPresetLoader, never()).loadPreset(any(SpecWeaponTextPreset.class));
     }
@@ -209,7 +209,7 @@ public class SpecialAttackTextResolverTest {
 
         assertThat(resolver.resolve(SpecWeapon.GRANITE_MAUL)).isPresent();
 
-        resolver.reloadPresets();
+        resolver.reloadPresets(false);
 
         assertThat(resolver.resolve(SpecWeapon.GRANITE_MAUL)).isEmpty();
     }
@@ -218,7 +218,7 @@ public class SpecialAttackTextResolverTest {
     public void reloadPresets_updateFromPresets() {
         when(config.specialAttackPreset()).thenReturn(SpecWeaponTextPreset.ANIME_MIX);
         when(mockPresetLoader.loadPreset(any(SpecWeaponTextPreset.class))).thenReturn(Optional.of(
-                new ChantData("Frieren",
+                new ChantData(0.f, "Frieren",
                         "",
                         "",
                         ImmutableListMultimap.of(),
@@ -229,7 +229,7 @@ public class SpecialAttackTextResolverTest {
 
         assertThat(resolver.resolve(SpecWeapon.GRANITE_MAUL)).hasValue(GRANITE_MAUL_TEXT);
 
-        resolver.reloadPresets();
+        resolver.reloadPresets(false);
 
         assertThat(resolver.resolve(SpecWeapon.GRANITE_MAUL)).hasValue(DRAGON_DAGGER_TEXT);
     }
