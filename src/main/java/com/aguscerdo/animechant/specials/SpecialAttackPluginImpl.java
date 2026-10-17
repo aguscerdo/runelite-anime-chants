@@ -19,9 +19,6 @@ import java.util.Objects;
 
 @Slf4j
 public class SpecialAttackPluginImpl implements SpecialAttackPlugin {
-    // TODO fix this.
-    private static final String WYVERN_SPEC_MESSAGE = "ancient wyvern shield";
-
     @Inject
     private Client client;
 
