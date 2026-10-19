@@ -102,7 +102,7 @@
         "sound": "ice_3.wav"
       },
       {
-        "text": "It's cold, 'in it",
+        "text": "It's cold, innit",
         "sound": "ice_4.wav"
       }
     ],
@@ -132,7 +132,7 @@
     ],
     "blood": [
       {
-        "text": "Your blood is tasty.",
+        "text": "Your blood is tasty",
         "sound": "blood_1.wav"
       },
       {
@@ -150,7 +150,7 @@
         "sound": "alchemy_1.wav"
       },
       {
-        "text": "Money makes the world go roud.",
+        "text": "Money makes the world go round.",
         "sound": "alchemy_2.wav"
       },
       {
@@ -164,7 +164,7 @@
         "sound": "demonbane_1.wav"
       },
       {
-        "text": "Erradicate all demons",
+        "text": "Eradicate all demons",
         "sound": "demonbane_2.wav"
       },
       {
@@ -172,7 +172,8 @@
         "sound": "demonbane_3.wav"
       },
       {
-        "text": "The word of heaven is truth!"
+        "text": "The word of heaven is truth!",
+        "sound": "demonbane_4.wav"
       }
     ],
     "thrall": [
@@ -219,7 +220,7 @@
     ],
     "enchant": [
       {
-        "text": "Let the gems light your way to succes",
+        "text": "Let the gems light your way to success",
         "sound": "enchant.wav"
       }
     ],
@@ -249,7 +250,7 @@
     ],
     "corruption": [
       {
-        "text": "The corrupted soulstyle will not turned it evil.",
+        "text": "The corrupted soulstyle will not tolerate evil.",
         "sound": "corruption_1.wav"
       },
       {
@@ -319,12 +320,6 @@
     ]
   },
   "spells": {
-    "flames of zamorak": [
-      {
-        "text": "I'll engulf the world in flame",
-        "sound": "zamorak_1.wav"
-      }
-    ],
     "Lvl-1 enchant": [
       {
         "text": "Oh holy sapphire!",
@@ -387,7 +382,7 @@
     ],
     "Superheat item": [
       {
-        "text": "Ah,we musn't forget to prepare the ore",
+        "text": "Ah, we mustn't forget to prepare the ore",
         "sound": "superheat_1.wav"
       }
     ],
@@ -413,7 +408,7 @@
     ],
     "Resurrect crops": [
       {
-        "text": "Trees needs doctors too",
+        "text": "Trees need doctors too",
         "sound": "resurrect_crops_1.wav"
       }
     ],
@@ -439,7 +434,7 @@
         "sound": "death_charge_1.wav"
       },
       {
-        "text": "Yeah, yeah, you're relly special",
+        "text": "Yeah, yeah, you're really special",
         "sound": "death_charge_2.wav"
       }
     ],
@@ -519,7 +514,7 @@
     ],
     "Geomancy": [
       {
-        "text": "Seeing you grown is my reward",
+        "text": "Seeing you grow is my reward",
         "sound": "geomancy_1.wav"
       }
     ],
@@ -529,7 +524,7 @@
         "sound": "humidify_1.wav"
       },
       {
-        "text": "Feel my glass to the brim",
+        "text": "Fill my glass to the brim",
         "sound": "humidify_2.wav"
       }
     ],
@@ -571,10 +566,10 @@
         "sound": "spin_flax_1.wav"
       }
     ],
-    "String Jewelery": [
+    "String Jewellery": [
       {
         "text": "Tug my strings tight, sweetheart",
-        "sound": "string_jewelery_1.wav"
+        "sound": "string_jewellery_1.wav"
       }
     ],
     "Superglass Make": [
@@ -604,7 +599,7 @@
     "Claws of Guthix": [
       {
         "text": "Balance",
-        "sound": "guthix_1"
+        "sound": "guthix_1.wav"
       },
       {
         "text": "All for Balance",
@@ -933,7 +928,7 @@
     ],
     "Arkan blade": [
       {
-        "text": "Engolfing flames",
+        "text": "Engulfing flames",
         "sound": "arkan.wav"
       }
     ],
@@ -1029,13 +1024,13 @@
     ],
     "Light ballista": [
       {
-        "text": "The heavy the bow, the fast of the arrow",
+        "text": "The heavier the bow, the fast of the arrow",
         "sound": "ballista.wav"
       }
     ],
     "Heavy ballista": [
       {
-        "text": "The heavy the bow, the fast of the arrow",
+        "text": "The heavier the bow, the fast of the arrow",
         "sound": "ballista.wav"
       }
     ],
@@ -1071,19 +1066,19 @@
     ],
     "Rune claws": [
       {
-        "text": "I am there for I claw",
+        "text": "I am therefore I claw",
         "sound": "rune_claws.wav"
       }
     ],
     "Saradomin's blessed sword": [
       {
-        "text": "Show me the power of godly lightnin",
+        "text": "Show me the power of godly lightning",
         "sound": "sara_sword.wav"
       }
     ],
     "Saradomin sword": [
       {
-        "text": "Show me the power of godly lightnin",
+        "text": "Show me the power of godly lightning",
         "sound": "sara_sword.wav"
       }
     ],
@@ -1100,7 +1095,7 @@
     ],
     "Vesta's longsword": [
       {
-        "text": "I'll pierce you trought!",
+        "text": "I'll pierce you through!",
         "sound": "vls.wav"
       }
     ],
@@ -1112,13 +1107,13 @@
     ],
     "Volatile Nightmare staff": [
       {
-        "text": "NIghtmare, banish by the dark",
+        "text": "Nightmare, banish by the dark",
         "sound": "volatile.wav"
       }
     ],
     "Zaryte crossbow": [
       {
-        "text": "Don't resist, this is the gods's will",
+        "text": "Don't resist, this is the gods' will",
         "sound": "zcb.wav"
       }
     ],
@@ -1148,7 +1143,7 @@
     ],
     "Dragon Dagger": [
       {
-        "text": "Demonic blades have nothing on my knife",
+        "text": "Try to parry this!",
         "sound": "dds.wav"
       }
     ],
@@ -1178,7 +1173,7 @@
     ],
     "Webweaver bow": [
       {
-        "text": "Left, right, above, bellow",
+        "text": "Left, right, above, below",
         "sound": "webweaver.wav"
       }
     ],

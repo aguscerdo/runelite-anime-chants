@@ -12,7 +12,6 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableListMultimap;
 import com.google.common.collect.ListMultimap;
 import lombok.extern.slf4j.Slf4j;
-import net.runelite.api.Client;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -28,9 +27,6 @@ import java.util.concurrent.ThreadLocalRandom;
 @Slf4j
 @Singleton
 public class SpecialAttackTextResolverImpl implements SpecialAttackTextResolver {
-    @Inject
-    private Client client;
-
     @Inject
     private PresetLoader presetLoader;
 
@@ -91,7 +87,7 @@ public class SpecialAttackTextResolverImpl implements SpecialAttackTextResolver 
 
     @Override
     public void reloadPresets(boolean force) {
-        if (currentPreset == config.specialAttackPreset()) {
+        if (!force && currentPreset == config.specialAttackPreset()) {
             return;
         }
 
