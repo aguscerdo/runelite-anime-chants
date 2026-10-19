@@ -18,7 +18,7 @@ overrides, or both.
     - [General](#general)
 - [Spell Categories](#spell-categories)
 - [Custom Overrides](#custom-overrides)
-- [Preset File Format (YAML)](#preset-file-format-yaml)
+- [Preset File Format (JSON)](#preset-file-format-json)
 - [Adding Sound Files](#sound-files)
 - [Contributing a Preset](#contributing-a-preset)
 
@@ -218,7 +218,7 @@ These presets can be edited in the runlite plugin data (`.runelite/plugin-data/a
 
 A category groups related spells so one entry can cover all of them. Categories are usable in
 [Custom Overrides](#custom-overrides) and as keys under `spell_categories` in
-[preset files](#preset-file-format-yaml). Names are case-insensitive, and spaces are treated as underscores
+[preset files](#preset-file-format-json). Names are case-insensitive, and spaces are treated as underscores
 (`Charge Orb` and `charge_orb` are the same).
 
 | Category     | Spellbook | Covers                                   |
@@ -296,9 +296,9 @@ abyssal whip file=whip.wav
 
 ![Overrides example](/images/spell_custom_override.png)
 
-## Preset File Format (YAML)
+## Preset File Format (JSON)
 
-Presets are YAML files bundled with the plugin (see the
+Presets are JSON files bundled with the plugin (see the
 [chantdata folder](https://github.com/aguscerdo/runelite-anime-chants/tree/master/src/main/resources/com/aguscerdo/animechant/chantdata)).
 This is the current schema, **version 1**.
 
@@ -306,44 +306,71 @@ This is the current schema, **version 1**.
 
 This is the bundled Frieren preset:
 
-```yaml
-version: 1
-name: Anime Mix
-spell_sound_directory: anime_mix/spells
-spell_categories:
-  fire:
-    - text: "Explooooooosiooooon!!"
-      sound: "explosion.wav"
-  air:
-    - text: "Luminous Wind!"
-      sound: "luminous_wind.wav"
-  earth:
-    - "Stone Cannon"
-  water:
-    - "Water Breathing, Fourth Form: Striking Tide!"
-  ice:
-    - "El Minya!"
-  blood:
-    - "Blood Demon Arts: Exploding Blood!"
-  shadow:
-    - text: "I am... Ā ť ø m î ċ"
-      sound: "atomic.wav"
-  smoke:
-    - "Moku Moku no Mi: Howaito Sunēku"
-  grasp:
-    - "Bakudō #61. Rikujōkōrō"
-  demonbane:
-    - text: "Zoltraak"
-      sound: "zoltrak.wav"
-  thrall:
-    - text: "Arise..."
-      sound: "arise.wav"
-  alchemy:
-    - "Equivalent Exchange"
-  teleport:
-    - "Truck-kun!"
-
+```json
+{
+  "version": 1,
+  "name": "Anime Mix",
+  "spell_sound_directory": "anime_mix/spells",
+  "spell_categories": {
+    "fire": [
+      {
+        "text": "Explooooooosiooooon!!",
+        "sound": "explosion.wav"
+      }
+    ],
+    "air": [
+      {
+        "text": "Luminous Wind!",
+        "sound": "luminous_wind.wav"
+      }
+    ],
+    "earth": [
+      "Stone Cannon"
+    ],
+    "water": [
+      "Water Breathing, Fourth Form: Striking Tide!"
+    ],
+    "ice": [
+      "El Minya!"
+    ],
+    "blood": [
+      "Blood Demon Arts: Exploding Blood!"
+    ],
+    "shadow": [
+      {
+        "text": "I am... Ā ť ø m î ċ",
+        "sound": "atomic.wav"
+      }
+    ],
+    "smoke": [
+      "Moku Moku no Mi: Howaito Sunēku"
+    ],
+    "grasp": [
+      "Bakudō #61. Rikujōkōrō"
+    ],
+    "demonbane": [
+      {
+        "text": "Zoltraak",
+        "sound": "zoltrak.wav"
+      }
+    ],
+    "thrall": [
+      {
+        "text": "Arise...",
+        "sound": "arise.wav"
+      }
+    ],
+    "alchemy": [
+      "Equivalent Exchange"
+    ],
+    "teleport": [
+      "Truck-kun!"
+    ]
+  }
+}
 ```
+
+JSON is strict: no comments, and no trailing commas after the last item in an object or list.
 
 ### Top-level fields
 
@@ -363,13 +390,23 @@ Each key maps to a **list** of entries. If a key has several entries, one is cho
 Each entry has display text and, optionally, a sound file. The sound path is resolved against the matching
 `*_sound_directory` when one is set.
 
-```yaml
-spells:
-  fire_strike:
-    - "Burn!"                   # text only
-    - text: "Flames, answer me" # text with a sound
-      sound: "flames.wav"
+An entry is either a plain string (text only) or an object with `text` and/or `sound`:
+
+```json
+{
+  "spells": {
+    "fire_strike": [
+      "Burn!",
+      {
+        "text": "Flames, answer me",
+        "sound": "flames.wav"
+      }
+    ]
+  }
+}
 ```
+
+The first entry is text only. The second has text with a sound.
 
 ### Lookup order
 
@@ -405,12 +442,18 @@ plugin-data directory.
 For custom sounds you can place them in the plugin directory and reference it, either in an existing preset, the user
 custom preset or reference them via overrides.
 
-```yaml
-spells:
-  fire_strike:
-    - "Burn!"                     # text only
-    - text: "Flames, answer me"   # text with a sound
-      sound: "flames.wav"
+```json
+{
+  "spells": {
+    "fire_strike": [
+      "Burn!",
+      {
+        "text": "Flames, answer me",
+        "sound": "flames.wav"
+      }
+    ]
+  }
+}
 ```
 
 ## Contributing a Preset

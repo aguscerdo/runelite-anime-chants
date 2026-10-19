@@ -6,7 +6,6 @@ import com.aguscerdo.animechant.specials.SpecialAttackPlugin;
 import com.aguscerdo.animechant.spells.SpellPlugin;
 import com.google.inject.Provides;
 import lombok.extern.slf4j.Slf4j;
-import net.runelite.api.Client;
 import net.runelite.api.events.GameTick;
 import net.runelite.client.callback.ClientThread;
 import net.runelite.client.config.ConfigManager;
@@ -30,11 +29,7 @@ import java.util.concurrent.ScheduledExecutorService;
         tags = {"anime", "spells", "sounds", "spec"},
         internalName = "anime-chant")
 public class AnimeChantPlugin extends Plugin {
-    private static TextEntry YAML_RELOAD = new TextEntry("Reloading all presets...", Optional.empty());
-
-
-    @Inject
-    private Client client;
+    private static final TextEntry RELOAD_TEXT = new TextEntry("Reloading all presets...", Optional.empty());
 
     @Inject
     private EventBus eventBus;
@@ -115,7 +110,7 @@ public class AnimeChantPlugin extends Plugin {
                 Filepath pluginDirectory = getPluginDirectory();
                 executor.execute(
                         () -> {
-                            textAndSoundService.displayText(YAML_RELOAD, false);
+                            textAndSoundService.displayText(RELOAD_TEXT, false);
                             FileManager.writePresetFiles(pluginDirectory, /* force= */true);
 
                             spellPlugin.startUp();

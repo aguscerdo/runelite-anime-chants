@@ -1,0 +1,50 @@
+{
+  "version": 1,
+  "name": "Fantasy",
+  "spell_categories": {
+    "fire": [
+      "Fireball"
+    ],
+    "air": [
+      "Gust of Wind"
+    ],
+    "earth": [
+      "Stone Cannon"
+    ],
+    "water": [
+      "Hydroblast"
+    ],
+    "ice": [
+      "Icicle Lance"
+    ],
+    "blood": [
+      "Vampiric Touch"
+    ],
+    "shadow": [
+      "Umbral Strike"
+    ],
+    "smoke": [
+      "Ashen Blast"
+    ],
+    "grasp": [
+      "Arcane Chains"
+    ],
+    "demonbane": [
+      "Cleansing Smite"
+    ],
+    "thrall": [
+      "Summon Familiar"
+    ],
+    "alchemy": [
+      "Transmutation!"
+    ],
+    "teleport": [
+      "Blink!"
+    ]
+  },
+  "spells": {
+    "high level alchemy": [
+      "Philosopher's Touch!"
+    ]
+  }
+}

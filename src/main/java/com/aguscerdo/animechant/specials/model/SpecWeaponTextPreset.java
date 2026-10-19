@@ -11,9 +11,9 @@ import lombok.Getter;
 @Getter
 public enum SpecWeaponTextPreset {
     NONE("None", "", ""),
-    ANIME_MIX("Anime Mix", "anime_mix", "anime_mix.yaml"),
-    SHADOWVERSE("Shadowverse voicelines", "shadowverse", "shadowverse.yaml"),
-    USER_CUSTOM("User Custom", "user_custom", "user_custom.yaml");
+    ANIME_MIX("Anime Mix", "anime_mix", "anime_mix.json"),
+    SHADOWVERSE("Shadowverse voicelines", "shadowverse", "shadowverse.json"),
+    USER_CUSTOM("User Custom", "user_custom", "user_custom.json");
 
 
     private final String label;

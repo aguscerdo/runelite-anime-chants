@@ -1,0 +1,1288 @@
+{
+  "version": 1,
+  "name": "Shadowverse",
+  "spell_sound_directory": "shadowverse/spells",
+  "spec_weapon_sound_directory": "shadowverse/specs",
+  "spell_categories": {
+    "fire": [
+      {
+        "text": "Burn",
+        "sound": "fire_1.wav"
+      },
+      {
+        "text": "Buuurn",
+        "sound": "fire_2.wav"
+      },
+      {
+        "text": "Burn",
+        "sound": "fire_3.wav"
+      },
+      {
+        "text": "Burn",
+        "sound": "fire_4.wav"
+      },
+      {
+        "text": "Burn to nothing",
+        "sound": "fire_5.wav"
+      }
+    ],
+    "water": [
+      {
+        "text": "Flow like water",
+        "sound": "water_1.wav"
+      },
+      {
+        "text": "Respect the sea",
+        "sound": "water_2.wav"
+      },
+      {
+        "text": "Try this water",
+        "sound": "water_3.wav"
+      },
+      {
+        "text": "Too humid for you?",
+        "sound": "water_4.wav"
+      }
+    ],
+    "earth": [
+      {
+        "text": "Embrace the earth",
+        "sound": "earth_1.wav"
+      },
+      {
+        "text": "Turn to stone",
+        "sound": "earth_2.wav"
+      },
+      {
+        "text": "Kiss the dirt",
+        "sound": "earth_3.wav"
+      }
+    ],
+    "air": [
+      {
+        "text": "Wind storm!!",
+        "sound": "air_1.wav"
+      },
+      {
+        "text": "Wind... Wind!",
+        "sound": "air_2.wav"
+      },
+      {
+        "text": "Let the wind blow",
+        "sound": "air_3.wav"
+      },
+      {
+        "text": "Winds of Glory",
+        "sound": "air_4.wav"
+      },
+      {
+        "text": "Can you stop the wind?",
+        "sound": "air_5.wav"
+      },
+      {
+        "text": "Winds",
+        "sound": "air_6.wav"
+      },
+      {
+        "text": "Whooosh",
+        "sound": "air_7.wav"
+      }
+    ],
+    "ice": [
+      {
+        "text": "Freeze",
+        "sound": "ice_1.wav"
+      },
+      {
+        "text": "Don't be so cold",
+        "sound": "ice_2.wav"
+      },
+      {
+        "text": "Freeze",
+        "sound": "ice_3.wav"
+      },
+      {
+        "text": "It's cold, 'in it",
+        "sound": "ice_4.wav"
+      }
+    ],
+    "smoke": [
+      {
+        "text": "Turn to ash!",
+        "sound": "smoke_1.wav"
+      },
+      {
+        "text": "To ash",
+        "sound": "smoke_2.wav"
+      },
+      {
+        "text": "Your pathetic life, turn to ash!",
+        "sound": "smoke_3.wav"
+      }
+    ],
+    "shadow": [
+      {
+        "text": "Death from the shadows",
+        "sound": "shadow_1.wav"
+      },
+      {
+        "text": "Wither in the shadows!",
+        "sound": "shadow_2.wav"
+      }
+    ],
+    "blood": [
+      {
+        "text": "Your blood is tasty.",
+        "sound": "blood_1.wav"
+      },
+      {
+        "text": "Covenant of blood!",
+        "sound": "blood_2.wav"
+      },
+      {
+        "text": "Shall we cross blood?",
+        "sound": "blood_3.wav"
+      }
+    ],
+    "alchemy": [
+      {
+        "text": "Time to make some money!",
+        "sound": "alchemy_1.wav"
+      },
+      {
+        "text": "Money makes the world go roud.",
+        "sound": "alchemy_2.wav"
+      },
+      {
+        "text": "Papa loves gold",
+        "sound": "alchemy_3.wav"
+      }
+    ],
+    "demonbane": [
+      {
+        "text": "Purification",
+        "sound": "demonbane_1.wav"
+      },
+      {
+        "text": "Erradicate all demons",
+        "sound": "demonbane_2.wav"
+      },
+      {
+        "text": "Up to heaven with you.",
+        "sound": "demonbane_3.wav"
+      },
+      {
+        "text": "The word of heaven is truth!"
+      }
+    ],
+    "thrall": [
+      {
+        "text": "Rise from the earth...",
+        "sound": "thrall_1.wav"
+      },
+      {
+        "text": "Spirits",
+        "sound": "thrall_2.wav"
+      }
+    ],
+    "bind": [
+      {
+        "text": "Stay still",
+        "sound": "bind_1.wav"
+      },
+      {
+        "text": "Geez, stay still",
+        "sound": "bind_2.wav"
+      },
+      {
+        "text": "Don't move",
+        "sound": "bind_3.wav"
+      },
+      {
+        "text": "Can't move, can you?",
+        "sound": "bind_4.wav"
+      }
+    ],
+    "curse": [
+      {
+        "text": "Curses upon you!",
+        "sound": "curse_1.wav"
+      },
+      {
+        "text": "A curse upon you!",
+        "sound": "curse_2.wav"
+      },
+      {
+        "text": "Wanna get cursed?",
+        "sound": "curse_3.wav"
+      }
+    ],
+    "enchant": [
+      {
+        "text": "Let the gems light your way to succes",
+        "sound": "enchant.wav"
+      }
+    ],
+    "reanimate": [
+      {
+        "text": "My kingdom rises again",
+        "sound": "reanimate_1.wav"
+      },
+      {
+        "text": "The dead walk here",
+        "sound": "reanimate_2.wav"
+      },
+      {
+        "text": "Why would the dead need a living wage?",
+        "sound": "reanimate_3.wav"
+      }
+    ],
+    "offering": [
+      {
+        "text": "I don't offer salvation. Just gratitude!",
+        "sound": "offering_1.wav"
+      },
+      {
+        "text": "An offering",
+        "sound": "offering_2.wav"
+      }
+    ],
+    "corruption": [
+      {
+        "text": "The corrupted soulstyle will not turned it evil.",
+        "sound": "corruption_1.wav"
+      },
+      {
+        "text": "Soar into a world of corruption!",
+        "sound": "corruption_2.wav"
+      }
+    ],
+    "cure": [
+      {
+        "text": "This'll cure what ails ya!",
+        "sound": "cure_1.wav"
+      },
+      {
+        "text": "Purification!",
+        "sound": "cure_2.wav"
+      }
+    ],
+    "heal": [
+      {
+        "text": "Be healed, my heroes.",
+        "sound": "heal_1.wav"
+      },
+      {
+        "text": "I fulfill my duty with healing light.",
+        "sound": "heal_2.wav"
+      }
+    ],
+    "teleport": [
+      {
+        "text": "Commencing transmission",
+        "sound": "teleport_1.wav"
+      },
+      {
+        "text": "Reforming dimension",
+        "sound": "teleport_2.wav"
+      }
+    ],
+    "tele_other": [
+      {
+        "text": "Begone",
+        "sound": "teleother_1.wav"
+      },
+      {
+        "text": "Begone",
+        "sound": "teleother_2.wav"
+      }
+    ],
+    "tele_group": [
+      {
+        "text": "Let's go!",
+        "sound": "tele_group_1.wav"
+      },
+      {
+        "text": "Let's go everyone",
+        "sound": "tele_group_2.wav"
+      },
+      {
+        "text": "Come on, let's go",
+        "sound": "tele_group_3.wav"
+      }
+    ],
+    "grasp": [
+      {
+        "text": "Grasp thy destiny",
+        "sound": "grasp_1.wav"
+      }
+    ]
+  },
+  "spells": {
+    "flames of zamorak": [
+      {
+        "text": "I'll engulf the world in flame",
+        "sound": "zamorak_1.wav"
+      }
+    ],
+    "Lvl-1 enchant": [
+      {
+        "text": "Oh holy sapphire!",
+        "sound": "sapphire.wav"
+      }
+    ],
+    "Lvl-2 enchant": [
+      {
+        "text": "Emerald Light",
+        "sound": "emerald.wav"
+      }
+    ],
+    "Telekinetic grab": [
+      {
+        "text": "Yoink!",
+        "sound": "telegrab_1.wav"
+      }
+    ],
+    "Vengeance other": [
+      {
+        "text": "Take my vengeance",
+        "sound": "venge_other.wav"
+      }
+    ],
+    "Vengeance": [
+      {
+        "text": "Revenge",
+        "sound": "vengeance_1.wav"
+      },
+      {
+        "text": "Revenge is all I desire",
+        "sound": "vengeance_2.wav"
+      }
+    ],
+    "Dream": [
+      {
+        "text": "Entering sleep mode",
+        "sound": "dream_1.wav"
+      },
+      {
+        "text": "Ah, back to sleep",
+        "sound": "dream_2.wav"
+      }
+    ],
+    "Bones to Bananas": [
+      {
+        "text": "Bananas",
+        "sound": "bananas_1.wav"
+      },
+      {
+        "text": "My king, look at these fruits",
+        "sound": "fruit_1.wav"
+      }
+    ],
+    "Bones to Peaches": [
+      {
+        "text": "My king, look at these fruits",
+        "sound": "fruit_1.wav"
+      }
+    ],
+    "Superheat item": [
+      {
+        "text": "Ah,we musn't forget to prepare the ore",
+        "sound": "superheat_1.wav"
+      }
+    ],
+    "Iban Blast": [
+      {
+        "text": "Blast off",
+        "sound": "iban_blast_1.wav"
+      },
+      {
+        "text": "Magic is a blast",
+        "sound": "iban_blast_2.wav"
+      }
+    ],
+    "Crumble undead": [
+      {
+        "text": "Crumble, shatter and banish",
+        "sound": "crumble_undead_1.wav"
+      },
+      {
+        "text": "All shall crumble before me",
+        "sound": "crumble_undead_2.wav"
+      }
+    ],
+    "Resurrect crops": [
+      {
+        "text": "Trees needs doctors too",
+        "sound": "resurrect_crops_1.wav"
+      }
+    ],
+    "Mark of Darkness": [
+      {
+        "text": "The darkness doesn't end",
+        "sound": "mark_of_darkness_1.wav"
+      },
+      {
+        "text": "Even if darkness consumes me",
+        "sound": "mark_of_darkness_2.wav"
+      }
+    ],
+    "Ward of Arceuus": [
+      {
+        "text": "Godsworn wall, unmoving shield",
+        "sound": "ward_1.wav"
+      }
+    ],
+    "Death Charge": [
+      {
+        "text": "Your death will make me stronger",
+        "sound": "death_charge_1.wav"
+      },
+      {
+        "text": "Yeah, yeah, you're relly special",
+        "sound": "death_charge_2.wav"
+      }
+    ],
+    "Dark Lure": [
+      {
+        "text": "Come",
+        "sound": "dark_lure_1.wav"
+      },
+      {
+        "text": "Come now",
+        "sound": "dark_lure_2.wav"
+      },
+      {
+        "text": "Come back!",
+        "sound": "dark_lure_3.wav"
+      }
+    ],
+    "Shadow Veil": [
+      {
+        "text": "Night's veil descends",
+        "sound": "shadow_veil_1.wav"
+      },
+      {
+        "text": "Can you see me?",
+        "sound": "shadow_veil_2.wav"
+      }
+    ],
+    "Vile Vigour": [
+      {
+        "text": "How vile",
+        "sound": "vile_vigour_1.wav"
+      }
+    ],
+    "Degrime": [
+      {
+        "text": "Oh! A healing herb!",
+        "sound": "degrime_1.wav"
+      },
+      {
+        "text": "I'll clean things up",
+        "sound": "degrime_2.wav"
+      }
+    ],
+    "Astral Contact": [
+      {
+        "text": "Link this world to the other realms",
+        "sound": "astral_contact_1.wav"
+      }
+    ],
+    "Energy Transfer": [
+      {
+        "text": "My music will pump you full of energy!",
+        "sound": "energy_transfer_1.wav"
+      }
+    ],
+    "Bake Pie": [
+      {
+        "text": "Cook like... without a cook book?",
+        "sound": "bake_pie_1.wav"
+      },
+      {
+        "text": "Eat your veggies",
+        "sound": "bake_pie_2.wav"
+      }
+    ],
+    "Boost Potion Share": [
+      {
+        "text": "Quaff down this potion",
+        "sound": "potion_1.wav"
+      }
+    ],
+    "Fertile Soil": [
+      {
+        "text": "Did you say thank you to the soil?",
+        "sound": "fertile_soil_1.wav"
+      }
+    ],
+    "Geomancy": [
+      {
+        "text": "Seeing you grown is my reward",
+        "sound": "geomancy_1.wav"
+      }
+    ],
+    "Humidify": [
+      {
+        "text": "Fill it all up",
+        "sound": "humidify_1.wav"
+      },
+      {
+        "text": "Feel my glass to the brim",
+        "sound": "humidify_2.wav"
+      }
+    ],
+    "Hunter Kit": [
+      {
+        "text": "I hope you enjoy my traps",
+        "sound": "hunter_kit_1.wav"
+      }
+    ],
+    "Magic Imbue": [
+      {
+        "text": "Gaze upon my lustrous runes",
+        "sound": "imbue_1.wav"
+      }
+    ],
+    "Plank Make": [
+      {
+        "text": "This isn't your run of the mill spell",
+        "sound": "plank_make_1.wav"
+      }
+    ],
+    "Spellbook Swap": [
+      {
+        "text": "Let's try this new spell",
+        "sound": "spellbook_swap_1.wav"
+      },
+      {
+        "text": "A happy little spell just for you",
+        "sound": "spellbook_swap_2.wav"
+      },
+      {
+        "text": "And a whoopsie-dipsi alakazam",
+        "sound": "spellbook_swap_3.wav"
+      }
+    ],
+    "Spin Flax": [
+      {
+        "text": "Now spin",
+        "sound": "spin_flax_1.wav"
+      }
+    ],
+    "String Jewelery": [
+      {
+        "text": "Tug my strings tight, sweetheart",
+        "sound": "string_jewelery_1.wav"
+      }
+    ],
+    "Superglass Make": [
+      {
+        "text": "I'd do anything for Glass",
+        "sound": "superglass_make_1.wav"
+      }
+    ],
+    "Tan Leather": [
+      {
+        "text": "Jealous of my pelt?",
+        "sound": "tan_leather_1.wav"
+      }
+    ],
+    "Saradomin Strike": [
+      {
+        "text": "Up to heaven with you",
+        "sound": "saradomin_1.wav"
+      }
+    ],
+    "Flames of Zamorak": [
+      {
+        "text": "Bathe in my flame",
+        "sound": "zamorak_1.wav"
+      }
+    ],
+    "Claws of Guthix": [
+      {
+        "text": "Balance",
+        "sound": "guthix_1"
+      },
+      {
+        "text": "All for Balance",
+        "sound": "guthix_2.wav"
+      }
+    ]
+  },
+  "spec_weapons": {
+    "Armadyl Godsword": [
+      {
+        "text": "From the heavens above justice is delivered!",
+        "sound": "ags.wav"
+      }
+    ],
+    "Zamorak Godsword": [
+      {
+        "text": "Rest in a prison of ice",
+        "sound": "zgs.wav"
+      }
+    ],
+    "Saradomin Godsword": [
+      {
+        "text": "I shall become faith incarnate",
+        "sound": "sgs.wav"
+      }
+    ],
+    "Bandos Godsword": [
+      {
+        "text": "More war",
+        "sound": "bgs.wav"
+      }
+    ],
+    "Ancient Godsword": [
+      {
+        "text": "Return to the void",
+        "sound": "ancient_gs.wav"
+      }
+    ],
+    "Dragon Axe": [
+      {
+        "sound": "chop_chop.wav"
+      }
+    ],
+    "Dragon Felling Axe": [
+      {
+        "sound": "chop_chop.wav"
+      }
+    ],
+    "Infernal Axe": [
+      {
+        "sound": "chop_chop.wav"
+      }
+    ],
+    "Crystal Felling Axe": [
+      {
+        "sound": "chop_chop.wav"
+      }
+    ],
+    "Crystal Axe": [
+      {
+        "sound": "chop_chop.wav"
+      }
+    ],
+    "3rd Age Axe": [
+      {
+        "sound": "chop_chop.wav"
+      }
+    ],
+    "3rd Age Felling Axe": [
+      {
+        "sound": "chop_chop.wav"
+      }
+    ],
+    "Echo Axe": [
+      {
+        "sound": "chop_chop.wav"
+      }
+    ],
+    "Dragon harpoon": [
+      {
+        "sound": "fishies.wav"
+      }
+    ],
+    "Infernal harpoon": [
+      {
+        "sound": "fishies.wav"
+      }
+    ],
+    "Crystal harpoon": [
+      {
+        "sound": "fishies.wav"
+      }
+    ],
+    "Echo harpoon": [
+      {
+        "sound": "fishies.wav"
+      }
+    ],
+    "Dragon Pickaxe": [
+      {
+        "sound": "smash.wav"
+      }
+    ],
+    "Infernal Pickaxe": [
+      {
+        "sound": "smash.wav"
+      }
+    ],
+    "3rd Age Pickaxe": [
+      {
+        "sound": "smash.wav"
+      }
+    ],
+    "Crystal Pickaxe": [
+      {
+        "sound": "smash.wav"
+      }
+    ],
+    "Echo Pickaxe": [
+      {
+        "sound": "smash.wav"
+      }
+    ],
+    "Eldritch Nightmare Staff": [
+      {
+        "text": "Nightmare, banish by the dark",
+        "sound": "eldritch.wav"
+      }
+    ],
+    "Keris partisan of the sun": [
+      {
+        "text": "Luminescence",
+        "sound": "keris_sun.wav"
+      }
+    ],
+    "Purging staff": [
+      {
+        "text": "Sinners be purged",
+        "sound": "purging.wav"
+      }
+    ],
+    "Toxic Blowpipe": [
+      {
+        "text": "Suck it up",
+        "sound": "blowpipe.wav"
+      }
+    ],
+    "Brine Saber": [
+      {
+        "text": "Need more salt",
+        "sound": "brine_saber.wav"
+      }
+    ],
+    "Dragon Battleaxe": [
+      {
+        "sound": "dragon_battleaxe.wav"
+      }
+    ],
+    "Excalibur": [
+      {
+        "text": "Clash in the name of glory",
+        "sound": "excalibur.wav"
+      }
+    ],
+    "Dinh's bulwark": [
+      {
+        "text": "Godsworn wall, unmoving shield",
+        "sound": "bulwark.wav"
+      }
+    ],
+    "Dragon Crossbow": [
+      {
+        "text": "With a bang and a boom",
+        "sound": "dragon_xbow.wav"
+      }
+    ],
+    "Dragon Halberd": [
+      {
+        "text": "Steady, Swing",
+        "sound": "swing.wav"
+      }
+    ],
+    "Crystal Halberd": [
+      {
+        "text": "Steady, Swing",
+        "sound": "swing.wav"
+      }
+    ],
+    "Dragon 2h Sword": [
+      {
+        "text": "Power of crimson",
+        "sound": "dragon_2h.wav"
+      }
+    ],
+    "Rune thrownaxe": [
+      {
+        "text": "Good throw me",
+        "sound": "rune_thrownaxe.wav"
+      }
+    ],
+    "Vesta's spear": [
+      {
+        "text": "Spear of Storms",
+        "sound": "vesta.wav"
+      }
+    ],
+    "Abyssal whip": [
+      {
+        "text": "The abyss awaits",
+        "sound": "whip.wav"
+      }
+    ],
+    "Accursed sceptre": [
+      {
+        "text": "A curse upon you",
+        "sound": "accursed_sceptre.wav"
+      }
+    ],
+    "Ancient mace": [
+      {
+        "text": "The god of war here reigns",
+        "sound": "ancient_mace.wav"
+      }
+    ],
+    "Barrelchest anchor": [
+      {
+        "text": "Weigh anchor, dragon ship",
+        "sound": "anchor.wav"
+      }
+    ],
+    "Bone Dagger": [
+      {
+        "text": "Stabidy staaabiidy",
+        "sound": "bone_dagger.wav"
+      }
+    ],
+    "Darklight": [
+      {
+        "text": "Weak",
+        "sound": "weak.wav"
+      }
+    ],
+    "Arclight": [
+      {
+        "text": "Weak",
+        "sound": "weak.wav"
+      }
+    ],
+    "Emberlight": [
+      {
+        "text": "Weak",
+        "sound": "weak.wav"
+      }
+    ],
+    "Dorgeshuun crossbow": [
+      {
+        "text": "Target in sight, preparing to fire",
+        "sound": "dorgeshuun_xbow.wav"
+      }
+    ],
+    "Dragon scimitar": [
+      {
+        "text": "One slash is all it takes",
+        "sound": "dscim.wav"
+      }
+    ],
+    "Dragon warhammer": [
+      {
+        "text": "This one'll smash you good",
+        "sound": "dwh.wav"
+      }
+    ],
+    "Statius's warhammer": [
+      {
+        "text": "This one'll smash you good",
+        "sound": "dwh.wav"
+      }
+    ],
+    "Elder Maul": [
+      {
+        "text": "This one'll smash you good",
+        "sound": "dwh.wav"
+      }
+    ],
+    "Eye of Ayak": [
+      {
+        "text": "Open your Eyes",
+        "sound": "ayak.wav"
+      }
+    ],
+    "Morrigan's throwing axe": [
+      {
+        "text": "So tired already?",
+        "sound": "morrigan_axe.wav"
+      }
+    ],
+    "Seercull": [
+      {
+        "text": "Hand over your soul",
+        "sound": "seercull.wav"
+      }
+    ],
+    "Staff of the Dead": [
+      {
+        "text": "Spirits",
+        "sound": "sotd.wav"
+      }
+    ],
+    "Tonalztics of Ralos": [
+      {
+        "text": "Winds of Sephyrvine, sun of Samara",
+        "sound": "ralos.wav"
+      }
+    ],
+    "Abyssal bludgeon": [
+      {
+        "text": "Gaze into the abyss",
+        "sound": "bludgeon.wav"
+      }
+    ],
+    "Armadyl crossbow": [
+      {
+        "text": "Sniped",
+        "sound": "armadyl_xbow.wav"
+      }
+    ],
+    "Arkan blade": [
+      {
+        "text": "Engolfing flames",
+        "sound": "arkan.wav"
+      }
+    ],
+    "Blue Moon spear": [
+      {
+        "text": "The moon watches over us",
+        "sound": "blue_moon_spear.wav"
+      }
+    ],
+    "Crimson kisten": [
+      {
+        "text": "I'll crush you",
+        "sound": "kisten.wav"
+      }
+    ],
+    "Dawnbringer": [
+      {
+        "text": "Dusk and dawn",
+        "sound": "dawnbringer.wav"
+      }
+    ],
+    "Dragon hasta": [
+      {
+        "text": "You're really pushing hard",
+        "sound": "hasta.wav"
+      }
+    ],
+    "Zamorakian hasta": [
+      {
+        "text": "You're really pushing hard",
+        "sound": "hasta.wav"
+      }
+    ],
+    "Dragon spear": [
+      {
+        "text": "You're really pushing hard",
+        "sound": "hasta.wav"
+      }
+    ],
+    "Zamorakian spear": [
+      {
+        "text": "You're really pushing hard",
+        "sound": "hasta.wav"
+      }
+    ],
+    "Dragon longsword": [
+      {
+        "text": "If I'm breathing, I'm cleaving",
+        "sound": "dlong.wav"
+      }
+    ],
+    "Dragon mace": [
+      {
+        "text": "Shatter",
+        "sound": "dmace.wav"
+      }
+    ],
+    "Dragon sword": [
+      {
+        "text": "I live by the sword",
+        "sound": "dsword.wav"
+      }
+    ],
+    "Dragon thrownaxe": [
+      {
+        "text": "Too slow",
+        "sound": "dragon_thrownaxe.wav"
+      }
+    ],
+    "Dual macuahuitl": [
+      {
+        "text": "Even the moon shall be tainted red",
+        "sound": "macuahuitl.wav"
+      }
+    ],
+    "Eclipse atlatl": [
+      {
+        "text": "You don't deserve the moon's radiance",
+        "sound": "atlatl.wav"
+      }
+    ],
+    "Granite hammer": [
+      {
+        "text": "Crumble, shatter and banish",
+        "sound": "granite_hammer.wav"
+      }
+    ],
+    "Keris partisan of corruption": [
+      {
+        "text": "Give me ominous, give me corruption",
+        "sound": "keris_corruption.wav"
+      }
+    ],
+    "Light ballista": [
+      {
+        "text": "The heavy the bow, the fast of the arrow",
+        "sound": "ballista.wav"
+      }
+    ],
+    "Heavy ballista": [
+      {
+        "text": "The heavy the bow, the fast of the arrow",
+        "sound": "ballista.wav"
+      }
+    ],
+    "Magic longbow": [
+      {
+        "text": "My hand is steady",
+        "sound": "magic_longbow.wav"
+      }
+    ],
+    "Magic comp bow": [
+      {
+        "text": "My hand is steady",
+        "sound": "magic_longbow.wav"
+      }
+    ],
+    "Morrigan's javelin": [
+      {
+        "text": "The will of the forest guides my spear",
+        "sound": "morrigan_jav.wav"
+      }
+    ],
+    "Noxious halberd": [
+      {
+        "text": "Drown in venom",
+        "sound": "nox.wav"
+      }
+    ],
+    "Osmumten's fang": [
+      {
+        "text": "Away, fangless one",
+        "sound": "fang.wav"
+      }
+    ],
+    "Rune claws": [
+      {
+        "text": "I am there for I claw",
+        "sound": "rune_claws.wav"
+      }
+    ],
+    "Saradomin's blessed sword": [
+      {
+        "text": "Show me the power of godly lightnin",
+        "sound": "sara_sword.wav"
+      }
+    ],
+    "Saradomin sword": [
+      {
+        "text": "Show me the power of godly lightnin",
+        "sound": "sara_sword.wav"
+      }
+    ],
+    "Soulflame horn": [
+      {
+        "sound": "soulflame_horn.wav"
+      }
+    ],
+    "Sunspear": [
+      {
+        "text": "My spear will stop you",
+        "sound": "sunspear.wav"
+      }
+    ],
+    "Vesta's longsword": [
+      {
+        "text": "I'll pierce you trought!",
+        "sound": "vls.wav"
+      }
+    ],
+    "Voidwaker": [
+      {
+        "text": "No one escapes the void",
+        "sound": "voidwaker.wav"
+      }
+    ],
+    "Volatile Nightmare staff": [
+      {
+        "text": "NIghtmare, banish by the dark",
+        "sound": "volatile.wav"
+      }
+    ],
+    "Zaryte crossbow": [
+      {
+        "text": "Don't resist, this is the gods's will",
+        "sound": "zcb.wav"
+      }
+    ],
+    "Abyssal dagger": [
+      {
+        "text": "Peer in to the abyss",
+        "sound": "abby_dagger.wav"
+      }
+    ],
+    "Burning claws": [
+      {
+        "text": "Strike, burn and climb higher",
+        "sound": "burning_claws.wav"
+      }
+    ],
+    "Dark bow": [
+      {
+        "text": "The darkness doesn't end",
+        "sound": "dark_bow.wav"
+      }
+    ],
+    "Dragon claws": [
+      {
+        "text": "Rip them to shreds",
+        "sound": "dclaws.wav"
+      }
+    ],
+    "Dragon Dagger": [
+      {
+        "text": "Demonic blades have nothing on my knife",
+        "sound": "dds.wav"
+      }
+    ],
+    "Dragon knife": [
+      {
+        "text": "Double the blades, double the fun",
+        "sound": "dragon_knife.wav"
+      }
+    ],
+    "Granite maul": [
+      {
+        "text": "Let's speed things up",
+        "sound": "gmaul.wav"
+      }
+    ],
+    "Rosewood blowpipe": [
+      {
+        "text": "Every rose has her thorns",
+        "sound": "rosewood_blowpipe.wav"
+      }
+    ],
+    "Magic shortbow": [
+      {
+        "text": "Pew! Pew!",
+        "sound": "magic_shortbow.wav"
+      }
+    ],
+    "Webweaver bow": [
+      {
+        "text": "Left, right, above, bellow",
+        "sound": "webweaver.wav"
+      }
+    ],
+    "Abyssal tentacle": [
+      {
+        "text": "To the depths of the abyss",
+        "sound": "tentacle.wav"
+      }
+    ],
+    "Rod of Ivandis": [
+      {
+        "text": "Ah, yes, that expression. Hold it",
+        "sound": "ivandis.wav"
+      }
+    ],
+    "Ivandis flail": [
+      {
+        "text": "Ah, yes, that expression. Hold it",
+        "sound": "ivandis.wav"
+      }
+    ],
+    "Blisterwood flail": [
+      {
+        "text": "Ah, yes, that expression. Hold it",
+        "sound": "ivandis.wav"
+      }
+    ],
+    "Hallowed flail": [
+      {
+        "text": "Ah, yes, that expression. Hold it",
+        "sound": "ivandis.wav"
+      }
+    ],
+    "Scorching Bow": [
+      {
+        "text": "No self respecting demon cries when getting a shot",
+        "sound": "scorching_bow.wav"
+      }
+    ],
+    "Ursine chainmace": [
+      {
+        "text": "I'm exhausted",
+        "sound": "ursine.wav"
+      }
+    ],
+    "Dragonfire shield": [
+      {
+        "text": "Super Ultra Dragon Strike",
+        "sound": "dfs.wav"
+      }
+    ],
+    "Ancient wyvern shield": [
+      {
+        "text": "Burning flames will freeze",
+        "sound": "aws.wav"
+      }
+    ],
+    "Dragonfire ward": [
+      {
+        "text": "I won't let you hurt Mister Dragon",
+        "sound": "dfw.wav"
+      }
+    ],
+    "Soulreaper axe": [
+      {
+        "text": "Your heads shall roll",
+        "sound": "sra.wav"
+      }
+    ],
+    "The dogsword": [
+      {
+        "text": "No! No walkies for you!",
+        "sound": "dogsword.wav"
+      }
+    ],
+    "Fang of the hound": [
+      {
+        "text": "Rrrrghh!",
+        "sound": "fang_of_the_hound.wav"
+      }
+    ],
+    "Infernal tecpatl": [
+      {
+        "text": "Bring the inferno",
+        "sound": "tecpatl.wav"
+      }
+    ],
+    "Lithic sceptre": [
+      {
+        "text": "Shatter",
+        "sound": "lithic_scepter.wav"
+      }
+    ],
+    "Sunlight Spear": [
+      {
+        "text": "Eternal light",
+        "sound": "sunlight_spear.wav"
+      }
+    ],
+    "Thunder khopesh": [
+      {
+        "text": "Devotion thunders in my core",
+        "sound": "thunder_khopesh.wav"
+      }
+    ]
+  }
+}

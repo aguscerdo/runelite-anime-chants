@@ -3,16 +3,14 @@ package com.aguscerdo.animechant.chantdata.model;
 import com.aguscerdo.animechant.specials.model.SpecWeapon;
 import com.aguscerdo.animechant.spells.model.Spell;
 import com.aguscerdo.animechant.spells.model.SpellCategory;
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.collect.ImmutableListMultimap;
+import com.google.gson.*;
 import lombok.Value;
 
+import java.lang.reflect.Type;
 import java.nio.file.Path;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
+import java.util.function.Function;
 
 /**
  * Canonical in-memory preset (current schema, version 1). When the schema changes,
@@ -46,18 +44,14 @@ public class ChantData {
         specWeapons = ImmutableListMultimap.of();
     }
 
-    /**
-     * Used by Jackson.
-     */
-    @JsonCreator
     public ChantData(
-            @JsonProperty("version") Float version,
-            @JsonProperty("name") String name,
-            @JsonProperty("spell_sound_directory") String spellSoundDirectory,
-            @JsonProperty("spec_weapon_sound_directory") String specWeaponSoundDirectory,
-            @JsonProperty("spell_categories") Map<SpellCategory, List<TextEntry>> spellCategories,
-            @JsonProperty("spells") Map<Spell, List<TextEntry>> spells,
-            @JsonProperty("spec_weapons") Map<SpecWeapon, List<TextEntry>> specWeapons
+            Float version,
+            String name,
+            String spellSoundDirectory,
+            String specWeaponSoundDirectory,
+            Map<SpellCategory, List<TextEntry>> spellCategories,
+            Map<Spell, List<TextEntry>> spells,
+            Map<SpecWeapon, List<TextEntry>> specWeapons
     ) {
         this.version = version;
         this.name = name;
@@ -122,5 +116,57 @@ public class ChantData {
                         .filter(s -> !s.isEmpty())
                         .map(s -> entry.withSound(Optional.of(dir.resolve(s).toString()))))
                 .orElse(entry);
+    }
+
+    public static class Deserializer implements JsonDeserializer<ChantData> {
+        private static String string(JsonObject obj, String field) {
+            JsonElement el = obj.get(field);
+            return el == null || el.isJsonNull() ? "" : el.getAsString();
+        }
+
+        /**
+         * Keys are read as strings and resolved by the enum's fromString (unknown keys merge
+         * instead of colliding). A single entry is accepted in place of a list.
+         */
+        private static <K> Map<K, List<TextEntry>> entries(
+                JsonObject root, String field, JsonDeserializationContext ctx,
+                Function<String, K> keyParser) {
+            Map<K, List<TextEntry>> out = new LinkedHashMap<>();
+            JsonElement section = root.get(field);
+            if (section == null || section.isJsonNull()) {
+                return out;
+            }
+
+            for (Map.Entry<String, JsonElement> e : section.getAsJsonObject().entrySet()) {
+                List<TextEntry> list = out.computeIfAbsent(keyParser.apply(e.getKey()), k -> new ArrayList<>());
+                JsonElement value = e.getValue();
+                if (value.isJsonArray()) {
+                    for (JsonElement item : value.getAsJsonArray()) {
+                        list.add(ctx.deserialize(item, TextEntry.class));
+                    }
+                } else {
+                    list.add(ctx.deserialize(value, TextEntry.class));
+                }
+            }
+
+            return out;
+        }
+
+        @Override
+        public ChantData deserialize(JsonElement json, Type type, JsonDeserializationContext ctx)
+                throws JsonParseException {
+            JsonObject root = json.getAsJsonObject();
+
+            float version = root.has("version") ? root.get("version").getAsFloat() : CURRENT_VERSION;
+            String name = string(root, "name");
+            String spellDir = string(root, "spell_sound_directory");
+            String specDir = string(root, "spec_weapon_sound_directory");
+
+            return new ChantData(
+                    version, name, spellDir, specDir,
+                    copyOf(entries(root, "spell_categories", ctx, SpellCategory::fromString), spellDir),
+                    copyOf(entries(root, "spells", ctx, Spell::fromString), spellDir),
+                    copyOf(entries(root, "spec_weapons", ctx, SpecWeapon::fromString), specDir));
+        }
     }
 }

@@ -11,13 +11,13 @@ import lombok.Getter;
 @Getter
 public enum SpellTextPreset {
     NONE("None", "", ""),
-    FANTASY("Fantasy", "fantasy", "fantasy.yaml"),
-    ANIME_MIX("Anime Mix", "anime_mix", "anime_mix.yaml"),
-    FRIEREN("Frieren", "frieren", "frieren.yaml"),
-    PALWORLD("Palworld", "palworld", "palworld.yaml"),
-    DEMON_SLAYER("Demon Slayer", "demon_slayer", "demon_slayer.yaml"),
-    SHADOWVERSE("Shadowverse", "shadowverse", "shadowverse.yaml"),
-    USER_CUSTOM("User Custom", "user_custom", "user_custom.yaml");
+    FANTASY("Fantasy", "fantasy", "fantasy.json"),
+    ANIME_MIX("Anime Mix", "anime_mix", "anime_mix.json"),
+    FRIEREN("Frieren", "frieren", "frieren.json"),
+    PALWORLD("Palworld", "palworld", "palworld.json"),
+    DEMON_SLAYER("Demon Slayer", "demon_slayer", "demon_slayer.json"),
+    SHADOWVERSE("Shadowverse", "shadowverse", "shadowverse.json"),
+    USER_CUSTOM("User Custom", "user_custom", "user_custom.json");
 
 
     private final String label;

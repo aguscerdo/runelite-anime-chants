@@ -1,17 +1,19 @@
 package com.aguscerdo.animechant.chantdata;
 
 import com.aguscerdo.animechant.chantdata.model.ChantData;
+import com.aguscerdo.animechant.chantdata.model.TextEntry;
 import com.aguscerdo.animechant.files.FileManager;
 import com.aguscerdo.animechant.files.PluginDirectory;
 import com.aguscerdo.animechant.specials.model.SpecWeaponTextPreset;
 import com.aguscerdo.animechant.spells.model.SpellTextPreset;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParseException;
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.client.util.Filepath;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.Optional;
@@ -19,32 +21,46 @@ import java.util.Optional;
 @Slf4j
 @Singleton
 public class PresetLoaderImpl implements PresetLoader {
-    private static final ObjectMapper YAML_MAPPER = PresetYaml.createMapper();
-
     @Inject
     private PluginDirectory pluginDirectoryGetter;
+
+    @Inject
+    private Gson baseGson;
+
+    private Gson gson;
+
+    private Gson gson() {
+        if (gson == null) {
+            gson = baseGson.newBuilder()
+                    .registerTypeAdapter(TextEntry.class, new TextEntry.Deserializer())
+                    .registerTypeAdapter(ChantData.class, new ChantData.Deserializer())
+                    .create();
+        }
+        return gson;
+    }
 
     /**
      * Reads the tree, checks "version", binds with that version's schema. Closes the reader.
      */
-    private static Optional<ChantData> loadFromYaml(Reader reader, String source) {
+    private Optional<ChantData> loadFromJson(Reader reader, String source) {
         try (Reader r = reader) {
-            JsonNode root = YAML_MAPPER.readTree(r);
-            if (root == null || root.isMissingNode() || !root.isObject()) {
-                log.warn("Preset {} is empty or not a mapping", source);
+            JsonElement root = gson().fromJson(r, JsonElement.class);
+            if (root == null || !root.isJsonObject()) {
+                log.warn("Preset {} is empty or not an object", source);
                 return Optional.empty();
             }
 
             // A missing "version" key is treated as the current version.
-            int version = root.path("version").asInt(ChantData.CURRENT_VERSION);
+            JsonElement v = root.getAsJsonObject().get("version");
+            int version = v != null && v.isJsonPrimitive() ? v.getAsInt() : ChantData.CURRENT_VERSION;
 
             if (version == 1) {
-                return Optional.of(YAML_MAPPER.treeToValue(root, ChantData.class));
+                return Optional.of(gson().fromJson(root, ChantData.class));
             }
-            log.error("Unsupported yaml schema version: {} in {}", version, source);
+            log.error("Unsupported schema version: {} in {}", version, source);
             return Optional.empty();
-        } catch (IOException e) {
-            log.warn("Invalid YAML in {}", source, e);
+        } catch (IOException | JsonParseException e) {
+            log.warn("Invalid JSON in {}", source, e);
             return Optional.empty();
         }
     }
@@ -67,6 +83,6 @@ public class PresetLoaderImpl implements PresetLoader {
         }
 
         return FileManager.getPresetFileReader(filepath.get(), directoryName, fileName)
-                .flatMap(reader -> loadFromYaml(reader, fileName));
+                .flatMap(reader -> loadFromJson(reader, fileName));
     }
 }

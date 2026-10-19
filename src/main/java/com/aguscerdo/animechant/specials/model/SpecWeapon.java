@@ -1,7 +1,6 @@
 package com.aguscerdo.animechant.specials.model;
 
 import com.aguscerdo.animechant.chantdata.model.TextEntry;
-import com.fasterxml.jackson.annotation.JsonCreator;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import lombok.AllArgsConstructor;
@@ -406,7 +405,6 @@ public enum SpecWeapon {
         return WEAPONS_BY_ID.getOrDefault(id, UNKNOWN);
     }
 
-    @JsonCreator(mode = JsonCreator.Mode.DELEGATING)
     public static SpecWeapon fromString(String str) {
         SpecWeapon byName = WEAPONS_BY_NAME.getOrDefault(str.toLowerCase(Locale.ROOT), UNKNOWN);
         if (!byName.isUnknown()) return byName;

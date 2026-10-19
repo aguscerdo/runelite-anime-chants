@@ -1,16 +1,11 @@
 package com.aguscerdo.animechant.chantdata.model;
 
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
+import com.google.gson.*;
 import lombok.NonNull;
 import lombok.Value;
 import lombok.With;
 
-import java.io.IOException;
+import java.lang.reflect.Type;
 import java.util.Optional;
 
 /**
@@ -24,7 +19,6 @@ import java.util.Optional;
  */
 @Value
 @With
-@JsonDeserialize(using = TextEntry.Deserializer.class)
 public class TextEntry {
 
     Optional<String> text;
@@ -36,7 +30,6 @@ public class TextEntry {
         this.text = Optional.ofNullable(text);
         this.sound = Optional.empty();
     }
-
 
     public TextEntry(String text, Optional<String> sound) {
         this.text = Optional.ofNullable(text);
@@ -53,38 +46,35 @@ public class TextEntry {
         this.sound = sound;
     }
 
-    static class Deserializer extends StdDeserializer<TextEntry> {
-        Deserializer() {
-            super(TextEntry.class);
-        }
-
-        private static Optional<String> optionalField(JsonNode node, String field) {
-            return node.hasNonNull(field)
-                    ? Optional.of(node.get(field).asText()).filter(s -> !s.isBlank())
-                    : Optional.empty();
+    /**
+     * Accepts a bare string (text only) or an object with "text" and/or "sound".
+     */
+    public static class Deserializer implements JsonDeserializer<TextEntry> {
+        private static Optional<String> optionalField(JsonObject obj, String field) {
+            JsonElement el = obj.get(field);
+            return el == null || el.isJsonNull()
+                    ? Optional.empty()
+                    : Optional.of(el.getAsString()).filter(s -> !s.isBlank());
         }
 
         @Override
-        public TextEntry deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
-            JsonNode node = p.getCodec().readTree(p);
-
-            if (node.isTextual()) {
-                return new TextEntry(node.asText());
+        public TextEntry deserialize(JsonElement json, Type type, JsonDeserializationContext ctx)
+                throws JsonParseException {
+            if (json.isJsonPrimitive()) {
+                return new TextEntry(json.getAsString());
             }
-
-            if (!node.isObject()) {
-                throw JsonMappingException.from(p,
+            if (!json.isJsonObject()) {
+                throw new JsonParseException(
                         "Preset entry must be a string or an object with 'text' and/or 'sound'");
             }
 
-            Optional<String> text = optionalField(node, "text");
-            Optional<String> sound = optionalField(node, "sound");
+            JsonObject obj = json.getAsJsonObject();
+            Optional<String> text = optionalField(obj, "text");
+            Optional<String> sound = optionalField(obj, "sound");
 
             if (text.isEmpty() && sound.isEmpty()) {
-                throw JsonMappingException.from(p,
-                        "Preset entry needs at least one of 'text' or 'sound'");
+                throw new JsonParseException("Preset entry needs at least one of 'text' or 'sound'");
             }
-
             return new TextEntry(text, sound);
         }
     }
