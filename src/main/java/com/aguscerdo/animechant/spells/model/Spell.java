@@ -1,6 +1,7 @@
 package com.aguscerdo.animechant.spells.model;
 
 import com.aguscerdo.animechant.chantdata.model.TextEntry;
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
@@ -313,6 +314,7 @@ public enum Spell {
     /**
      * Case-insensitive exact name match, or UNKNOWN.
      */
+    @JsonCreator(mode = JsonCreator.Mode.DELEGATING)
     public static Spell fromString(String name) {
         if (name == null || name.isEmpty()) {
             return UNKNOWN;

@@ -208,7 +208,7 @@ public class CustomOverrides {
                 return true;
             }
             if (!isFile && entry.getText().isEmpty()) {
-                it.set(entry.withText(content));
+                it.set(entry.withText(Optional.ofNullable(content)));
                 return true;
             }
         }

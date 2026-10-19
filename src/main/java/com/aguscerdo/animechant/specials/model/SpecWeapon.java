@@ -1,6 +1,7 @@
 package com.aguscerdo.animechant.specials.model;
 
 import com.aguscerdo.animechant.chantdata.model.TextEntry;
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import lombok.AllArgsConstructor;
@@ -119,7 +120,7 @@ public enum SpecWeapon {
     RUNE_THROWNAXE("Rune thrownaxe", "Chainhit", ImmutableList.of(
             ItemID.RUNE_THROWNAXE)),
     VESTAS_SPEAR("Vesta's spear", "Spear Wall", ImmutableList.of(
-            ItemID.VESTAS_SPEAR)),
+            ItemID.VESTAS_SPEAR, ItemID.VESTAS_SPEAR_BH)),
     ABYSSAL_WHIP("Abyssal whip", "Energy Drain", ImmutableList.of(
             ItemID.ABYSSAL_WHIP,
             ItemID.ABYSSAL_WHIP_LAVA,
@@ -321,8 +322,6 @@ public enum SpecWeapon {
             ItemID.BR_MAGIC_BOW)),
     SARADOMIN_SWORD("Saradomin sword", "Saradomin's Lightning", ImmutableList.of(
             ItemID.SARADOMIN_SWORD)),
-    VESTAS_SPEAR_BOUNTY_HUNTER("Vesta's spear (Bounty Hunter)", "Spear Wall", ImmutableList.of(
-            ItemID.VESTAS_SPEAR_BH)),
     WEBWEAVER_BOW("Webweaver bow", "Swarm", ImmutableList.of(
             ItemID.WILD_CAVE_WEBWEAVER_CHARGED)),
     ABYSSAL_TENTACLE("Abyssal tentacle", "Binding Tentacle", ImmutableList.of(
@@ -407,6 +406,7 @@ public enum SpecWeapon {
         return WEAPONS_BY_ID.getOrDefault(id, UNKNOWN);
     }
 
+    @JsonCreator(mode = JsonCreator.Mode.DELEGATING)
     public static SpecWeapon fromString(String str) {
         SpecWeapon byName = WEAPONS_BY_NAME.getOrDefault(str.toLowerCase(Locale.ROOT), UNKNOWN);
         if (!byName.isUnknown()) return byName;

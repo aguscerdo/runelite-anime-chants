@@ -179,7 +179,7 @@ public class SpellTextResolverTest {
 
     @Test
     public void resolve_entryWithNoTextOrSound_returnsEmpty() {
-        TextEntry otherTextEntry = new TextEntry("", Optional.empty());
+        TextEntry otherTextEntry = new TextEntry(Optional.empty(), Optional.empty());
         spellToText.put(Spell.WATER_WAVE, otherTextEntry);
         injectResolver(SpellTextPreset.NONE);
 

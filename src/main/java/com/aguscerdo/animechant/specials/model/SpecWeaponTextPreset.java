@@ -12,6 +12,7 @@ import lombok.Getter;
 public enum SpecWeaponTextPreset {
     NONE("None", "", ""),
     ANIME_MIX("Anime Mix", "anime_mix", "anime_mix.yaml"),
+    SHADOWVERSE("Shadowverse voicelines", "shadowverse", "shadowverse.yaml"),
     USER_CUSTOM("User Custom", "user_custom", "user_custom.yaml");
 
 

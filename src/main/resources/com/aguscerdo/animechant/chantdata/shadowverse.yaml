@@ -1,6 +1,7 @@
 version: 1
 name: Shadowverse
 spell_sound_directory: shadowverse/spells
+spec_weapon_sound_directory: shadowverse/specs
 spell_categories:
   fire:
     - text: Burn
@@ -296,8 +297,344 @@ spells:
   Tan Leather:
     - text: Jealous of my pelt?
       sound: tan_leather_1.wav
+  Saradomin Strike:
+    - text: Up to heaven with you
+      sound: saradomin_1.wav
+  Flames of Zamorak:
+    - text: Bathe in my flame
+      sound: zamorak_1.wav
+  Claws of Guthix:
+    - text: Balance
+      sound: guthix_1
+    - text: All for Balance
+      sound: guthix_2.wav
 
-specials:
-  armadyl godsword:
+
+spec_weapons:
+  Armadyl Godsword:
     - text: From the heavens above justice is delivered!
-      sound: specs/ags.wav
+      sound: ags.wav
+  Zamorak Godsword:
+    - text: Rest in a prison of ice
+      sound: zgs.wav
+  Saradomin Godsword:
+    - text: I shall become faith incarnate
+      sound: sgs.wav
+  Bandos Godsword:
+    - text: More war
+      sound: bgs.wav
+  Ancient Godsword:
+    - text: Return to the void
+      sound: ancient_gs.wav
+  Dragon Axe:
+    - sound: chop_chop.wav
+  Dragon Felling Axe:
+    - sound: chop_chop.wav
+  Infernal Axe:
+    - sound: chop_chop.wav
+  Crystal Felling Axe:
+    - sound: chop_chop.wav
+  Crystal Axe:
+    - sound: chop_chop.wav
+  3rd Age Axe:
+    - sound: chop_chop.wav
+  3rd Age Felling Axe:
+    - sound: chop_chop.wav
+  Echo Axe:
+    - sound: chop_chop.wav
+  Dragon harpoon:
+    - sound: fishies.wav
+  Infernal harpoon:
+    - sound: fishies.wav
+  Crystal harpoon:
+    - sound: fishies.wav
+  Echo harpoon:
+    - sound: fishies.wav
+  Dragon Pickaxe:
+    - sound: smash.wav
+  Infernal Pickaxe:
+    - sound: smash.wav
+  3rd Age Pickaxe:
+    - sound: smash.wav
+  Crystal Pickaxe:
+    - sound: smash.wav
+  Echo Pickaxe:
+    - sound: smash.wav
+  Eldritch Nightmare Staff:
+    - text: Nightmare, banish by the dark
+      sound: eldritch.wav
+  Keris partisan of the sun:
+    - text: Luminescence
+      sound: keris_sun.wav
+  Purging staff:
+    - text: Sinners be purged
+      sound: purging.wav
+  Toxic Blowpipe:
+    - text: Suck it up
+      sound: blowpipe.wav
+  Brine Saber:
+    - text: Need more salt
+      sound: brine_saber.wav
+  Dragon Battleaxe:
+    - sound: dragon_battleaxe.wav
+  Excalibur:
+    - text: Clash in the name of glory
+      sound: excalibur.wav
+  Dinh's bulwark:
+    - text: Godsworn wall, unmoving shield
+      sound: bulwark.wav
+  Dragon Crossbow:
+    - text: With a bang and a boom
+      sound: dragon_xbow.wav
+  Dragon Halberd:
+    - text: Steady, Swing
+      sound: swing.wav
+  Crystal Halberd:
+    - text: Steady, Swing
+      sound: swing.wav
+  Dragon 2h Sword:
+    - text: Power of crimson
+      sound: dragon_2h.wav
+  Rune thrownaxe:
+    - text: Good throw me
+      sound: rune_thrownaxe.wav
+  Vesta's spear:
+    - text: Spear of Storms
+      sound: vesta.wav
+  Abyssal whip:
+    - text: The abyss awaits
+      sound: whip.wav
+  Accursed sceptre:
+    - text: A curse upon you
+      sound: accursed_sceptre.wav
+  Ancient mace:
+    - text: The god of war here reigns
+      sound: ancient_mace.wav
+  Barrelchest anchor:
+    - text: Weigh anchor, dragon ship
+      sound: anchor.wav
+  Bone Dagger:
+    - text: Stabidy staaabiidy
+      sound: bone_dagger.wav
+  Darklight:
+    - text: Weak
+      sound: weak.wav
+  Arclight:
+    - text: Weak
+      sound: weak.wav
+  Emberlight:
+    - text: Weak
+      sound: weak.wav
+  Dorgeshuun crossbow:
+    - text: Target in sight, preparing to fire
+      sound: dorgeshuun_xbow.wav
+  Dragon scimitar:
+    - text: One slash is all it takes
+      sound: dscim.wav
+  Dragon warhammer:
+    - text: This one'll smash you good
+      sound: dwh.wav
+  Statius's warhammer:
+    - text: This one'll smash you good
+      sound: dwh.wav
+  Elder Maul:
+    - text: This one'll smash you good
+      sound: dwh.wav
+  Eye of Ayak:
+    - text: Open your Eyes
+      sound: ayak.wav
+  Morrigan's throwing axe:
+    - text: So tired already?
+      sound: morrigan_axe.wav
+  Seercull:
+    - text: Hand over your soul
+      sound: seercull.wav
+  Staff of the Dead:
+    - text: Spirits
+      sound: sotd.wav
+  Tonalztics of Ralos:
+    - text: Winds of Sephyrvine, sun of Samara
+      sound: ralos.wav
+  Abyssal bludgeon:
+    - text: Gaze into the abyss
+      sound: bludgeon.wav
+  Armadyl crossbow:
+    - text: Sniped
+      sound: armadyl_xbow.wav
+  Arkan blade:
+    - text: Engolfing flames
+      sound: arkan.wav
+  Blue Moon spear:
+    - text: The moon watches over us
+      sound: blue_moon_spear.wav
+  Crimson kisten:
+    - text: I'll crush you
+      sound: kisten.wav
+  Dawnbringer:
+    - text: Dusk and dawn
+      sound: dawnbringer.wav
+  Dragon hasta:
+    - text: You're really pushing hard
+      sound: hasta.wav
+  Zamorakian hasta:
+    - text: You're really pushing hard
+      sound: hasta.wav
+  Dragon spear:
+    - text: You're really pushing hard
+      sound: hasta.wav
+  Zamorakian spear:
+    - text: You're really pushing hard
+      sound: hasta.wav
+  Dragon longsword:
+    - text: If I'm breathing, I'm cleaving
+      sound: dlong.wav
+  Dragon mace:
+    - text: Shatter
+      sound: dmace.wav
+  Dragon sword:
+    - text: I live by the sword
+      sound: dsword.wav
+  Dragon thrownaxe:
+    - text: Too slow
+      sound: dragon_thrownaxe.wav
+  Dual macuahuitl:
+    - text: Even the moon shall be tainted red
+      sound: macuahuitl.wav
+  Eclipse atlatl:
+    - text: You don't deserve the moon's radiance
+      sound: atlatl.wav
+  Granite hammer:
+    - text: Crumble, shatter and banish
+      sound: granite_hammer.wav
+  Keris partisan of corruption:
+    - text: Give me ominous, give me corruption
+      sound: keris_corruption.wav
+  Light ballista:
+    - text: The heavy the bow, the fast of the arrow
+      sound: ballista.wav
+  Heavy ballista:
+    - text: The heavy the bow, the fast of the arrow
+      sound: ballista.wav
+  Magic longbow:
+    - text: My hand is steady
+      sound: magic_longbow.wav
+  Magic comp bow:
+    - text: My hand is steady
+      sound: magic_longbow.wav
+  Morrigan's javelin:
+    - text: The will of the forest guides my spear
+      sound: morrigan_jav.wav
+  Noxious halberd:
+    - text: Drown in venom
+      sound: nox.wav
+  Osmumten's fang:
+    - text: Away, fangless one
+      sound: fang.wav
+  Rune claws:
+    - text: I am there for I claw
+      sound: rune_claws.wav
+  Saradomin's blessed sword:
+    - text: Show me the power of godly lightnin
+      sound: sara_sword.wav
+  Saradomin sword:
+    - text: Show me the power of godly lightnin
+      sound: sara_sword.wav
+  Soulflame horn:
+    - sound: soulflame_horn.wav
+  Sunspear:
+    - text: My spear will stop you
+      sound: sunspear.wav
+  Vesta's longsword:
+    - text: I'll pierce you trought!
+      sound: vls.wav
+  Voidwaker:
+    - text: No one escapes the void
+      sound: voidwaker.wav
+  Volatile Nightmare staff:
+    - text: NIghtmare, banish by the dark
+      sound: volatile.wav
+  Zaryte crossbow:
+    - text: Don't resist, this is the gods's will
+      sound: zcb.wav
+  Abyssal dagger:
+    - text: Peer in to the abyss
+      sound: abby_dagger.wav
+  Burning claws:
+    - text: Strike, burn and climb higher
+      sound: burning_claws.wav
+  Dark bow:
+    - text: The darkness doesn't end
+      sound: dark_bow.wav
+  Dragon claws:
+    - text: Rip them to shreds
+      sound: dclaws.wav
+  Dragon Dagger:
+    - text: Demonic blades have nothing on my knife
+      sound: dds.wav
+  Dragon knife:
+    - text: Double the blades, double the fun
+      sound: dragon_knife.wav
+  Granite maul:
+    - text: Let's speed things up
+      sound: gmaul.wav
+  Rosewood blowpipe:
+    - text: Every rose has her thorns
+      sound: rosewood_blowpipe.wav
+  Magic shortbow:
+    - text: Pew! Pew!
+      sound: magic_shortbow.wav
+  Webweaver bow:
+    - text: Left, right, above, bellow
+      sound: webweaver.wav
+  Abyssal tentacle:
+    - text: To the depths of the abyss
+      sound: tentacle.wav
+  Rod of Ivandis:
+    - text: Ah, yes, that expression. Hold it
+      sound: ivandis.wav
+  Ivandis flail:
+    - text: Ah, yes, that expression. Hold it
+      sound: ivandis.wav
+  Blisterwood flail:
+    - text: Ah, yes, that expression. Hold it
+      sound: ivandis.wav
+  Hallowed flail:
+    - text: Ah, yes, that expression. Hold it
+      sound: ivandis.wav
+  Scorching Bow:
+    - text: No self respecting demon cries when getting a shot
+      sound: scorching_bow.wav
+  Ursine chainmace:
+    - text: I'm exhausted
+      sound: ursine.wav
+  Dragonfire shield:
+    - text: Super Ultra Dragon Strike
+      sound: dfs.wav
+  Ancient wyvern shield:
+    - text: Burning flames will freeze
+      sound: aws.wav
+  Dragonfire ward:
+    - text: I won't let you hurt Mister Dragon
+      sound: dfw.wav
+  Soulreaper axe:
+    - text: Your heads shall roll
+      sound: sra.wav
+  The dogsword:
+    - text: No! No walkies for you!
+      sound: dogsword.wav
+  Fang of the hound:
+    - text: Rrrrghh!
+      sound: fang_of_the_hound.wav
+  Infernal tecpatl:
+    - text: Bring the inferno
+      sound: tecpatl.wav
+  Lithic sceptre:
+    - text: Shatter
+      sound: lithic_scepter.wav
+  Sunlight Spear:
+    - text: Eternal light
+      sound: sunlight_spear.wav
+  Thunder khopesh:
+    - text: Devotion thunders in my core
+      sound: thunder_khopesh.wav
+

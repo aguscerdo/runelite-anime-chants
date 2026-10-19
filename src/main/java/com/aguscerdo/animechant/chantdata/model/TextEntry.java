@@ -27,14 +27,41 @@ import java.util.Optional;
 @JsonDeserialize(using = TextEntry.Deserializer.class)
 public class TextEntry {
 
-    String text;
+    Optional<String> text;
 
     @NonNull
     Optional<String> sound;
 
+    public TextEntry(String text) {
+        this.text = Optional.ofNullable(text);
+        this.sound = Optional.empty();
+    }
+
+
+    public TextEntry(String text, Optional<String> sound) {
+        this.text = Optional.ofNullable(text);
+        this.sound = sound;
+    }
+
+    public TextEntry(String text, String sound) {
+        this.text = Optional.ofNullable(text);
+        this.sound = Optional.ofNullable(sound);
+    }
+
+    public TextEntry(Optional<String> text, Optional<String> sound) {
+        this.text = text;
+        this.sound = sound;
+    }
+
     static class Deserializer extends StdDeserializer<TextEntry> {
         Deserializer() {
             super(TextEntry.class);
+        }
+
+        private static Optional<String> optionalField(JsonNode node, String field) {
+            return node.hasNonNull(field)
+                    ? Optional.of(node.get(field).asText()).filter(s -> !s.isBlank())
+                    : Optional.empty();
         }
 
         @Override
@@ -42,21 +69,23 @@ public class TextEntry {
             JsonNode node = p.getCodec().readTree(p);
 
             if (node.isTextual()) {
-                return new TextEntry(node.asText(), Optional.empty());
+                return new TextEntry(node.asText());
             }
 
-            if (!node.isObject() || !node.hasNonNull("text")) {
-                throw JsonMappingException.from(p, "Preset entry must be a string or an object with 'text'");
+            if (!node.isObject()) {
+                throw JsonMappingException.from(p,
+                        "Preset entry must be a string or an object with 'text' and/or 'sound'");
             }
 
-            Optional<String> sound = node.hasNonNull("sound")
-                    ? Optional.of(node.get("sound").asText())
-                    : Optional.empty();
-            if (sound.isPresent() && sound.get().isBlank()) {
-                sound = Optional.empty();
+            Optional<String> text = optionalField(node, "text");
+            Optional<String> sound = optionalField(node, "sound");
+
+            if (text.isEmpty() && sound.isEmpty()) {
+                throw JsonMappingException.from(p,
+                        "Preset entry needs at least one of 'text' or 'sound'");
             }
 
-            return new TextEntry(node.get("text").asText(), sound);
+            return new TextEntry(text, sound);
         }
     }
 }

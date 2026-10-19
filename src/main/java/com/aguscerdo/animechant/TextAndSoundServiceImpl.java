@@ -76,8 +76,10 @@ public class TextAndSoundServiceImpl implements TextAndSoundService {
     public void displayText(TextEntry entry, boolean shout) {
         if (entry == null) return;
 
-        String text = entry.getText();
-        if (text == null || text.isBlank() || text.equals(CustomOverrides.NONE)) return;
+        Optional<String> textOptional = entry.getText();
+        if (textOptional.isEmpty()) return;
+        String text = textOptional.get();
+        if (text.isBlank() || text.equals(CustomOverrides.NONE)) return;
 
         Player me = client.getLocalPlayer();
         if (me == null) return;

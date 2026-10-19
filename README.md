@@ -12,7 +12,6 @@ overrides, or both.
 
 - [Features](#features)
 - [Quick Start](#quick-start)
-- [Sound Files](#sound-files)
 - [Config Options](#config-options)
     - [Spells](#spells)
     - [Special Attacks](#special-attacks)
@@ -20,8 +19,8 @@ overrides, or both.
 - [Spell Categories](#spell-categories)
 - [Custom Overrides](#custom-overrides)
 - [Preset File Format (YAML)](#preset-file-format-yaml)
+- [Adding Sound Files](#sound-files)
 - [Contributing a Preset](#contributing-a-preset)
-- [FAQ / Troubleshooting](#faq--troubleshooting)
 
 ## Features
 
@@ -38,13 +37,6 @@ overrides, or both.
 2. Open the plugin settings and pick a **Spell Text Preset**.
 3. Cast a spell.
 4. (Optional) Add your own text with [Custom Overrides](#custom-overrides).
-
-## Sound Files
-
-Sound files are not included by default. You can download some presets I've collected and manually put them in the
-plugin-data directory.
-
-<!-- TODO: add step-by-step of sound files. -->
 
 ## Config Options
 
@@ -130,14 +122,12 @@ Default: 0
 > **Delay vs. delay from last cast:** the first only counts casts that actually displayed text; the second counts
 > every cast.
 
-<!-- TODO: Short GIF comparing auto-cast with and without a delay -->
 ![Delay comparison_no_delay](/images/spell_no_delay.gif)
 ![Delay comparison_no_delay](/images/spell_delay.gif)
 
 ### Special Attacks
 
-<!-- TODO: Screenshot of the Special Attacks config section -->
-![Special attacks section](docs/images/config-specs.png)
+![Special attacks section](/images/spec_config.png)
 
 #### Enable Special Attack Chanting
 
@@ -388,6 +378,40 @@ For a given spell, text is looked up in this order:
 1. Your [custom overrides](#custom-overrides)
 2. The selected preset (individual spell, then spell category)
 3. Fallback, either spell name, spec attack name or spec weapon name.
+
+## Adding Sound Files
+
+Sound files are not included by default. You can download some presets I've collected and manually put them in the
+plugin-data directory.
+
+#### Locating Plugin Directory
+
+1) Before starting download the plug-in from runelite to create all the directories.
+2) Locate the plugin directory.
+
+- Mac / Linux: `~/.runelite/plugin-data/anime-chant`
+- Windows: `C:\Users\*username*\.runelite\plugin-data\anime-chant`
+
+#### Downloading preset sound files
+
+3) Go to https://github.com/aguscerdo/runelite-anime-chant-sounds and download the sound files.
+4) Place the appropriate folders in each directory.
+
+- E.g. Download [anime_mix/spells](https://github.com/aguscerdo/runelite-anime-chant-sounds/tree/main/anime_mix/spells)
+  and place it in `plugin-data/anime-chant/anime_mix/spells`
+
+#### Adding Your own files
+
+For custom sounds you can place them in the plugin directory and reference it, either in an existing preset, the user
+custom preset or reference them via overrides.
+
+```yaml
+spells:
+  fire_strike:
+    - "Burn!"                     # text only
+    - text: "Flames, answer me"   # text with a sound
+      sound: "flames.wav"
+```
 
 ## Contributing a Preset
 
