@@ -27,7 +27,7 @@ import java.util.concurrent.ScheduledExecutorService;
         name = "Anime Chant",
         description = "Shows custom text when you cast spells",
         tags = {"anime", "spells", "sounds", "spec"},
-        internalName = "anime-chant")
+        internalName = "anime-chants")
 public class AnimeChantPlugin extends Plugin {
     private static final TextEntry RELOAD_TEXT = new TextEntry("Reloading all presets...", Optional.empty());
 
