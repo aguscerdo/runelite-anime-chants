@@ -206,6 +206,29 @@ public interface AnimeChantConfig extends Config {
         return false;
     }
 
+    @ConfigItem(
+            keyName = SPECIAL_ATTACK_OVERRIDE,
+            name = "Spec Overrides",
+            description = "Custom user special attack overrides.<br>" +
+                    "Each line must contain one entry formatted as follows:<br><br>" +
+                    "--------------------------------------------------------<br>" +
+                    "Weapon Name=Text to Display<br>" +
+                    "Weapoin Item Id=Text to Display<br>" +
+                    "Weapon Name file=Path to <b>.wav</b> files file from runescape folder<br>" +
+                    "--------------------------------------------------------<br><br>" +
+                    "<b>Usage Notes:</b><br>" +
+                    "- Multiple entries with the same name will all be used<br>" +
+                    "- Multiple file paths for the same weapon will be applied in order<br>" +
+                    "- User entries take priority over weapon spec presets or spec name names<br>" +
+                    "- Setting a weapon spec to <b>None</b> or <b>empty</b> will disable it<br>" +
+                    "- Invalid lines will be ignored",
+            section = SPECIAL_ATTACKS_SECTION,
+            position = 3
+    )
+    default String customSpecialAttackOverrides() {
+        return "";
+    }
+
 
     @Range(min = 0, max = 100)
     @ConfigItem(
@@ -242,36 +265,12 @@ public interface AnimeChantConfig extends Config {
     }
 
     @ConfigItem(
-            keyName = SPECIAL_ATTACK_OVERRIDE,
-            name = "Spec Overrides",
-            description = "Custom user special attack overrides.<br>" +
-                    "Each line must contain one entry formatted as follows:<br><br>" +
-                    "--------------------------------------------------------<br>" +
-                    "Weapon Name=Text to Display<br>" +
-                    "Weapoin Item Id=Text to Display<br>" +
-                    "Weapon Name file=Path to <b>.wav</b> files file from runescape folder<br>" +
-                    "--------------------------------------------------------<br><br>" +
-                    "<b>Usage Notes:</b><br>" +
-                    "- Multiple entries with the same name will all be used<br>" +
-                    "- Multiple file paths for the same weapon will be applied in order<br>" +
-                    "- User entries take priority over weapon spec presets or spec name names<br>" +
-                    "- Setting a weapon spec to <b>None</b> or <b>empty</b> will disable it<br>" +
-                    "- Invalid lines will be ignored",
-            section = SPECIAL_ATTACKS_SECTION,
-            position = 3
-    )
-    default String customSpecialAttackOverrides() {
-        return "";
-    }
-
-    @ConfigItem(
             keyName = RELOAD_PRESET_FILES,
             name = "[Reload preset files]",
             description = "Reloads the plugin's preset files with the latest ones.<br>" +
                     "Reload happens when checkbox is toggled on or off.",
             position = 8
     )
-
     default boolean reloadPresetFiles() {
         return false;
     }
