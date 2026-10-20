@@ -53,9 +53,9 @@ Default: enabled
 #### Spell Text Preset
 
 Choose from a list of pre-made spell-to-text conversions. For the full lists, refer to the
-[GitHub repo](https://github.com/aguscerdo/runelite-anime-chants/tree/master/src/main/resources/com/aguscerdo/animechant/chantdata).
+[GitHub repo](https://github.com/aguscerdo/runelite-anime-chants/tree/master/src/main/resources/com/aguscerdo/animechants/chantdata).
 
-These presets can be edited in the runlite plugin data (`.runelite/plugin-data/anime-chant`).
+These presets can be edited in the runlite plugin data (`.runelite/plugin-data/anime-chants`).
 
 | Preset         | Description                                                                                      |
 |----------------|--------------------------------------------------------------------------------------------------|
@@ -138,9 +138,9 @@ Default: enabled
 #### Spec Text Preset
 
 Bundled list of special attack text. Your overrides always take priority. For the full lists, refer to the
-[GitHub repo](https://github.com/aguscerdo/runelite-anime-chants/tree/master/src/main/resources/com/aguscerdo/animechant/chantdata).
+[GitHub repo](https://github.com/aguscerdo/runelite-anime-chants/tree/master/src/main/resources/com/aguscerdo/animechants/chantdata).
 
-These presets can be edited in the runlite plugin data (`.runelite/plugin-data/anime-chant`).
+These presets can be edited in the runlite plugin data (`.runelite/plugin-data/anime-chants`).
 
 | Value         | Behavior                              |
 |---------------|---------------------------------------|
@@ -209,7 +209,7 @@ A convenient place to copy and paste stuff, such as presets you like. It is not 
 Rewrites the plugin's preset files from the bundled versions and reloads them. The reload triggers when the
 checkbox is toggled on or off.
 
-These presets can be edited in the runlite plugin data (`.runelite/plugin-data/anime-chant`).
+These presets can be edited in the runlite plugin data (`.runelite/plugin-data/anime-chants`).
 
 > **Warning:** this overwrites the preset files in the plugin directory. Changes you made to them will be lost.
 > Use [overrides](#custom-overrides) for personal tweaks instead.
@@ -299,7 +299,7 @@ abyssal whip file=whip.wav
 ## Preset File Format (JSON)
 
 Presets are JSON files bundled with the plugin (see the
-[chantdata folder](https://github.com/aguscerdo/runelite-anime-chants/tree/master/src/main/resources/com/aguscerdo/animechant/chantdata)).
+[chantdata folder](https://github.com/aguscerdo/runelite-anime-chants/tree/master/src/main/resources/com/aguscerdo/animechants/chantdata)).
 This is the current schema, **version 1**.
 
 ### Example
@@ -426,8 +426,8 @@ plugin-data directory.
 1) Before starting download the plug-in from runelite to create all the directories.
 2) Locate the plugin directory.
 
-- Mac / Linux: `~/.runelite/plugin-data/anime-chant`
-- Windows: `C:\Users\*username*\.runelite\plugin-data\anime-chant`
+- Mac / Linux: `~/.runelite/plugin-data/anime-chants`
+- Windows: `C:\Users\*username*\.runelite\plugin-data\anime-chants`
 
 #### Downloading preset sound files
 
@@ -435,7 +435,7 @@ plugin-data directory.
 4) Place the appropriate folders in each directory.
 
 - E.g. Download [anime_mix/spells](https://github.com/aguscerdo/runelite-anime-chant-sounds/tree/main/anime_mix/spells)
-  and place it in `plugin-data/anime-chant/anime_mix/spells`
+  and place it in `plugin-data/anime-chants/anime_mix/spells`
 
 #### Adding Your own files
 
