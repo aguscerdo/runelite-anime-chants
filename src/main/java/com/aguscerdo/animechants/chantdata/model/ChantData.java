@@ -8,9 +8,10 @@ import com.google.gson.*;
 import lombok.Value;
 
 import java.lang.reflect.Type;
-import java.nio.file.Path;
 import java.util.*;
 import java.util.function.Function;
+
+import static com.aguscerdo.animechants.tools.StringUtils.joinPath;
 
 /**
  * Canonical in-memory preset (current schema, version 1). When the schema changes,
@@ -92,9 +93,8 @@ public class ChantData {
             return ImmutableListMultimap.of();
         }
 
-        final Optional<Path> soundPath = Optional.ofNullable(soundDirectory)
-                .filter(dir -> !dir.isEmpty())
-                .map(Path::of);
+        final Optional<String> soundDir = Optional.ofNullable(soundDirectory)
+                .filter(dir -> !dir.isEmpty());
 
         ImmutableListMultimap.Builder<K, TextEntry> builder = ImmutableListMultimap.builder();
 
@@ -102,7 +102,7 @@ public class ChantData {
             if (key != null && values != null) {
                 values.stream()
                         .filter(Objects::nonNull)
-                        .map(entry -> withResolvedSound(entry, soundPath))
+                        .map(entry -> withResolvedSound(entry, soundDir))
                         .forEach(entry -> builder.put(key, entry));
             }
         });
@@ -110,11 +110,12 @@ public class ChantData {
         return builder.build();
     }
 
-    private static TextEntry withResolvedSound(TextEntry entry, Optional<Path> soundPath) {
-        return soundPath
+
+    private static TextEntry withResolvedSound(TextEntry entry, Optional<String> soundDir) {
+        return soundDir
                 .flatMap(dir -> entry.getSound()
                         .filter(s -> !s.isEmpty())
-                        .map(s -> entry.withSound(Optional.of(dir.resolve(s).toString()))))
+                        .map(s -> entry.withSound(Optional.of(joinPath(dir, s)))))
                 .orElse(entry);
     }
 

@@ -9,9 +9,9 @@ import net.runelite.client.util.Filepath;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Optional;
+
+import static com.aguscerdo.animechants.tools.StringUtils.joinPath;
 
 @Slf4j
 public class FileManager {
@@ -47,7 +47,7 @@ public class FileManager {
     /**
      * Write preset files into the plugin data for manual edits
      */
-    public static void writePresetFiles(Filepath pluginDirectory, boolean force) {
+    public static void copyPresetFiles(Filepath pluginDirectory, boolean force) {
         for (SpellTextPreset preset : SpellTextPreset.values()) {
             setUpPresetFiles(pluginDirectory, preset.getDirectoryName(), preset.getFileName(), force);
         }
@@ -89,9 +89,9 @@ public class FileManager {
             Filepath destinationPath = folderPath.join(fileName);
             if (destinationPath.exists() && !force) return;
 
-            Path origin = Paths.get(PRESETS_DIR, fileName);
+            String origin = joinPath(PRESETS_DIR, fileName);
 
-            try (InputStream in = PresetLoaderImpl.class.getResourceAsStream(origin.toString())) {
+            try (InputStream in = PresetLoaderImpl.class.getResourceAsStream(origin)) {
                 if (in == null) {
                     log.warn("Failed to read Java resource: {}", origin);
                     return;

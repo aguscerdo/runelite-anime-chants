@@ -41,9 +41,6 @@ public class AnimeChantsPlugin extends Plugin {
     private ClientThread clientThread;
 
     @Inject
-    private AnimeChantsConfig config;
-
-    @Inject
     private TextAndSoundService textAndSoundService;
 
     @Inject
@@ -80,7 +77,7 @@ public class AnimeChantsPlugin extends Plugin {
             try {
                 Filepath pluginDirectory = getPluginDirectory();
                 pluginDirectory.createDirectories();
-                FileManager.writePresetFiles(pluginDirectory, /* force= */false);
+                FileManager.copyPresetFiles(pluginDirectory, /* force= */false);
             } catch (Exception e) {
                 log.error("Failed to initialize directories.", e);
             }
@@ -111,7 +108,7 @@ public class AnimeChantsPlugin extends Plugin {
                 executor.execute(
                         () -> {
                             textAndSoundService.displayText(RELOAD_TEXT, false);
-                            FileManager.writePresetFiles(pluginDirectory, /* force= */true);
+                            FileManager.copyPresetFiles(pluginDirectory, /* force= */true);
 
                             spellPlugin.startUp();
                             specialAttackPlugin.startUp();
