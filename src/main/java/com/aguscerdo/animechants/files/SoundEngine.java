@@ -33,7 +33,8 @@ public class SoundEngine {
         log.debug("Playing files at {}", resolved);
 
 
-        float gain = 20f * (float) Math.log10(config.soundVolume() / 100f);
+        float ratio = config.soundVolume() * 0.01f;
+        float gain = 20f * (float) Math.log10(ratio * ratio);
 
         try {
             audioPlayer.play(resolved.get(), gain);

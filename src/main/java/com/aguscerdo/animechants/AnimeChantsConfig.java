@@ -238,7 +238,7 @@ public interface AnimeChantsConfig extends Config {
             position = 5
     )
     default int soundVolume() {
-        return 30;
+        return 45;
     }
 
 
