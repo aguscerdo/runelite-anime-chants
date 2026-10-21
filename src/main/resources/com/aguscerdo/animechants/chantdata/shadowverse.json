@@ -1278,6 +1278,18 @@
         "text": "Devotion thunders in my core",
         "sound": "thunder_khopesh.wav"
       }
+    ],
+    "Zorya's Tome": [
+      {
+        "text": "Eradicate it all! Everything but the truth!",
+        "sound": "zoryas_tome.wav"
+      }
+    ],
+    "Rondache": [
+      {
+        "text": "Dodge this",
+        "sound": "rondache.wav"
+      }
     ]
   }
 }

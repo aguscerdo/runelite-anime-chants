@@ -389,7 +389,11 @@ public enum SpecWeapon {
             ItemID.WEAPON_OF_SOL)),
     THUNDER_KHOPESH("Thunder khopesh", "Lingering Lightning", ImmutableList.of(
             ItemID.THUNDER_KHOPESH,
-            ItemID.DEADMAN_THUNDER_KHOPESH));
+            ItemID.DEADMAN_THUNDER_KHOPESH)),
+    ZORYAS_TOME("Zorya's Tome", "TODO",
+            ImmutableList.of(ItemID.ZORYAS_TOME,
+                    ItemID.ZORYAS_TOME_UNCHARGED)),
+    RONDACHE("Rondache", "TODO", ImmutableList.of(ItemID.RONDACHE));
 
 
     private static final ImmutableMap<String, SpecWeapon> WEAPONS_BY_NAME = Arrays.stream(values())

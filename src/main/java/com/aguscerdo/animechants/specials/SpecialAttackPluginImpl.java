@@ -15,6 +15,8 @@ import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.events.ConfigChanged;
 
 import javax.inject.Inject;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 @Slf4j
@@ -32,7 +34,8 @@ public class SpecialAttackPluginImpl implements SpecialAttackPlugin {
     private TextAndSoundService textAndSoundService;
 
     private int specPercent = -1;
-    private int sraStacks = 0;
+
+    private final Map<SpecWeapon, Integer> stackCounter = new HashMap<>();
 
 
     public void startUp() {
@@ -42,9 +45,9 @@ public class SpecialAttackPluginImpl implements SpecialAttackPlugin {
 
     public void shutDown() {
         specPercent = -1;
-        sraStacks = 0;
 
         textResolver.clear();
+        stackCounter.clear();
     }
 
 
@@ -66,25 +69,33 @@ public class SpecialAttackPluginImpl implements SpecialAttackPlugin {
         GameState gs = state.getGameState();
         if (gs == GameState.LOGIN_SCREEN || gs == GameState.HOPPING || gs == GameState.CONNECTION_LOST) {
             specPercent = -1;
-            sraStacks = 0;
+            stackCounter.clear();
         }
     }
 
 
     @Subscribe
     public void onVarbitChanged(VarbitChanged event) {
-        if (event.getVarpId() == VarPlayerID.SA_ENERGY) {
-            handleSpecialAttack(event);
-            return;
-        } else if (event.getVarpId() == VarPlayerID.SOULREAPER_STACKS) {
-            handleSoulReaperAxe(event);
-            return;
+        switch (event.getVarpId()) {
+            case VarPlayerID.SA_ENERGY:
+                handleSpecialAttack(event);
+                return;
+            case VarPlayerID.SOULREAPER_STACKS:
+                handleAltSpecStacks(event, SpecWeapon.SOULREAPER_AXE);
+                return;
+
         }
 
-        if (event.getVarbitId() == VarbitID.DRAGONFIRE_SHIELD_RECHARGE
-                || event.getVarbitId() == VarbitID.DRAGONFIRE_WARD_RECHARGE
-        ) {
-            handleAltSpecialAttack(event);
+        switch (event.getVarbitId()) {
+            case VarbitID.DRAGONFIRE_SHIELD_RECHARGE:
+                handleAltSpecTimer(event, SpecWeapon.DRAGONFIRE_SHIELD);
+                return;
+            case VarbitID.DRAGONFIRE_WARD_RECHARGE:
+                handleAltSpecTimer(event, SpecWeapon.DRAGONFIRE_WARD);
+                return;
+            case VarbitID.RONDACHE_CHARGES:
+                handleAltSpecStacks(event, SpecWeapon.RONDACHE);
+                return;
         }
     }
 
@@ -108,29 +119,9 @@ public class SpecialAttackPluginImpl implements SpecialAttackPlugin {
         textResolver.resolve(specWeapon).ifPresent(this::processTextEntry);
     }
 
-    private void handleSoulReaperAxe(VarbitChanged event) {
-        int newStacks = event.getValue();
-        int oldStacks = sraStacks;
-        sraStacks = newStacks;
 
-        if (!config.specialAttacksEnabled()) return;
-        // TODO figure out how to handle using spec with 1 stack and no false-triggers with decrease.
-        if (newStacks != 0 || oldStacks - newStacks < 2) return;
-
-        textResolver.resolve(SpecWeapon.SOULREAPER_AXE).ifPresent(this::processTextEntry);
-    }
-
-    private void handleAltSpecialAttack(VarbitChanged event) {
+    private void handleAltSpecTimer(VarbitChanged event, SpecWeapon specWeapon) {
         int newValue = event.getValue();
-        SpecWeapon specWeapon;
-
-        if (event.getVarbitId() == VarbitID.DRAGONFIRE_SHIELD_RECHARGE) {
-            specWeapon = SpecWeapon.DRAGONFIRE_SHIELD;
-        } else if (event.getVarbitId() == VarbitID.DRAGONFIRE_WARD_RECHARGE) {
-            specWeapon = SpecWeapon.DRAGONFIRE_WARD;
-        } else {
-            return;
-        }
 
         if (!config.specialAttacksEnabled()) return;
 
@@ -138,6 +129,20 @@ public class SpecialAttackPluginImpl implements SpecialAttackPlugin {
         if (newValue != 24) {
             return;
         }
+
+        textResolver.resolve(specWeapon).ifPresent(this::processTextEntry);
+    }
+
+    private void handleAltSpecStacks(VarbitChanged event, SpecWeapon specWeapon) {
+        int newValue = event.getValue();
+
+        Integer oldValue = stackCounter.put(specWeapon, newValue);
+        if (oldValue == null) return;
+
+        if (!config.specialAttacksEnabled()) return;
+
+        // Setting initial value, gaining charges or emptying.
+        if (newValue != 0 || oldValue - newValue < 2) return;
 
         textResolver.resolve(specWeapon).ifPresent(this::processTextEntry);
     }
