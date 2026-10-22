@@ -124,6 +124,7 @@ public class SpecialAttackPluginImpl implements SpecialAttackPlugin {
         int newValue = event.getValue();
 
         if (!config.specialAttacksEnabled()) return;
+        if (!isWearing(specWeapon)) return;
 
         // Setting initial value, gaining charges or emptying.
         if (newValue != 24) {
@@ -140,6 +141,7 @@ public class SpecialAttackPluginImpl implements SpecialAttackPlugin {
         if (oldValue == null) return;
 
         if (!config.specialAttacksEnabled()) return;
+        if (!isWearing(specWeapon)) return;
 
         // Setting initial value, gaining charges or emptying.
         if (newValue != 0 || oldValue - newValue < 2) return;
@@ -154,13 +156,31 @@ public class SpecialAttackPluginImpl implements SpecialAttackPlugin {
 
     private int getWeaponId() {
         ItemContainer worn = client.getItemContainer(InventoryID.WORN);
-        log.debug("Worn: {}", worn);
         if (worn == null) return -1;
 
         Item weapon = worn.getItem(EquipmentInventorySlot.WEAPON.getSlotIdx());
-        log.debug("weapon: {}", weapon);
         if (weapon == null) return -1;
 
         return weapon.getId();
+    }
+
+    /**
+     * Returns true if spec weapon is being worn.
+     */
+    private boolean isWearing(SpecWeapon specWeapon) {
+        ItemContainer worn = client.getItemContainer(InventoryID.WORN);
+        if (worn == null) return false;
+
+        Item weapon = worn.getItem(EquipmentInventorySlot.WEAPON.getSlotIdx());
+        if (weapon != null && SpecWeapon.fromId(weapon.getId()) == specWeapon) {
+            return true;
+        }
+
+        Item shield = worn.getItem(EquipmentInventorySlot.SHIELD.getSlotIdx());
+        if (shield != null && SpecWeapon.fromId(shield.getId()) == specWeapon) {
+            return true;
+        }
+
+        return false;
     }
 }

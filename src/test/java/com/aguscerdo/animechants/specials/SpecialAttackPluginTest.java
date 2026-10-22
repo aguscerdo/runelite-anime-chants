@@ -8,7 +8,6 @@ import com.google.inject.Inject;
 import com.google.inject.testing.fieldbinder.Bind;
 import com.google.inject.testing.fieldbinder.BoundFieldModule;
 import net.runelite.api.*;
-import net.runelite.api.events.ChatMessage;
 import net.runelite.api.events.GameStateChanged;
 import net.runelite.api.events.VarbitChanged;
 import net.runelite.api.gameval.InventoryID;
@@ -30,6 +29,11 @@ import static org.mockito.Mockito.*;
 public class SpecialAttackPluginTest {
 
     private static final int GRANITE_MAUL_ID = 4153;
+    private static final int SOULREAPER_AXE_ID = 28338;
+    private static final int DRAGONFIRE_SHIELD_ID = 11283;
+
+    private static final Item DFS_ITEM = new Item(DRAGONFIRE_SHIELD_ID, 1);
+    private static final Item SRA_ITEM = new Item(SOULREAPER_AXE_ID, 1);
 
     private static final TextEntry GRANITE_MAUL_TEXT_ENTRY = new TextEntry("Quickest of Smashes", Optional.of("gmaul.wav"));
 
@@ -338,7 +342,8 @@ public class SpecialAttackPluginTest {
 
 
     @Test
-    public void onVarbitChanged_altSpecNot24_ignore() {
+    public void onVarbitChanged_timerAltSpecNot24_ignore() {
+        setWornAltSpecWeapons();
 
         plugin.onVarbitChanged(makeVarbit(VarbitID.DRAGONFIRE_SHIELD_RECHARGE, 100));
         plugin.onVarbitChanged(makeVarbit(VarbitID.DRAGONFIRE_SHIELD_RECHARGE, 80));
@@ -350,7 +355,8 @@ public class SpecialAttackPluginTest {
 
 
     @Test
-    public void onVarbitChanged_altSpecNewNot24_success() {
+    public void onVarbitChanged_timerAltSpecNewNot24_success() {
+        setWornAltSpecWeapons();
         when(mockTextResolver.resolve(any())).thenReturn(Optional.of(GRANITE_MAUL_TEXT_ENTRY));
 
         plugin.onVarbitChanged(makeVarbit(VarbitID.DRAGONFIRE_SHIELD_RECHARGE, 0));
@@ -361,7 +367,8 @@ public class SpecialAttackPluginTest {
     }
 
     @Test
-    public void onVarbitChanged_altNewVarbit24_success() {
+    public void onVarbitChanged_timerAltNewVarbit24_success() {
+        setWornAltSpecWeapons();
         when(mockTextResolver.resolve(any())).thenReturn(Optional.of(GRANITE_MAUL_TEXT_ENTRY));
 
         plugin.onVarbitChanged(makeVarbit(VarbitID.DRAGONFIRE_SHIELD_RECHARGE, 0));
@@ -372,8 +379,9 @@ public class SpecialAttackPluginTest {
     }
 
     @Test
-    public void onVarbitChanged_altSpecTextNotResolved_notDisplayed() {
+    public void onVarbitChanged_timerAltSpecTextNotResolved_notDisplayed() {
         when(mockTextResolver.resolve(any())).thenReturn(Optional.empty());
+        setWornAltSpecWeapons();
 
         plugin.onVarbitChanged(makeVarbit(VarbitID.DRAGONFIRE_SHIELD_RECHARGE, 0));
         plugin.onVarbitChanged(makeVarbit(VarbitID.DRAGONFIRE_SHIELD_RECHARGE, 24));
@@ -383,7 +391,20 @@ public class SpecialAttackPluginTest {
     }
 
     @Test
-    public void onVarbitChanged_sraDecreaseOfLessThanTwo_ignored() {
+    public void onVarbitChanged_timerAltSpecTextNotWorn_ignore() {
+        when(mockWornContainer.getItem(anyInt())).thenReturn(null);
+
+        plugin.onVarbitChanged(makeVarbit(VarbitID.DRAGONFIRE_SHIELD_RECHARGE, 0));
+        plugin.onVarbitChanged(makeVarbit(VarbitID.DRAGONFIRE_SHIELD_RECHARGE, 24));
+
+        verify(mockTextResolver, times(0)).resolve(any());
+        verify(mockTextAndSoundService, times(0)).processTextEntry(any(), anyBoolean(), anyBoolean());
+    }
+
+    @Test
+    public void onVarbitChanged_stackAltSpecDecreaseOfLessThanTwo_ignored() {
+        setWornAltSpecWeapons();
+
         plugin.onVarbitChanged(makePlayerVarbit(VarPlayerID.SOULREAPER_STACKS, 5));
         plugin.onVarbitChanged(makePlayerVarbit(VarPlayerID.SOULREAPER_STACKS, 4));
 
@@ -392,7 +413,9 @@ public class SpecialAttackPluginTest {
     }
 
     @Test
-    public void onVarbitChanged_sraIncrease_ignored() {
+    public void onVarbitChanged_stackAltSpecIncrease_ignored() {
+        setWornAltSpecWeapons();
+
         plugin.onVarbitChanged(makePlayerVarbit(VarPlayerID.SOULREAPER_STACKS, 4));
         plugin.onVarbitChanged(makePlayerVarbit(VarPlayerID.SOULREAPER_STACKS, 5));
 
@@ -401,8 +424,9 @@ public class SpecialAttackPluginTest {
     }
 
     @Test
-    public void onVarbitChanged_sraDecreaseAllStacksNoTextEntry_ignore() {
+    public void onVarbitChanged_stackAltSpecDecreaseAllStacksNoTextEntry_ignore() {
         when(mockTextResolver.resolve(any())).thenReturn(Optional.empty());
+        setWornAltSpecWeapons();
 
         plugin.onVarbitChanged(makePlayerVarbit(VarPlayerID.SOULREAPER_STACKS, 4));
         plugin.onVarbitChanged(makePlayerVarbit(VarPlayerID.SOULREAPER_STACKS, 0));
@@ -412,8 +436,20 @@ public class SpecialAttackPluginTest {
     }
 
     @Test
-    public void onVarbitChanged_sraDecreaseAllStacksWithTextEntry_display() {
+    public void onVarbitChanged_stackAltSpecDecreaseAllStacksNotWorn_ignore() {
+        when(mockWornContainer.getItem(anyInt())).thenReturn(null);
+
+        plugin.onVarbitChanged(makePlayerVarbit(VarPlayerID.SOULREAPER_STACKS, 4));
+        plugin.onVarbitChanged(makePlayerVarbit(VarPlayerID.SOULREAPER_STACKS, 0));
+
+        verify(mockTextResolver, times(0)).resolve(any());
+        verify(mockTextAndSoundService, times(0)).processTextEntry(any(), anyBoolean(), anyBoolean());
+    }
+
+    @Test
+    public void onVarbitChanged_stackAltSpecDecreaseAllStacksWithTextEntry_display() {
         when(mockTextResolver.resolve(any())).thenReturn(Optional.of(GRANITE_MAUL_TEXT_ENTRY));
+        setWornAltSpecWeapons();
 
         plugin.onVarbitChanged(makePlayerVarbit(VarPlayerID.SOULREAPER_STACKS, 4));
         plugin.onVarbitChanged(makePlayerVarbit(VarPlayerID.SOULREAPER_STACKS, 0));
@@ -424,7 +460,7 @@ public class SpecialAttackPluginTest {
 
 
     @Test
-    public void onVarbitChanged_sraDecreaseNotTo0_ignored() {
+    public void onVarbitChanged_stackAltSpecDecreaseNotTo0_ignored() {
         when(mockTextResolver.resolve(any())).thenReturn(Optional.empty());
 
         plugin.onVarbitChanged(makePlayerVarbit(VarPlayerID.SOULREAPER_STACKS, 4));
@@ -466,11 +502,11 @@ public class SpecialAttackPluginTest {
         return event;
     }
 
+    private void setWornAltSpecWeapons() {
+        when(mockWornContainer.getItem(EquipmentInventorySlot.WEAPON.getSlotIdx()))
+                .thenReturn(SRA_ITEM);
 
-    private ChatMessage makeChatMessage(String message) {
-        return new ChatMessage(
-                null, ChatMessageType.GAMEMESSAGE,
-                "game", message, "", 12345
-        );
+        when(mockWornContainer.getItem(EquipmentInventorySlot.SHIELD.getSlotIdx()))
+                .thenReturn(DFS_ITEM);
     }
 }
