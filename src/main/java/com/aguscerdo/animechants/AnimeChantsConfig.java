@@ -5,9 +5,19 @@ import com.aguscerdo.animechants.specials.model.SpecialAttackFallback;
 import com.aguscerdo.animechants.spells.model.SpellTextPreset;
 import net.runelite.client.config.*;
 
+// @formatter:off
 @ConfigGroup(AnimeChantsConfig.GROUP)
 public interface AnimeChantsConfig extends Config {
     String GROUP = "anime-chants";
+
+    String SPELL_PRESET = "spellPrest";
+    String SPELL_OVERRIDES = "customSpellOverrides";
+
+    String SPECIAL_ATTACK_PRESET = "specialAttackPreset";
+    String SPECIAL_ATTACK_OVERRIDE = "customSpecialAttackOverride";
+
+    String RELOAD_PRESET_FILES = "reloadPresetFiles";
+
 
     // ------- Spells ------- //
 
@@ -31,7 +41,6 @@ public interface AnimeChantsConfig extends Config {
         return true;
     }
 
-    String SPELL_PRESET = "spellPrest";
 
     @ConfigItem(
             keyName = SPELL_PRESET,
@@ -44,16 +53,6 @@ public interface AnimeChantsConfig extends Config {
         return SpellTextPreset.FANTASY;
     }
 
-    @ConfigSection(
-            name = "Special Attacks",
-            description = "Settings for text shown on special attacks",
-            position = 2,
-            closedByDefault = true
-    )
-    String SPECIAL_ATTACKS_SECTION = "anime-chants-special-attacks";
-
-
-    String SPELL_OVERRIDES = "customSpellOverrides";
 
     @ConfigItem(
             keyName = "fallbackToSpellName",
@@ -65,8 +64,13 @@ public interface AnimeChantsConfig extends Config {
     default boolean fallbackToSpellName() {
         return true;
     }
-
-    String RELOAD_PRESET_FILES = "reloadPresetFiles";
+    @ConfigSection(
+            name = "Special Attacks",
+            description = "Settings for text shown on special attacks",
+            position = 2,
+            closedByDefault = true
+    )
+    String SPECIAL_ATTACKS_SECTION = "anime-chants-special-attacks";
 
     @ConfigItem(
             keyName = "shoutSpells",
@@ -74,7 +78,7 @@ public interface AnimeChantsConfig extends Config {
             description = "Make spells more intense by adding ! at the end of every chant!<br>" +
                     "No change if text ends with dot `.` or exclamation point `!`.",
             section = SPELL_SECTION,
-            position = 4
+            position = 3
     )
     default boolean shoutSpells() {
         return false;
@@ -85,7 +89,7 @@ public interface AnimeChantsConfig extends Config {
             name = "Spell Sounds",
             description = "Play sounds (if any) when chanting a spell.",
             section = SPELL_SECTION,
-            position = 5
+            position = 4
     )
     default boolean spellSoundsEnabled() {
         return false;
@@ -97,13 +101,11 @@ public interface AnimeChantsConfig extends Config {
             name = "Spell text delay (ticks)",
             description = "Text is hidden if the same spell/category showed text less than N ticks ago.",
             section = SPELL_SECTION,
-            position = 6
+            position = 5
     )
     default int spellTextDelayTicks() {
         return 0;
     }
-
-    // ------- Special Attacks ------- //
 
     @Range(min = 0)
     @ConfigItem(
@@ -113,14 +115,38 @@ public interface AnimeChantsConfig extends Config {
                     + "(even if that cast showed nothing).<br>" +
                     "Spell-name text and category text are tracked separately.",
             section = SPELL_SECTION,
-            position = 7
+            position = 6
     )
     default int spellTextDelayFromLastCastTicks() {
         return 0;
     }
 
-    String SPECIAL_ATTACK_PRESET = "specialAttackPreset";
-    String SPECIAL_ATTACK_OVERRIDE = "customSpecialAttackOverride";
+
+    // ------- Special Attacks ------- //
+
+    @ConfigItem(
+            keyName = SPELL_OVERRIDES,
+            name = "Custom Spell Overrides",
+            description = "Custom user spell overrides.<br>" +
+                    "Each line must contain one entry formatted as follows:<br><br>" +
+                    "--------------------------------------------------------<br>" +
+                    "Spell Name=Text to Display<br>" +
+                    "Spell Category name=Text to Display<br>" +
+                    "Spell Name File=Path to <b>.wav</b> files file from runescape folder<br>" +
+                    "--------------------------------------------------------<br><br>" +
+                    "<b>Usage Notes:</b><br>" +
+                    "- Multiple entries with the same name will all be used<br>" +
+                    "- Multiple file paths for the same spell will be applied in order<br>" +
+                    "- User entries take priority over spell presets or spell names<br>" +
+                    "- Setting a spell to <b>None</b> or <b>empty</b> will disable it<br>" +
+                    "- Invalid lines will be ignored",
+            section = SPELL_SECTION,
+            position = 7
+    )
+    default String customSpellOverrides() {
+        return "";
+    }
+
 
     @ConfigItem(
             keyName = "specialAttacksEnabled",
@@ -132,6 +158,7 @@ public interface AnimeChantsConfig extends Config {
     default boolean specialAttacksEnabled() {
         return true;
     }
+
 
     @ConfigItem(
             keyName = SPECIAL_ATTACK_PRESET,
@@ -160,51 +187,29 @@ public interface AnimeChantsConfig extends Config {
     }
 
     @ConfigItem(
-            keyName = SPELL_OVERRIDES,
-            name = "Custom Spell Overrides",
-            description = "Custom user spell overrides.<br>" +
-                    "Each line must contain one entry formatted as follows:<br><br>" +
-                    "--------------------------------------------------------<br>" +
-                    "Spell Name=Text to Display<br>" +
-                    "Spell Category name=Text to Display<br>" +
-                    "Spell Name File=Path to <b>.wav</b> files file from runescape folder<br>" +
-                    "--------------------------------------------------------<br><br>" +
-                    "<b>Usage Notes:</b><br>" +
-                    "- Multiple entries with the same name will all be used<br>" +
-                    "- Multiple file paths for the same spell will be applied in order<br>" +
-                    "- User entries take priority over spell presets or spell names<br>" +
-                    "- Setting a spell to <b>None</b> or <b>empty</b> will disable it<br>" +
-                    "- Invalid lines will be ignored",
-            section = SPELL_SECTION,
-            position = 3
-    )
-    default String customSpellOverrides() {
-        return "";
-    }
-
-
-    @ConfigItem(
             keyName = "shoutSpecialAttacks",
             name = "Shout Specs",
             description = "Make your specs more intense by adding ! at the end of every chant!<br>" +
                     "No change if text ends with dot `.` or exclamation point `!`.",
             section = SPECIAL_ATTACKS_SECTION,
-            position = 4
+            position = 3
     )
     default boolean shoutSpecialAttacks() {
         return false;
     }
+
 
     @ConfigItem(
             keyName = "specialAttackSoundsEnabled",
             name = "Special Attack Sounds",
             description = "Play sounds (if any) when performing a special attack.",
             section = SPECIAL_ATTACKS_SECTION,
-            position = 6
+            position = 4
     )
     default boolean specialAttackSoundsEnabled() {
         return false;
     }
+
 
     @ConfigItem(
             keyName = SPECIAL_ATTACK_OVERRIDE,
@@ -223,12 +228,14 @@ public interface AnimeChantsConfig extends Config {
                     "- Setting a weapon spec to <b>None</b> or <b>empty</b> will disable it<br>" +
                     "- Invalid lines will be ignored",
             section = SPECIAL_ATTACKS_SECTION,
-            position = 3
+            position = 5
     )
     default String customSpecialAttackOverrides() {
         return "";
     }
 
+
+    // ------- General ------- //
 
     @Range(min = 0, max = 100)
     @ConfigItem(
@@ -236,8 +243,7 @@ public interface AnimeChantsConfig extends Config {
             name = "Sound Volume",
             description = "Volume of chant sounds",
             position = 5
-    )
-    default int soundVolume() {
+    ) default int soundVolume() {
         return 45;
     }
 
@@ -264,6 +270,7 @@ public interface AnimeChantsConfig extends Config {
         return "";
     }
 
+
     @ConfigItem(
             keyName = RELOAD_PRESET_FILES,
             name = "[Reload preset files]",
@@ -275,3 +282,4 @@ public interface AnimeChantsConfig extends Config {
         return false;
     }
 }
+// @formatter:on

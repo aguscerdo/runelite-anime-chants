@@ -29,12 +29,20 @@ public class PresetLoaderImpl implements PresetLoader {
 
     private Gson gson;
 
+    @Override
+    public Optional<ChantData> loadPreset(SpellTextPreset preset) {
+        return loadPresetFile(preset.getDirectoryName(), preset.getFileName());
+    }
+
+    @Override
+    public Optional<ChantData> loadPreset(SpecWeaponTextPreset preset) {
+        return loadPresetFile(preset.getDirectoryName(), preset.getFileName());
+    }
+
+
     private Gson gson() {
         if (gson == null) {
-            gson = baseGson.newBuilder()
-                    .registerTypeAdapter(TextEntry.class, new TextEntry.Deserializer())
-                    .registerTypeAdapter(ChantData.class, new ChantData.Deserializer())
-                    .create();
+            gson = baseGson.newBuilder().registerTypeAdapter(TextEntry.class, new TextEntry.Deserializer()).registerTypeAdapter(ChantData.class, new ChantData.Deserializer()).create();
         }
         return gson;
     }
@@ -65,15 +73,6 @@ public class PresetLoaderImpl implements PresetLoader {
         }
     }
 
-    @Override
-    public Optional<ChantData> loadPreset(SpellTextPreset preset) {
-        return loadPresetFile(preset.getDirectoryName(), preset.getFileName());
-    }
-
-    @Override
-    public Optional<ChantData> loadPreset(SpecWeaponTextPreset preset) {
-        return loadPresetFile(preset.getDirectoryName(), preset.getFileName());
-    }
 
     @SuppressWarnings("OptionalIsPresent")
     private Optional<ChantData> loadPresetFile(String directoryName, String fileName) {
@@ -82,7 +81,6 @@ public class PresetLoaderImpl implements PresetLoader {
             return Optional.empty();
         }
 
-        return FileManager.getPresetFileReader(filepath.get(), directoryName, fileName)
-                .flatMap(reader -> loadFromJson(reader, fileName));
+        return FileManager.getPresetFileReader(filepath.get(), directoryName, fileName).flatMap(reader -> loadFromJson(reader, fileName));
     }
 }
