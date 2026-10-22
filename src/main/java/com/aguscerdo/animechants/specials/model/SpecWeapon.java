@@ -15,6 +15,7 @@ import java.util.function.Function;
 
 import static com.google.common.collect.ImmutableMap.toImmutableMap;
 
+@SuppressWarnings("UnstableApiUsage")
 @AllArgsConstructor
 @Getter
 public enum SpecWeapon {
@@ -390,20 +391,22 @@ public enum SpecWeapon {
     THUNDER_KHOPESH("Thunder khopesh", "Lingering Lightning", ImmutableList.of(
             ItemID.THUNDER_KHOPESH,
             ItemID.DEADMAN_THUNDER_KHOPESH)),
-    ZORYAS_TOME("Zorya's Tome", "TODO",
+    ZORYAS_TOME("Zorya's Tome", "Zorya's Flow",
             ImmutableList.of(ItemID.ZORYAS_TOME,
                     ItemID.ZORYAS_TOME_UNCHARGED)),
-    RONDACHE("Rondache", "TODO", ImmutableList.of(ItemID.RONDACHE));
+    RONDACHE("Rondache", "Shield Slam", ImmutableList.of(ItemID.RONDACHE));
 
+
+    private final String name;
+    private final String specialAttackName;
+    private final ImmutableList<Integer> weaponIds;
 
     private static final ImmutableMap<String, SpecWeapon> WEAPONS_BY_NAME = Arrays.stream(values())
             .collect(toImmutableMap(spec -> spec.getName().toLowerCase(Locale.ROOT), Function.identity()));
     private static final ImmutableMap<Integer, SpecWeapon> WEAPONS_BY_ID = Arrays.stream(values())
             .flatMap(weapon -> weapon.weaponIds.stream().map(id -> Map.entry(id, weapon)))
             .collect(toImmutableMap(Map.Entry::getKey, Map.Entry::getValue));
-    private final String name;
-    private final String specialAttackName;
-    private final ImmutableList<Integer> weaponIds;
+
 
     public static SpecWeapon fromId(int id) {
         return WEAPONS_BY_ID.getOrDefault(id, UNKNOWN);
@@ -427,7 +430,6 @@ public enum SpecWeapon {
     public TextEntry specialAttackNameAsTextEntry() {
         return new TextEntry(specialAttackName, Optional.empty());
     }
-
 
     public boolean isUnknown() {
         return this == UNKNOWN;
